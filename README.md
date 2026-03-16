@@ -15,7 +15,7 @@ To recreate this project with the same configuration:
 
 ```sh
 # recreate this project
-pnpm dlx sv@0.12.7 create --template minimal --types ts --add prettier eslint drizzle="database:postgresql+postgresql:neon" better-auth="demo:password" sveltekit-adapter="adapter:netlify" vitest="usages:unit,component" playwright --install pnpm .
+pnpm dlx sv@0.12.7 create --template minimal --types ts --add prettier eslint drizzle="database:postgresql+postgresql:neon" better-auth="demo:password" vitest="usages:unit,component" playwright sveltekit-adapter="adapter:netlify" --install pnpm .
 ```
 
 ## Developing
