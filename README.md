@@ -2,13 +2,14 @@
 
 Good decisions that die for lack of translation into business language.
 
-A decision logging tool for designers who report to non-design leadership. You put in the context — the problem, the options, the data, the tradeoffs — and it helps you think it through and communicate it clearly. One input, three outputs.
+A decision logging tool for designers who report to non-design leadership. You put in the context (the problem, the options, the data, the tradeoffs) and it helps you think it through and communicate it clearly. 
+One input, three outputs.
 
 ## What it does
 
-- **Prepare Decision** — structures your reasoning before you commit. For you, not for them.
-- **Communicate to Leadership** — translates the decision into exec-ready language tied to business metrics. CEO register by default.
-- **Portfolio Case** — narrates the decision as a structured case study for interviews and portfolio work.
+- **Prepare Decision** - structures your reasoning before you commit. For you, not for them.
+- **Communicate to Leadership** - translates the decision into exec-ready language tied to business metrics. CEO register by default.
+- **Portfolio Case** - narrates the decision as a structured case study for interviews and portfolio work.
 
 ## Tech stack
 
@@ -57,11 +58,11 @@ src/
 
 Each decision captures three groups of fields:
 
-**Context** — decision, problem, business area, audience  
-**Analysis** — options considered, data & signals, tradeoffs accepted  
-**Outcomes** — primary metric, guardrail metric, expected outcome
+**Context** - decision, problem, business area, audience  
+**Analysis** - options considered, data & signals, tradeoffs accepted  
+**Outcomes** - primary metric, guardrail metric, expected outcome
 
-The coaching model challenges each step before the user proceeds — questions are calibrated to the selected audience.
+The coaching model challenges each step before the user proceeds - questions are calibrated to the selected audience.
 
 ## API
 
@@ -78,8 +79,9 @@ MVP in progress. Authentication required for all users. Public mode (one output 
 
 ## What's not built yet
 
-- Outputs page — rendering the three generated modes
-- Decision log — saved history per user
-- Database schema — Drizzle + Neon, structure TBD
-- Public mode — future, one output per session via cookie
-- Audience modes beyond CEO — CPO, CFO, Engineering Lead scaffolded, prompts pending
+- Outputs page - rendering the three generated modes
+- Decision log - saved history per user
+- Database schema - Drizzle + Neon, structure TBD
+- Public mode - future, one output per session via cookie
+- Audience modes beyond CEO - CPO, CFO, Engineering Lead scaffolded, prompts pending
+
