@@ -1,14 +1,12 @@
 <script>
-  export let currentStep = 1;
+  import { strings } from '$lib/strings.js';
 
-  const steps = [
-    { n: 1, label: 'Context' },
-    { n: 2, label: 'Analysis' },
-    { n: 3, label: 'Outcomes' }
-  ];
+  let { currentStep = 1 } = $props();
+
+  const steps = strings.stepProgress.steps;
 </script>
 
-<div class="progress" role="list" aria-label="Decision steps">
+<div class="progress" role="list" aria-label={strings.stepProgress.ariaLabel}>
   {#each steps as step}
     <div
       class="step"
@@ -69,7 +67,7 @@
     align-items: center;
     justify-content: center;
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     flex-shrink: 0;
     position: relative;
@@ -82,7 +80,7 @@
 
   .label {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-muted);

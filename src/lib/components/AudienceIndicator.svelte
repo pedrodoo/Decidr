@@ -1,12 +1,13 @@
 <script>
-  export let label = 'CEO';
-  export let onReset; // () => void
+  import { strings } from '$lib/strings.js';
+
+  let { label = 'CEO', onReset } = $props();
 </script>
 
-<button class="indicator" on:click={onReset} type="button" aria-label="Change audience">
-  <span class="label">Audience</span>
+<button class="indicator" onclick={onReset} type="button" aria-label={strings.audienceIndicator.changeAudienceAria}>
+  <span class="label">{strings.audienceIndicator.label}</span>
   <span class="value">{label}</span>
-  <span class="change">Change</span>
+  <span class="change">{strings.common.change}</span>
 </button>
 
 <style>
@@ -14,6 +15,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    min-height: 44px;
     padding: 8px 14px;
     background: var(--orange-bg);
     border: 1px solid var(--orange-border);
@@ -26,10 +28,11 @@
   }
 
   .indicator:hover { background: rgba(249, 115, 22, 0.16); }
+  .indicator:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 
   .label {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -37,14 +40,14 @@
 
   .value {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--orange);
     font-weight: 500;
   }
 
   .change {
     margin-left: auto;
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     text-decoration: underline;
     text-underline-offset: 3px;

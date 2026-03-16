@@ -3,17 +3,18 @@
   import AudienceIndicator from '$lib/components/AudienceIndicator.svelte';
   import StepProgress from '$lib/components/StepProgress.svelte';
   import CoachResponse from '$lib/components/CoachResponse.svelte';
+  import { strings } from '$lib/strings.js';
 
   // --- State ---
-  let phase = 'gate'; // 'gate' | 'steps'
-  let audience = { id: 'ceo', label: 'CEO' };
-  let currentStep = 1;
+  let phase = $state('gate'); // 'gate' | 'steps'
+  let audience = $state({ id: 'ceo', label: 'CEO' });
+  let currentStep = $state(1);
 
   // Coach visibility per step
-  let coachVisible = { 1: false, 2: false, 3: false };
+  let coachVisible = $state({ 1: false, 2: false, 3: false });
 
   // Form values
-  let form = {
+  let form = $state({
     decision: '',
     problem: '',
     businessArea: '',
@@ -23,56 +24,16 @@
     primaryMetric: '',
     guardrailMetric: '',
     expectedOutcome: ''
-  };
+  });
 
-  const businessAreas = [
-    { id: 'activation', label: 'Activation', class: 'activation' },
-    { id: 'conversion', label: 'Conversion', class: 'conversion' },
-    { id: 'retention', label: 'Retention', class: 'retention' },
-    { id: 'revenue',   label: 'Revenue',    class: 'revenue' }
-  ];
+  const s = strings.newDecision;
+  const businessAreas = s.businessAreas;
+  const prompts = s.prompts;
+  const coachContent = s.coachContent;
 
-  // --- Audience prompts (calibrated per audience) ---
-  // Extend this object when CPO / CFO / Eng are added
-  const prompts = {
-    ceo: {
-      decision: "A CEO needs to understand this in one sentence — and it needs to sound like a business decision, not a design task. <strong>What are you deciding?</strong>",
-      problem: "Frame this as a business problem, not a UX observation. <strong>What is the cost of not acting?</strong> A CEO will want to know that before anything else.",
-      options: "<strong>Include the option to do nothing.</strong> A CEO will ask why you're not running a test first, or why you're not trying a less drastic change. Anticipate that.",
-      data: "Qualitative signals count — but <strong>name them as signals, not facts.</strong> A CEO will probe anything that looks like assumption dressed as data.",
-      tradeoffs: "A CEO needs to know what you're giving up — <strong>and that you've thought about whether the business can absorb it.</strong> Don't hide the downside.",
-      primaryMetric: "The number that tells you this decision worked.",
-      guardrailMetric: "The metric you're <strong>not willing to sacrifice.</strong>",
-      expectedOutcome: "<strong>Make a prediction you can be held to.</strong> A CEO will remember what you said. Vague expectations are worse than honest uncertainty."
-    }
-  };
-
-  // --- Coach content per step (per audience) ---
-  const coachContent = {
-    ceo: {
-      1: {
-        intro: "Good start. The problem statement is concrete and you've named the business impact. Before you move to analysis, consider what a CEO will immediately push back on:",
-        questions: [
-          "The drop in conversion — is this <em>caused</em> by your recent change, or correlated with when it shipped? A CEO will ask "how do you know it's this, not something else?" Have an answer ready.",
-          "Who originally asked for this feature? If it was a leadership call, your recommendation to reverse it needs to acknowledge that directly — or it looks like you're overriding a previous decision without context.",
-          ""Users are confused" — is this observed behaviour (recordings, tickets) or a hypothesis? Name your source. A CEO won't accept 'users feel confused' without evidence."
-        ],
-        challenge: "<strong>Think about this:</strong> You're framing this as a conversion problem. A CEO might reframe it as a growth problem — not just fixing what broke, but what does fixing it <em>unlock</em>? What does recovery mean for monthly new users and downstream revenue?",
-        challengeIsPositive: false,
-        continueLabel: 'Continue to Analysis'
-      },
-      2: {
-        intro: "Solid. Options are well-defined, the do-nothing case is included, and the tradeoff is named honestly. Two things a CEO will likely push on:",
-        questions: [
-          "Why aren't you testing first? If you're shipping directly, say why — speed, confidence in data, cost of delay. A CEO who values data-driven decisions will question a direct ship over a test.",
-          "The tradeoff names the user impact but not the business impact. How many signups per week does 'some users who drop off' represent? Even a rough estimate makes this more defensible."
-        ],
-        challenge: "<strong>Strong point:</strong> Framing this as a quality-of-growth decision — not just a UX fix — is exactly what lands with a CEO. Keep that language when you generate your output.",
-        challengeIsPositive: true,
-        continueLabel: 'Continue to Outcomes'
-      }
-    }
-  };
+  function stepCounter(current, total) {
+    return s.stepCounter.replace('{current}', current).replace('{total}', total);
+  }
 
   // --- Handlers ---
   function handleAudienceStart(selected) {
@@ -109,18 +70,19 @@
   }
 
   // Convenience: get current audience's prompts
-  $: p = prompts[audience.id] ?? prompts.ceo;
-  $: c = coachContent[audience.id] ?? coachContent.ceo;
+  const p = $derived(prompts[audience.id] ?? prompts.ceo);
+  const c = $derived(coachContent[audience.id] ?? coachContent.ceo);
 </script>
 
 <svelte:head>
-  <title>New Decision — Decidr</title>
+  <title>{s.pageTitle}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </svelte:head>
 
-<div class="page">
+<main id="main" class="page">
+  <h1 class="sr-only">New Decision</h1>
 
   <!-- AUDIENCE GATE -->
   {#if phase === 'gate'}
@@ -136,39 +98,39 @@
     {#if currentStep === 1}
       <div class="step">
         <div class="field">
-          <label class="field-label" for="f-decision">Decision</label>
+          <label class="field-label" for="f-decision">{s.fieldLabels.decision}</label>
           <p class="field-prompt">{@html p.decision}</p>
-          <input id="f-decision" type="text" bind:value={form.decision} placeholder="e.g. Remove social login from the signup screen" />
+          <input id="f-decision" type="text" bind:value={form.decision} placeholder={s.placeholders.decision} />
         </div>
 
         <div class="field">
-          <label class="field-label" for="f-problem">Problem</label>
+          <label class="field-label" for="f-problem">{s.fieldLabels.problem}</label>
           <p class="field-prompt">{@html p.problem}</p>
-          <textarea id="f-problem" class="short" bind:value={form.problem} placeholder="What's broken or suboptimal? What happens if you don't act?"></textarea>
+          <textarea id="f-problem" class="short" bind:value={form.problem} placeholder={s.placeholders.problem}></textarea>
         </div>
 
-        <div class="field">
-          <div class="field-label">Business Area</div>
-          <p class="field-prompt">Which area does this decision most directly affect?</p>
+        <fieldset class="field fieldset-reset">
+          <legend class="field-label">{s.fieldLabels.businessArea}</legend>
+          <p class="field-prompt">{s.fieldLabels.businessAreaPrompt}</p>
           <div class="pill-group">
             {#each businessAreas as area}
               <button
                 type="button"
                 class="pill {area.class}"
                 class:active={form.businessArea === area.id}
-                on:click={() => setArea(area.id)}
+                onclick={() => setArea(area.id)}
               >
                 {area.label}
               </button>
             {/each}
           </div>
-        </div>
+        </fieldset>
 
         <div class="step-actions">
-          <span class="step-counter">Step 1 of 3</span>
-          <button class="btn-primary" type="button" on:click={() => submitStep(1)}>
-            Continue
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+          <span class="step-counter">{stepCounter(1, 3)}</span>
+          <button class="btn-primary" type="button" onclick={() => submitStep(1)}>
+            {strings.common.continue}
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M5 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -177,7 +139,7 @@
         <div id="coach-1">
           <CoachResponse
             visible={coachVisible[1]}
-            stepLabel="Context review"
+            stepLabel={s.stepLabels.contextReview}
             audienceLabel={audience.label}
             intro={c[1].intro}
             questions={c[1].questions}
@@ -194,35 +156,35 @@
     {#if currentStep === 2}
       <div class="step">
         <div class="field">
-          <label class="field-label" for="f-options">Options Considered</label>
+          <label class="field-label" for="f-options">{s.fieldLabels.options}</label>
           <p class="field-prompt">{@html p.options}</p>
-          <textarea id="f-options" class="medium" bind:value={form.options} placeholder="Option A: ...&#10;Option B: ...&#10;Option C: Do nothing"></textarea>
+          <textarea id="f-options" class="medium" bind:value={form.options} placeholder={s.placeholders.options}></textarea>
         </div>
 
         <div class="field">
-          <label class="field-label" for="f-data">Data & Signals</label>
+          <label class="field-label" for="f-data">{s.fieldLabels.data}</label>
           <p class="field-prompt">{@html p.data}</p>
-          <textarea id="f-data" class="short" bind:value={form.data} placeholder="Any numbers, research, or observations — qualitative signals count too."></textarea>
+          <textarea id="f-data" class="short" bind:value={form.data} placeholder={s.placeholders.data}></textarea>
         </div>
 
         <div class="field">
-          <label class="field-label" for="f-tradeoffs">Tradeoffs Accepted</label>
+          <label class="field-label" for="f-tradeoffs">{s.fieldLabels.tradeoffs}</label>
           <p class="field-prompt">{@html p.tradeoffs}</p>
-          <textarea id="f-tradeoffs" class="short" bind:value={form.tradeoffs} placeholder="e.g. Short-term drop in X. We accept this because long-term Y matters more."></textarea>
+          <textarea id="f-tradeoffs" class="short" bind:value={form.tradeoffs} placeholder={s.placeholders.tradeoffs}></textarea>
         </div>
 
         <div class="step-actions">
-          <button class="btn-secondary" type="button" on:click={() => goToStep(1)}>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+          <button class="btn-secondary" type="button" onclick={() => goToStep(1)}>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            Back
+            {strings.common.back}
           </button>
           <div class="actions-right">
-            <span class="step-counter">Step 2 of 3</span>
-            <button class="btn-primary" type="button" on:click={() => submitStep(2)}>
-              Continue
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+            <span class="step-counter">{stepCounter(2, 3)}</span>
+            <button class="btn-primary" type="button" onclick={() => submitStep(2)}>
+              {strings.common.continue}
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <path d="M5 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
@@ -232,7 +194,7 @@
         <div id="coach-2">
           <CoachResponse
             visible={coachVisible[2]}
-            stepLabel="Analysis review"
+            stepLabel={s.stepLabels.analysisReview}
             audienceLabel={audience.label}
             intro={c[2].intro}
             questions={c[2].questions}
@@ -250,67 +212,67 @@
       <div class="step">
         <div class="field-row">
           <div class="field">
-            <label class="field-label" for="f-metric">Primary Metric</label>
+            <label class="field-label" for="f-metric">{s.fieldLabels.primaryMetric}</label>
             <p class="field-prompt">{@html p.primaryMetric}</p>
-            <input id="f-metric" type="text" bind:value={form.primaryMetric} placeholder="e.g. Signup completion rate" />
+            <input id="f-metric" type="text" bind:value={form.primaryMetric} placeholder={s.placeholders.primaryMetric} />
           </div>
           <div class="field">
-            <label class="field-label" for="f-guardrail">Guardrail Metric</label>
+            <label class="field-label" for="f-guardrail">{s.fieldLabels.guardrailMetric}</label>
             <p class="field-prompt">{@html p.guardrailMetric}</p>
-            <input id="f-guardrail" type="text" bind:value={form.guardrailMetric} placeholder="e.g. Day-7 retention" />
+            <input id="f-guardrail" type="text" bind:value={form.guardrailMetric} placeholder={s.placeholders.guardrailMetric} />
           </div>
         </div>
 
         <div class="field">
-          <label class="field-label" for="f-outcome">Expected Outcome</label>
+          <label class="field-label" for="f-outcome">{s.fieldLabels.expectedOutcome}</label>
           <p class="field-prompt">{@html p.expectedOutcome}</p>
-          <input id="f-outcome" type="text" bind:value={form.expectedOutcome} placeholder="e.g. Removing X will recover signup completion from 56% to ~68% within 2 sprints." />
+          <input id="f-outcome" type="text" bind:value={form.expectedOutcome} placeholder={s.placeholders.expectedOutcome} />
         </div>
 
         <div class="divider"></div>
 
         <div class="field">
-          <div class="field-label">What you'll get</div>
-          <p class="field-prompt">One input. Three outputs. Each built for a different purpose.</p>
+          <div class="field-label">{s.fieldLabels.whatYouGet}</div>
+          <p class="field-prompt">{s.fieldLabels.whatYouGetPrompt}</p>
           <div class="output-preview">
             <div class="output-mode">
               <span class="output-num one">1</span>
               <div>
-                <div class="output-title">Prepare Decision</div>
-                <div class="output-desc">Structured reasoning to review before you commit. For you, not for them.</div>
+                <div class="output-title">{s.outputPreview.oneTitle}</div>
+                <div class="output-desc">{s.outputPreview.oneDesc}</div>
               </div>
             </div>
             <div class="output-mode">
               <span class="output-num two">2</span>
               <div>
-                <div class="output-title">Communicate to Leadership</div>
-                <div class="output-desc">Exec-ready language for a {audience.label}. Business impact, risk, and clear recommendation.</div>
+                <div class="output-title">{s.outputPreview.twoTitle}</div>
+                <div class="output-desc">{s.outputPreview.twoDesc.replace('{audienceLabel}', audience.label)}</div>
               </div>
             </div>
             <div class="output-mode">
               <span class="output-num three">3</span>
               <div>
-                <div class="output-title">Portfolio Case</div>
-                <div class="output-desc">A structured case study narrative for interviews and portfolio work.</div>
+                <div class="output-title">{s.outputPreview.threeTitle}</div>
+                <div class="output-desc">{s.outputPreview.threeDesc}</div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="step-actions">
-          <button class="btn-secondary" type="button" on:click={() => goToStep(2)}>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+          <button class="btn-secondary" type="button" onclick={() => goToStep(2)}>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            Back
+            {strings.common.back}
           </button>
           <div class="actions-right">
-            <span class="step-counter">Step 3 of 3</span>
-            <button class="btn-primary" type="button" on:click={handleGenerate}>
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="white">
+            <span class="step-counter">{stepCounter(3, 3)}</span>
+            <button class="btn-primary" type="button" onclick={handleGenerate}>
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
                 <path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z"/>
               </svg>
-              Generate outputs
+              {s.generateOutputs}
             </button>
           </div>
         </div>
@@ -318,18 +280,37 @@
     {/if}
   {/if}
 
-</div>
+</main>
 
 <style>
-  .page { max-width: 680px; margin: 0 auto; padding: 48px 24px 100px; }
+  .page { max-width: 760px; margin: 0 auto; padding: 48px 24px 100px; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
   .step { display: flex; flex-direction: column; }
 
   .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
 
+  .fieldset-reset {
+    border: 0;
+    padding: 0;
+    margin: 0 0 28px 0;
+    min-width: 0;
+  }
+
   .field-label {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--text-xs);
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -337,7 +318,7 @@
   }
 
   .field-prompt {
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     line-height: 1.65;
   }
@@ -354,9 +335,10 @@
 
   .pill {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.05em;
-    padding: 6px 12px;
+    min-height: 44px;
+    padding: 10px 12px;
     border-radius: 6px;
     cursor: pointer;
     border: 1px solid transparent;
@@ -367,6 +349,7 @@
 
   .pill:hover { opacity: 0.7; transform: translateY(-1px); }
   .pill.active { opacity: 1; }
+  .pill:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
   .pill.activation { background: var(--teal); color: var(--teal-text); border-color: rgba(45, 212, 191, 0.25); }
   .pill.conversion { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-border); }
   .pill.retention  { background: var(--blue-bg); color: var(--blue-text); border-color: rgba(96, 165, 250, 0.3); }
@@ -385,7 +368,7 @@
 
   .step-counter {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
   }
 
@@ -405,7 +388,7 @@
 
   .output-num {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 12px;
     width: 20px;
     height: 20px;
     border-radius: 4px;
@@ -419,6 +402,6 @@
   .output-num.two   { background: var(--green-bg); color: var(--green-text); }
   .output-num.three { background: rgba(167, 139, 250, 0.12); color: #a78bfa; }
 
-  .output-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
-  .output-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .output-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+  .output-desc  { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.4; }
 </style>

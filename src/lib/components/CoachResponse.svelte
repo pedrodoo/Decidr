@@ -1,17 +1,21 @@
 <script>
-  export let visible = false;
-  export let stepLabel = '';
-  export let audienceLabel = '';
-  export let intro = '';
-  export let questions = []; // string[]
-  export let challenge = '';
-  export let challengeIsPositive = false; // true = positive framing, false = pushback
-  export let onContinue; // () => void
-  export let continueLabel = 'Continue';
+  import { strings } from '$lib/strings.js';
+
+  let {
+    visible = false,
+    stepLabel = '',
+    audienceLabel = '',
+    intro = '',
+    questions = [],
+    challenge = '',
+    challengeIsPositive = false,
+    onContinue,
+    continueLabel = strings.coach.defaultContinueLabel
+  } = $props();
 </script>
 
 {#if visible}
-  <div class="coach" role="region" aria-label="Coaching feedback">
+  <div class="coach" role="region" aria-label={strings.coach.regionAria}>
     <div class="header">
       <div class="avatar" aria-hidden="true">
         <svg viewBox="0 0 12 12" fill="var(--coach-accent)">
@@ -42,10 +46,10 @@
       {/if}
 
       <div class="footer">
-        <span class="footer-text">You can revise above, or continue.</span>
-        <button class="btn-primary" on:click={onContinue} type="button">
+        <span class="footer-text">{strings.coach.footerText}</span>
+        <button class="btn-primary" onclick={onContinue} type="button">
           {continueLabel}
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M5 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
@@ -93,7 +97,7 @@
 
   .name {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--coach-accent);
@@ -107,7 +111,7 @@
   }
 
   .intro {
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--coach-text);
     line-height: 1.7;
   }
@@ -122,19 +126,19 @@
     background: rgba(96, 165, 250, 0.05);
     border: 1px solid rgba(96, 165, 250, 0.1);
     border-radius: 8px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--coach-text);
     line-height: 1.55;
   }
 
-  .q-icon { color: var(--coach-accent); flex-shrink: 0; margin-top: 1px; font-size: 12px; }
+  .q-icon { color: var(--coach-accent); flex-shrink: 0; margin-top: 1px; font-size: var(--text-sm); }
 
   .challenge {
     padding: 12px 14px;
     background: rgba(249, 115, 22, 0.07);
     border: 1px solid rgba(249, 115, 22, 0.18);
     border-radius: 8px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: #ffd0a8;
     line-height: 1.65;
   }
@@ -153,5 +157,5 @@
     gap: 16px;
   }
 
-  .footer-text { font-size: 12px; color: var(--text-muted); }
+  .footer-text { font-size: var(--text-sm); color: var(--text-muted); }
 </style>

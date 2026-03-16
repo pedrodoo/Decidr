@@ -1,0 +1,139 @@
+/**
+ * Decidr design tokens
+ * Single source of truth for color, type, space, radius, and motion.
+ * Use semantic tokens (--bg, --text-primary, etc.) in components;
+ * they are defined at the bottom of this file from these primitives.
+ */
+
+:root {
+  /* ─── Color primitives ───────────────────────────────────────────── */
+  /* Neutral (backgrounds, borders, text) */
+  --dt-neutral-50: #fafafa;
+  --dt-neutral-100: #f2f2f2;
+  --dt-neutral-200: #e5e5e5;
+  --dt-neutral-300: #b0b0b0;
+  --dt-neutral-400: #787878;
+  --dt-neutral-500: #606060;
+  --dt-neutral-600: #555555;
+  --dt-neutral-700: #333333;
+  --dt-neutral-800: #252525;
+  --dt-neutral-850: #1e1e1e;
+  --dt-neutral-900: #111111;
+
+  /* Brand orange */
+  --dt-orange-500: #f97316;
+  --dt-orange-600: #ea6d0e;
+  /* Primary button background: white text on this meets WCAG AA 4.5:1 */
+  --dt-orange-700: #c2410c;
+  --dt-orange-dim: rgba(249, 115, 22, 0.1);
+  --dt-orange-border: rgba(249, 115, 22, 0.3);
+  --dt-orange-bg: rgba(249, 115, 22, 0.12);
+  --dt-orange-bg-subtle: rgba(249, 115, 22, 0.05);
+
+  /* Blue (coach, retention) */
+  --dt-blue-400: #60a5fa;
+  --dt-blue-bg: rgba(96, 165, 250, 0.12);
+  --dt-blue-border: rgba(96, 165, 250, 0.2);
+  --dt-blue-border-subtle: rgba(96, 165, 250, 0.1);
+  --dt-blue-bg-subtle: rgba(96, 165, 250, 0.05);
+  --dt-coach-bg: #171f2e;
+  --dt-coach-text: #c5d5ed;
+
+  /* Green (success, revenue) */
+  --dt-green-400: #4ade80;
+  --dt-green-bg: rgba(74, 222, 128, 0.12);
+  --dt-green-border: rgba(74, 222, 128, 0.3);
+
+  /* Teal (activation) */
+  --dt-teal-400: #2dd4bf;
+  --dt-teal-bg: rgba(20, 184, 166, 0.18);
+  --dt-teal-border: rgba(45, 212, 191, 0.25);
+
+  /* Purple (output variant) */
+  --dt-purple-400: #a78bfa;
+  --dt-purple-bg: rgba(167, 139, 250, 0.12);
+
+  /* Semantic color aliases (used by app.css and components) */
+  --bg: var(--dt-neutral-900);
+  --surface: var(--dt-neutral-850);
+  --surface-2: var(--dt-neutral-800);
+  --border: var(--dt-neutral-700);
+  --border-focus: var(--dt-neutral-600);
+
+  --text-primary: var(--dt-neutral-100);
+  --text-secondary: var(--dt-neutral-300);
+  --text-muted: var(--dt-neutral-400);
+
+  --orange: var(--dt-orange-500);
+  --orange-hover: var(--dt-orange-600);
+  --orange-button: var(--dt-orange-700);
+  --orange-dim: var(--dt-orange-dim);
+  --orange-border: var(--dt-orange-border);
+  --orange-bg: var(--dt-orange-bg);
+
+  --coach-bg: var(--dt-coach-bg);
+  --coach-border: var(--dt-blue-border);
+  --coach-text: var(--dt-coach-text);
+  --coach-accent: var(--dt-blue-400);
+
+  --teal: var(--dt-teal-bg);
+  --teal-text: var(--dt-teal-400);
+  --green-bg: var(--dt-green-bg);
+  --green-text: var(--dt-green-400);
+  --blue-bg: var(--dt-blue-bg);
+  --blue-text: var(--dt-blue-400);
+
+  /* ─── Typography ─────────────────────────────────────────────────── */
+  --dt-font-sans: 'Sora', sans-serif;
+  --dt-font-mono: 'IBM Plex Mono', monospace;
+
+  --dt-font-size-xs: 13px;
+  --dt-font-size-sm: 15px;
+  --dt-font-size-base: 18px;
+  --dt-font-size-lg: 20px;
+  --dt-font-size-xl: 22px;
+  --dt-font-size-xxl: 24px;
+  --dt-font-size-xxxl: 28px;
+
+  --dt-line-height-tight: 1.4;
+  --dt-line-height-normal: 1.6;
+  --dt-line-height-relaxed: 1.7;
+
+  --dt-font-weight-normal: 400;
+  --dt-font-weight-medium: 500;
+  --dt-font-weight-semibold: 600;
+  --dt-font-weight-bold: 700;
+
+  /* Semantic type (alias existing names) */
+  --font-sans: var(--dt-font-sans);
+  --font-mono: var(--dt-font-mono);
+  --text-xs: var(--dt-font-size-xs);
+  --text-sm: var(--dt-font-size-sm);
+  --text-base: var(--dt-font-size-base);
+  --text-lg: var(--dt-font-size-lg);
+  --text-xl: var(--dt-font-size-xl);
+  --text-xxl: var(--dt-font-size-xxl);
+  --text-xxxl: var(--dt-font-size-xxxl);
+
+  /* ─── Space ──────────────────────────────────────────────────────── */
+  --dt-space-1: 4px;
+  --dt-space-2: 8px;
+  --dt-space-3: 12px;
+  --dt-space-4: 16px;
+  --dt-space-5: 20px;
+  --dt-space-6: 24px;
+  --dt-space-8: 32px;
+  --dt-space-10: 40px;
+  --dt-space-12: 48px;
+  --dt-space-16: 64px;
+
+  /* ─── Radius ─────────────────────────────────────────────────────── */
+  --dt-radius-sm: 6px;
+  --dt-radius-md: 8px;
+  --dt-radius-lg: 10px;
+
+  /* ─── Motion ─────────────────────────────────────────────────────── */
+  --dt-duration-fast: 0.1s;
+  --dt-duration-normal: 0.15s;
+  --dt-duration-slow: 0.2s;
+}

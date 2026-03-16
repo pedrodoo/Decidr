@@ -1,43 +1,37 @@
+@import './lib/design-tokens.css';
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #111111;
-  --surface: #1e1e1e;
-  --surface-2: #252525;
-  --border: #333333;
-  --border-focus: #555555;
-
-  --text-primary: #f2f2f2;
-  --text-secondary: #a0a0a0;
-  --text-muted: #606060;
-
-  --orange: #f97316;
-  --orange-dim: rgba(249, 115, 22, 0.1);
-  --orange-border: rgba(249, 115, 22, 0.3);
-  --orange-bg: rgba(249, 115, 22, 0.12);
-
-  --coach-bg: #171f2e;
-  --coach-border: rgba(96, 165, 250, 0.2);
-  --coach-text: #c5d5ed;
-  --coach-accent: #60a5fa;
-
-  --teal: rgba(20, 184, 166, 0.18);
-  --teal-text: #2dd4bf;
-  --green-bg: rgba(74, 222, 128, 0.12);
-  --green-text: #4ade80;
-  --blue-bg: rgba(96, 165, 250, 0.12);
-  --blue-text: #60a5fa;
-
-  --font-sans: 'Sora', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-}
 
 body {
   font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--dt-line-height-normal);
   background: var(--bg);
   color: var(--text-primary);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--dt-space-3) var(--dt-space-5);
+  background: var(--orange);
+  color: white;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--dt-font-weight-semibold);
+  border-radius: var(--dt-radius-md);
+  z-index: 100;
+  transition: top var(--dt-duration-fast);
+}
+
+.skip-link:focus {
+  top: var(--dt-space-4);
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
 }
 
 input[type="text"],
@@ -45,21 +39,20 @@ textarea {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
+  border-radius: var(--dt-radius-md);
+  padding: var(--dt-space-3) 14px;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text-primary);
-  outline: none;
   resize: none;
-  transition: border-color 0.15s, background 0.15s;
-  line-height: 1.6;
+  transition: border-color var(--dt-duration-normal), background var(--dt-duration-normal);
+  line-height: var(--dt-line-height-normal);
 }
 
 input[type="text"]::placeholder,
 textarea::placeholder {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 input[type="text"]:focus,
@@ -68,39 +61,49 @@ textarea:focus {
   background: var(--surface-2);
 }
 
+input[type="text"]:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
 .btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background: var(--orange);
+  gap: var(--dt-space-2);
+  min-height: 44px;
+  padding: var(--dt-space-3) var(--dt-space-5);
+  background: var(--orange-button);
   color: white;
   font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: var(--dt-font-weight-semibold);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--dt-radius-md);
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: background var(--dt-duration-normal), transform var(--dt-duration-fast);
 }
 
-.btn-primary:hover { background: #ea6d0e; transform: translateY(-1px); }
+.btn-primary:hover { background: var(--orange-hover); transform: translateY(-1px); }
 .btn-primary:active { transform: translateY(0); }
+.btn-primary:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
+  gap: var(--dt-space-2);
+  min-height: 44px;
+  padding: var(--dt-space-3) var(--dt-space-4);
   background: transparent;
   color: var(--text-secondary);
   font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--text-sm);
+  font-weight: var(--dt-font-weight-medium);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--dt-radius-md);
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color var(--dt-duration-normal), color var(--dt-duration-normal);
 }
 
 .btn-secondary:hover { border-color: var(--border-focus); color: var(--text-primary); }
+.btn-secondary:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
