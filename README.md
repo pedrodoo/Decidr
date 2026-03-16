@@ -1,42 +1,85 @@
-# sv
+# Decidr
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Good decisions that die for lack of translation into business language.
 
-## Creating a project
+A decision logging tool for designers who report to non-design leadership. You put in the context — the problem, the options, the data, the tradeoffs — and it helps you think it through and communicate it clearly. One input, three outputs.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## What it does
 
-```sh
-# create a new project
-npx sv create my-app
+- **Prepare Decision** — structures your reasoning before you commit. For you, not for them.
+- **Communicate to Leadership** — translates the decision into exec-ready language tied to business metrics. CEO register by default.
+- **Portfolio Case** — narrates the decision as a structured case study for interviews and portfolio work.
+
+## Tech stack
+
+SvelteKit · Neon · Drizzle ORM · Better Auth · Anthropic API
+
+## Getting started
+
+```bash
+pnpm install
+cp .env.example .env   # add your keys
+pnpm dev
 ```
 
-To recreate this project with the same configuration:
+App runs at `localhost:5173`.
 
-```sh
-# recreate this project
-pnpm dlx sv@0.12.7 create --template minimal --types ts --add prettier eslint drizzle="database:postgresql+postgresql:neon" better-auth="demo:password" vitest="usages:unit,component" playwright sveltekit-adapter="adapter:netlify" --install pnpm .
+## Environment variables
+
+```
+ANTHROPIC_API_KEY=        # Anthropic API key
+DATABASE_URL=             # Neon connection string
+BETTER_AUTH_SECRET=       # Better Auth secret
 ```
 
-## Developing
+## Project structure
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```
+src/
+  lib/
+    ai/
+      prompts.ts          # Prompt architecture for three output modes
+    components/
+      AudienceGate.svelte
+      AudienceIndicator.svelte
+      StepProgress.svelte
+      CoachResponse.svelte
+  routes/
+    decisions/
+      new/+page.svelte    # Decision input flow — audience gate + 3 steps + coaching
+    api/
+      decisions/
+        generate/
+          +server.ts      # Generate endpoint — three parallel Anthropic calls
 ```
 
-## Building
+## Input model
 
-To create a production version of your app:
+Each decision captures three groups of fields:
 
-```sh
-npm run build
-```
+**Context** — decision, problem, business area, audience  
+**Analysis** — options considered, data & signals, tradeoffs accepted  
+**Outcomes** — primary metric, guardrail metric, expected outcome
 
-You can preview the production build with `npm run preview`.
+The coaching model challenges each step before the user proceeds — questions are calibrated to the selected audience.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## API
+
+`POST /api/decisions/generate`
+
+Requires authentication. Rate limited to 10 requests per IP per hour.
+
+Request body: `DecisionInput` (see `src/lib/ai/prompts.ts`)  
+Response: `{ prepare: string, communicate: string, portfolio: string }`
+
+## Status
+
+MVP in progress. Authentication required for all users. Public mode (one output per session, no account required) planned for v2.
+
+## What's not built yet
+
+- Outputs page — rendering the three generated modes
+- Decision log — saved history per user
+- Database schema — Drizzle + Neon, structure TBD
+- Public mode — future, one output per session via cookie
+- Audience modes beyond CEO — CPO, CFO, Engineering Lead scaffolded, prompts pending

@@ -83,7 +83,7 @@
 
   .card:hover:not(.disabled) { border-color: var(--border-focus); background: var(--surface-2); }
   .card.active { border-color: var(--orange); background: rgba(249, 115, 22, 0.05); }
-  .card.disabled { opacity: 0.35; cursor: not-allowed; }
+  .card.disabled { opacity: 0.55; cursor: not-allowed; }
   .card:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 
   .icon {
@@ -123,11 +123,12 @@
     font-size: var(--text-xs);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 2px 6px;
+    padding: 3px 8px;
     border-radius: 4px;
-    background: var(--border);
-    color: var(--text-muted);
-    font-weight: 400;
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    font-weight: 600;
+    border: 1px solid var(--border);
   }
 
   .check {
