@@ -1,3 +1,4 @@
+<!-- Root layout: shared across all routes. Loads fonts, favicon, app.css, and skip link for a11y. -->
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import '@fontsource/sora/300.css';

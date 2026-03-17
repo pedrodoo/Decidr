@@ -38,21 +38,31 @@ BETTER_AUTH_SECRET=       # Better Auth secret
 ```
 src/
   lib/
-    ai/
-      prompts.ts          # Prompt architecture for three output modes
-    components/
+    components/           # Reusable UI used on /decisions/new
       AudienceGate.svelte
       AudienceIndicator.svelte
       StepProgress.svelte
       CoachResponse.svelte
+    server/               # Auth (Better Auth) + DB (Drizzle)
+      auth.ts
+      db/index.ts
+      db/schema.ts
+      db/auth.schema.ts   # Better Auth–generated
+    strings.js            # App copy (audience gate, new decision, coach content)
+    design-tokens.css     # Design primitives + semantic tokens
   routes/
+    +page.svelte          # Home / landing
+    +layout.svelte        # Root layout (fonts, favicon, skip link)
     decisions/
       new/+page.svelte    # Decision input flow — audience gate + 3 steps + coaching
-    api/
-      decisions/
-        generate/
-          +server.ts      # Generate endpoint — three parallel Anthropic calls
+    demo/                 # Demo routes (Better Auth, Playwright)
+      +page.svelte
+      better-auth/        # +page.svelte, +page.server.ts
+      better-auth/login/
+      playwright/
 ```
+
+Planned (not yet in repo): `lib/ai/prompts.ts`, `routes/api/decisions/generate/+server.ts`. See [docs/APP-STRUCTURE.md](docs/APP-STRUCTURE.md) for a full map.
 
 ## Input model
 

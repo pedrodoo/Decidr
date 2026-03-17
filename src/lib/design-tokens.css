@@ -53,7 +53,7 @@
   --dt-purple-400: #a78bfa;
   --dt-purple-bg: rgba(167, 139, 250, 0.12);
 
-  /* Semantic color aliases (used by app.css and components) */
+  /* ─── Semantic tokens (use these in app.css and components) ───────── */
   --bg: var(--dt-neutral-900);
   --surface: var(--dt-neutral-850);
   --surface-2: var(--dt-neutral-800);

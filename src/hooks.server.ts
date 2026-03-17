@@ -1,3 +1,6 @@
+/**
+ * Server hook: runs on every request. Loads Better Auth session into event.locals (session, user), then delegates to Better Auth's SvelteKit handler for auth routes.
+ */
 import type { Handle } from '@sveltejs/kit';
 import { building } from '$app/environment';
 import { auth } from '$lib/server/auth';

@@ -1,3 +1,7 @@
+<!--
+  Step indicator (1 — Context, 2 — Analysis, 3 — Outcomes). Display-only; parent controls currentStep and handles navigation.
+  Props: currentStep (1–3). Copy from strings.stepProgress. Used on /decisions/new.
+-->
 <script>
   import { strings } from '$lib/strings.js';
 

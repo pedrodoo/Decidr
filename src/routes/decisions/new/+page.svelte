@@ -1,3 +1,7 @@
+<!--
+  Decision input flow: audience gate → 3 steps (Context, Analysis, Outcomes) with inline coaching → Generate.
+  Phases: gate (pick audience) | steps (form + coach blocks). All copy from $lib/strings.js (newDecision, audienceGate).
+-->
 <script>
   import AudienceGate from '$lib/components/AudienceGate.svelte';
   import AudienceIndicator from '$lib/components/AudienceIndicator.svelte';
@@ -64,8 +68,8 @@
     form.businessArea = id;
   }
 
+  // TODO: POST form data to POST /api/decisions/generate, then navigate to outputs page.
   function handleGenerate() {
-    // TODO: POST form data to API route, navigate to outputs page
     console.log('Generate outputs', { audience, form });
   }
 

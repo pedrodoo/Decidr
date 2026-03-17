@@ -1,3 +1,4 @@
+<!-- Demo: Better Auth — shows signed-in user from session; sign-out form. Data from +page.server.ts. -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageServerData } from './$types';

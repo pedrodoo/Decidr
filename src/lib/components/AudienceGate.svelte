@@ -1,3 +1,7 @@
+<!--
+  Audience selection gate shown before the decision steps. User picks an audience (e.g. CEO); copy and coaching tone are keyed by audience.
+  Props: onStart(audience) — called with { id, label } when user clicks Start. Copy from strings.audienceGate.
+-->
 <script>
   import { strings } from '$lib/strings.js';
 

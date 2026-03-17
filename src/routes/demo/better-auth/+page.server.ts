@@ -1,3 +1,4 @@
+/** Loads signed-in user for demo; redirects to login if no session. Handles signOut action. */
 import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';

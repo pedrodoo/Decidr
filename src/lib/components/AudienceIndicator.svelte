@@ -1,3 +1,7 @@
+<!--
+  Shows current audience in the steps header; clicking it resets back to the gate. Used on /decisions/new when phase === 'steps'.
+  Props: label (audience label, e.g. "CEO"), onReset() — called when user clicks to change audience.
+-->
 <script>
   import { strings } from '$lib/strings.js';
 

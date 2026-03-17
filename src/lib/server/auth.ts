@@ -1,3 +1,7 @@
+/**
+ * Better Auth config: email/password, Drizzle adapter (Neon), SvelteKit cookies.
+ * Used by demo routes (/demo/better-auth, login) and will protect app routes when auth is enforced.
+ */
 import { betterAuth } from 'better-auth/minimal';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';

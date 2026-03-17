@@ -1,3 +1,8 @@
+<!--
+  Inline coach block shown after the user submits a step. Shows intro, optional questions, optional challenge, and Continue button.
+  Props: visible, stepLabel, audienceLabel, intro (HTML), questions[], challenge (HTML), challengeIsPositive, onContinue(), continueLabel.
+  Used once per step on /decisions/new; parent toggles visible and scrolls to coach (id coach-{n}) after submit.
+-->
 <script>
   import { strings } from '$lib/strings.js';
 

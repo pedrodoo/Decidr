@@ -1,5 +1,6 @@
 /**
- * Centralized app strings. Edit this file to review and update all user-facing copy.
+ * Single source of app copy. Edit here to change any user-facing text.
+ * Main keys: common, audienceGate, audienceIndicator, stepProgress, newDecision (prompts, coachContent, businessAreas), coach.
  */
 
 export const strings = {

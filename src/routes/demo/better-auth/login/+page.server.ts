@@ -1,3 +1,4 @@
+/** Loads demo login page (redirects to /demo/better-auth if already signed in). Actions: signInEmail, signUpEmail. */
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';

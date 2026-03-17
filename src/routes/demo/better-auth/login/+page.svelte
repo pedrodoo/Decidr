@@ -1,3 +1,4 @@
+<!-- Demo: Better Auth login/register form. Actions: signInEmail, signUpEmail. Form errors in form.message. -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
