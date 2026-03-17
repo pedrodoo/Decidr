@@ -8,6 +8,7 @@
   import StepProgress from '$lib/components/StepProgress.svelte';
   import CoachResponse from '$lib/components/CoachResponse.svelte';
   import { strings } from '$lib/strings.js';
+  import { inputStore } from '$lib/stores/input';
   import { outputsStore } from '../../../lib/stores/outputs';
   import { goto } from '$app/navigation';
 
@@ -95,7 +96,8 @@
     generateError = null;
 
     try {
-      const response = await fetch('/api/decisions/generate', {
+      const url = '/api/decisions/generate';
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -114,12 +116,8 @@
       }
 
       const result = await response.json();
-      outputsStore.update((o: any) => ({
-        ...o,
-        prepare: result.prepare,
-        communicate: result.communicate,
-        portfolio: result.portfolio
-      }));
+      outputsStore.set({ prepare: result.prepare });
+      inputStore.set({ audience, form });
       goto('/decisions/outputs');
 
     } catch (e) {
