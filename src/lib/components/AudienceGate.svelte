@@ -2,7 +2,7 @@
   Audience selection gate shown before the decision steps. User picks an audience (e.g. CEO); copy and coaching tone are keyed by audience.
   Props: onStart(audience) — called with { id, label } when user clicks Start. Copy from strings.audienceGate.
 -->
-<script>
+<script lang="ts">
   import { strings } from '$lib/strings.js';
 
   let { onStart } = $props(); // (audience: { id: string, label: string }) => void
@@ -11,7 +11,7 @@
 
   let selected = $state(audiences[0]);
 
-  function select(a) {
+  function select(a: any) {
     if (!a.available) return;
     selected = a;
   }

@@ -2,20 +2,26 @@
   Decision input flow: audience gate → 3 steps (Context, Analysis, Outcomes) with inline coaching → Generate.
   Phases: gate (pick audience) | steps (form + coach blocks). All copy from $lib/strings.js (newDecision, audienceGate).
 -->
-<script>
+<script lang="ts">
   import AudienceGate from '$lib/components/AudienceGate.svelte';
   import AudienceIndicator from '$lib/components/AudienceIndicator.svelte';
   import StepProgress from '$lib/components/StepProgress.svelte';
   import CoachResponse from '$lib/components/CoachResponse.svelte';
   import { strings } from '$lib/strings.js';
+  import { outputsStore } from '$lib/stores/outputs.js';
+  import { goto } from '$app/navigation';
+
+  type Phase = 'gate' | 'steps';
+  type Step = 1 | 2 | 3;
+  type AudienceSelection = { id: string; label: string };
 
   // --- State ---
-  let phase = $state('gate'); // 'gate' | 'steps'
-  let audience = $state({ id: 'ceo', label: 'CEO' });
-  let currentStep = $state(1);
+  let phase = $state<Phase>('gate');
+  let audience = $state<AudienceSelection>({ id: 'ceo', label: 'CEO' });
+  let currentStep = $state<Step>(1);
 
   // Coach visibility per step
-  let coachVisible = $state({ 1: false, 2: false, 3: false });
+  let coachVisible = $state<Record<Step, boolean>>({ 1: false, 2: false, 3: false });
 
   // Form values
   let form = $state({
@@ -32,15 +38,15 @@
 
   const s = strings.newDecision;
   const businessAreas = s.businessAreas;
-  const prompts = s.prompts;
-  const coachContent = s.coachContent;
+  const prompts = s.prompts as Record<string, any>;
+  const coachContent = s.coachContent as Record<string, any>;
 
-  function stepCounter(current, total) {
-    return s.stepCounter.replace('{current}', current).replace('{total}', total);
+  function stepCounter(current: number, total: number) {
+    return s.stepCounter.replace('{current}', String(current)).replace('{total}', String(total));
   }
 
   // --- Handlers ---
-  function handleAudienceStart(selected) {
+  function handleAudienceStart(selected: AudienceSelection) {
     audience = selected;
     phase = 'steps';
   }
@@ -51,7 +57,7 @@
     coachVisible = { 1: false, 2: false, 3: false };
   }
 
-  function submitStep(n) {
+  function submitStep(n: Step) {
     coachVisible[n] = true;
     // Scroll to coach after tick
     setTimeout(() => {
@@ -59,59 +65,57 @@
     }, 50);
   }
 
-  function goToStep(n) {
+  function goToStep(n: Step) {
     currentStep = n;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function setArea(id) {
+  function setArea(id: string) {
     form.businessArea = id;
   }
 
   // POST form data to POST /api/decisions/generate, then navigate to outputs page.
- let loading = $state(false);
-let generateError = $state(null);
+  let loading = $state(false);
+  let generateError = $state<string | null>(null);
 
-async function handleGenerate() {
-  loading = true;
-  generateError = null;
+  async function handleGenerate() {
+    loading = true;
+    generateError = null;
 
-  try {
-    const response = await fetch('/api/decisions/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        audience: audience.id,
-        audienceLabel: audience.label,
-        decision: form.decision,
-        problem: form.problem,
-        businessArea: form.businessArea,
-        options: form.options,
-        data: form.data,
-        tradeoffs: form.tradeoffs,
-        primaryMetric: form.primaryMetric,
-        guardrailMetric: form.guardrailMetric,
-        expectedOutcome: form.expectedOutcome
-      })
-    });
+    try {
+      const response = await fetch('/api/decisions/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audience: audience.id,
+          audienceLabel: audience.label,
+          decision: form.decision,
+          problem: form.problem,
+          businessArea: form.businessArea,
+          options: form.options,
+          data: form.data,
+          tradeoffs: form.tradeoffs,
+          primaryMetric: form.primaryMetric,
+          guardrailMetric: form.guardrailMetric,
+          expectedOutcome: form.expectedOutcome
+        })
+      });
 
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.message ?? 'Something went wrong');
+      if (!response.ok) {
+        const err = (await response.json()) as { message?: string };
+        throw new Error(err.message ?? 'Something went wrong');
+      }
+
+      const outputs = (await response.json()) as any;
+      outputsStore.set(outputs);
+      goto('/decisions/outputs');
+
+    } catch (e) {
+      generateError = e instanceof Error ? e.message : 'Unknown error';
+    } finally {
+      loading = false;
     }
-
-    const outputs = await response.json();
-    console.log('Outputs:', outputs);
-
-    // TODO: navigate to outputs page
-    // goto(`/decisions/${id}/outputs`);
-
-  } catch (e) {
-    generateError = e instanceof Error ? e.message : 'Unknown error';
-  } finally {
-    loading = false;
   }
-}
 
   // Convenience: get current audience's prompts
   const p = $derived(prompts[audience.id] ?? prompts.ceo);
@@ -314,6 +318,10 @@ async function handleGenerate() {
             {s.generateOutputs}
             {/if}
           </button>
+
+{#if generateError}
+  <p class="generate-error">{generateError}</p>
+{/if}
 
           {#if generateError}
             <p class="generate-error">{generateError}</p>
