@@ -53,6 +53,7 @@
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.79.0",
 		"@fontsource/ibm-plex-mono": "^5.2.7",
-		"@fontsource/sora": "^5.2.8"
+		"@fontsource/sora": "^5.2.8",
+		"marked": "^17.0.4"
 	}
 }
