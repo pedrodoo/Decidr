@@ -68,10 +68,50 @@
     form.businessArea = id;
   }
 
-  // TODO: POST form data to POST /api/decisions/generate, then navigate to outputs page.
-  function handleGenerate() {
-    console.log('Generate outputs', { audience, form });
+  // POST form data to POST /api/decisions/generate, then navigate to outputs page.
+ let loading = $state(false);
+let generateError = $state(null);
+
+async function handleGenerate() {
+  loading = true;
+  generateError = null;
+
+  try {
+    const response = await fetch('/api/decisions/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        audience: audience.id,
+        audienceLabel: audience.label,
+        decision: form.decision,
+        problem: form.problem,
+        businessArea: form.businessArea,
+        options: form.options,
+        data: form.data,
+        tradeoffs: form.tradeoffs,
+        primaryMetric: form.primaryMetric,
+        guardrailMetric: form.guardrailMetric,
+        expectedOutcome: form.expectedOutcome
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.message ?? 'Something went wrong');
+    }
+
+    const outputs = await response.json();
+    console.log('Outputs:', outputs);
+
+    // TODO: navigate to outputs page
+    // goto(`/decisions/${id}/outputs`);
+
+  } catch (e) {
+    generateError = e instanceof Error ? e.message : 'Unknown error';
+  } finally {
+    loading = false;
   }
+}
 
   // Convenience: get current audience's prompts
   const p = $derived(prompts[audience.id] ?? prompts.ceo);
@@ -264,12 +304,20 @@
         </div>
 
         <div class="step-actions">
-          <button class="btn-secondary" type="button" onclick={() => goToStep(2)}>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <button class="btn-primary" type="button" onclick={handleGenerate} disabled={loading}>
+            {#if loading}
+            Generating...
+            {:else}
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
+            <path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z"/>
             </svg>
-            {strings.common.back}
+            {s.generateOutputs}
+            {/if}
           </button>
+
+          {#if generateError}
+            <p class="generate-error">{generateError}</p>
+          {/if}
           <div class="actions-right">
             <span class="step-counter">{stepCounter(3, 3)}</span>
             <button class="btn-primary" type="button" onclick={handleGenerate}>
@@ -326,6 +374,12 @@
     color: var(--text-secondary);
     line-height: 1.65;
   }
+
+  .generate-error {
+  font-size: 13px;
+  color: #f87171;
+  margin-top: 12px;
+}
 
   :global(.field-prompt strong) { color: var(--text-primary); font-weight: 500; }
   :global(.field-prompt em) { font-style: italic; }
