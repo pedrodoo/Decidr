@@ -8,16 +8,28 @@
   import StepProgress from '$lib/components/StepProgress.svelte';
   import CoachResponse from '$lib/components/CoachResponse.svelte';
   import { strings } from '$lib/strings.js';
-  import { outputsStore } from '$lib/stores/outputs.js';
+  import { outputsStore } from '../../../lib/stores/outputs';
   import { goto } from '$app/navigation';
+
+  // Clean stores when new decision starts
+  import { onMount } from 'svelte';
+  onMount(() => {
+    outputsStore.set({} as any);
+  });
 
   type Phase = 'gate' | 'steps';
   type Step = 1 | 2 | 3;
-  type AudienceSelection = { id: string; label: string };
+  type AudienceSelection = { id: string; label: string; icon: string; description: string; available: boolean };
 
   // --- State ---
   let phase = $state<Phase>('gate');
-  let audience = $state<AudienceSelection>({ id: 'ceo', label: 'CEO' });
+  let audience = $state<AudienceSelection>({
+    id: 'ceo',
+    label: 'CEO',
+    icon: '',
+    description: '',
+    available: true
+  });
   let currentStep = $state<Step>(1);
 
   // Coach visibility per step
@@ -87,27 +99,27 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          audience: audience.id,
-          audienceLabel: audience.label,
-          decision: form.decision,
-          problem: form.problem,
-          businessArea: form.businessArea,
-          options: form.options,
-          data: form.data,
-          tradeoffs: form.tradeoffs,
-          primaryMetric: form.primaryMetric,
-          guardrailMetric: form.guardrailMetric,
-          expectedOutcome: form.expectedOutcome
+          mode: 'prepare',
+          input: {
+            audience: audience.id,
+            audienceLabel: audience.label,
+            ...form
+          }
         })
       });
 
       if (!response.ok) {
-        const err = (await response.json()) as { message?: string };
+        const err = await response.json();
         throw new Error(err.message ?? 'Something went wrong');
       }
 
-      const outputs = (await response.json()) as any;
-      outputsStore.set(outputs);
+      const result = await response.json();
+      outputsStore.update((o: any) => ({
+        ...o,
+        prepare: result.prepare,
+        communicate: result.communicate,
+        portfolio: result.portfolio
+      }));
       goto('/decisions/outputs');
 
     } catch (e) {
@@ -148,13 +160,23 @@
         <div class="field">
           <label class="field-label" for="f-decision">{s.fieldLabels.decision}</label>
           <p class="field-prompt">{@html p.decision}</p>
-          <input id="f-decision" type="text" bind:value={form.decision} placeholder={s.placeholders.decision} />
+          <input
+            id="f-decision"
+            type="text"
+            bind:value={form.decision}
+            placeholder={s.placeholders.decision}
+          />
         </div>
 
         <div class="field">
           <label class="field-label" for="f-problem">{s.fieldLabels.problem}</label>
           <p class="field-prompt">{@html p.problem}</p>
-          <textarea id="f-problem" class="short" bind:value={form.problem} placeholder={s.placeholders.problem}></textarea>
+          <textarea
+            id="f-problem"
+            class="short"
+            bind:value={form.problem}
+            placeholder={s.placeholders.problem}
+          ></textarea>
         </div>
 
         <fieldset class="field fieldset-reset">
@@ -308,34 +330,21 @@
         </div>
 
         <div class="step-actions">
+          <span class="step-counter">{stepCounter(3, 3)}</span>
           <button class="btn-primary" type="button" onclick={handleGenerate} disabled={loading}>
             {#if loading}
-            Generating...
+              Generating...
             {:else}
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
-            <path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z"/>
-            </svg>
-            {s.generateOutputs}
-            {/if}
-          </button>
-
-{#if generateError}
-  <p class="generate-error">{generateError}</p>
-{/if}
-
-          {#if generateError}
-            <p class="generate-error">{generateError}</p>
-          {/if}
-          <div class="actions-right">
-            <span class="step-counter">{stepCounter(3, 3)}</span>
-            <button class="btn-primary" type="button" onclick={handleGenerate}>
               <svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
                 <path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z"/>
               </svg>
               {s.generateOutputs}
-            </button>
-          </div>
+            {/if}
+          </button>
         </div>
+        {#if generateError}
+          <p class="generate-error">{generateError}</p>
+        {/if}
       </div>
     {/if}
   {/if}
@@ -343,7 +352,13 @@
 </main>
 
 <style>
-  .page { max-width: 760px; margin: 0 auto; padding: 48px 24px 100px; }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 100px;
+    position: relative;
+    z-index: 10000;
+  }
 
   .sr-only {
     position: absolute;
@@ -357,9 +372,16 @@
     border: 0;
   }
 
-  .step { display: flex; flex-direction: column; }
+  .step { display: flex; flex-direction: column; position: relative; z-index: 1; }
 
   .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+
+  /* Ensure inputs sit above any external overlay (e.g. devtools/Cursor highlight) so they receive focus and input */
+  .field input,
+  .field textarea {
+    position: relative;
+    z-index: 10000;
+  }
 
   .fieldset-reset {
     border: 0;
@@ -384,10 +406,10 @@
   }
 
   .generate-error {
-  font-size: 13px;
-  color: #f87171;
-  margin-top: 12px;
-}
+    font-size: 13px;
+    color: #f87171;
+    margin-top: 12px;
+  }
 
   :global(.field-prompt strong) { color: var(--text-primary); font-weight: 500; }
   :global(.field-prompt em) { font-style: italic; }

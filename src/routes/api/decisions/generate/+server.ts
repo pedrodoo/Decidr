@@ -77,7 +77,9 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
   // Parse and validate input
   let input: DecisionInput;
   try {
-    input = await request.json();
+    const raw = await request.json();
+    // Client sends { mode, input }; API expects flat DecisionInput — use nested input when present
+    input = raw?.input && typeof raw.input === 'object' && raw.input !== null ? raw.input as DecisionInput : raw as DecisionInput;
   } catch {
     throw error(400, 'Invalid request body');
   }
