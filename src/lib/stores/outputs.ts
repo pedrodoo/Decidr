@@ -1,10 +1,9 @@
 import { writable } from 'svelte/store';
 
 export interface DecisionOutputs {
-  prepare: string;
-  communicate: string;
-  portfolio: string;
+  prepare?: string;
+  communicate?: string;
+  portfolio?: string;
 }
 
-export const outputsStore = writable<DecisionOutputs | null>(null);
-
+export const outputsStore = writable<DecisionOutputs>({});

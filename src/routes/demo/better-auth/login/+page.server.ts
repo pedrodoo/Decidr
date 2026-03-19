@@ -6,7 +6,14 @@ import { auth } from '$lib/server/auth';
 import { APIError } from 'better-auth/api';
 
 export const load: PageServerLoad = async (event) => {
+	// #region agent log
+	fetch('http://127.0.0.1:7340/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b68eac'},body:JSON.stringify({sessionId:'b68eac',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/demo/better-auth/login/+page.server.ts:load',message:'demo login page load hit',data:{hasUser:!!event.locals.user},timestamp:Date.now()})}).catch(()=>{});
+	// #endregion
+
 	if (event.locals.user) {
+		// #region agent log
+		fetch('http://127.0.0.1:7340/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b68eac'},body:JSON.stringify({sessionId:'b68eac',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/demo/better-auth/login/+page.server.ts:load',message:'demo login already signed in -> redirect to demo auth index',data:{target:'/demo/better-auth'},timestamp:Date.now()})}).catch(()=>{});
+		// #endregion
 		return redirect(302, '/demo/better-auth');
 	}
 	return {};
@@ -14,6 +21,10 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	signInEmail: async (event) => {
+		// #region agent log
+		fetch('http://127.0.0.1:7340/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b68eac'},body:JSON.stringify({sessionId:'b68eac',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/demo/better-auth/login/+page.server.ts:actions.signInEmail',message:'demo signInEmail action invoked',data:{},timestamp:Date.now()})}).catch(()=>{});
+		// #endregion
+
 		const formData = await event.request.formData();
 		const email = formData.get('email')?.toString() ?? '';
 		const password = formData.get('password')?.toString() ?? '';
@@ -33,9 +44,17 @@ export const actions: Actions = {
 			return fail(500, { message: 'Unexpected error' });
 		}
 
+		// #region agent log
+		fetch('http://127.0.0.1:7340/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b68eac'},body:JSON.stringify({sessionId:'b68eac',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/demo/better-auth/login/+page.server.ts:actions.signInEmail',message:'demo signInEmail successful -> redirect target',data:{target:'/demo/better-auth'},timestamp:Date.now()})}).catch(()=>{});
+		// #endregion
+
 		return redirect(302, '/demo/better-auth');
 	},
 	signUpEmail: async (event) => {
+		// #region agent log
+		fetch('http://127.0.0.1:7340/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b68eac'},body:JSON.stringify({sessionId:'b68eac',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/demo/better-auth/login/+page.server.ts:actions.signUpEmail',message:'demo signUpEmail action invoked',data:{},timestamp:Date.now()})}).catch(()=>{});
+		// #endregion
+
 		const formData = await event.request.formData();
 		const email = formData.get('email')?.toString() ?? '';
 		const password = formData.get('password')?.toString() ?? '';
@@ -56,6 +75,10 @@ export const actions: Actions = {
 			}
 			return fail(500, { message: 'Unexpected error' });
 		}
+
+		// #region agent log
+		fetch('http://127.0.0.1:7340/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b68eac'},body:JSON.stringify({sessionId:'b68eac',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/demo/better-auth/login/+page.server.ts:actions.signUpEmail',message:'demo signUpEmail successful -> redirect target',data:{target:'/demo/better-auth'},timestamp:Date.now()})}).catch(()=>{});
+		// #endregion
 
 		return redirect(302, '/demo/better-auth');
 	}

@@ -1,0 +1,68 @@
+# Package manager
+Always use pnpm. Never use npm or yarn.
+
+# Database migrations
+Always migrate, never push.
+Never run `db:push` or `drizzle-kit push`.
+Always use `db:generate` followed by `db:migrate`.
+If a migration is needed, run: pnpm db:generate && pnpm db:migrate
+
+# Stack
+This project uses SvelteKit, Drizzle ORM, Neon (PostgreSQL), Better Auth, and Anthropic API.
+
+# Svelte
+Use Svelte 5 syntax: $state, $derived, $props, $effect. Never use the old Svelte 4 store syntax with $ prefix in components.
+Use `onclick` not `on:click`. Use `onsubmit` not `on:submit`.
+
+# TypeScript
+Always use TypeScript. Never use plain JavaScript files for logic.
+Prefer `type` over `interface` unless extending is needed.
+
+# Environment variables
+Server-side secrets use `$env/static/private`.
+Public variables use `$env/static/public`.
+Never use `process.env` in SvelteKit.
+
+# API routes
+All API routes live in `src/routes/api/`.
+Always validate input before calling external services.
+Always handle errors and return appropriate HTTP status codes.
+
+# AI / Anthropic
+Never generate all three outputs at once. Generate `prepare` first, then allow the user to choose `communicate` or `portfolio` separately.
+Always use `$env/static/private` for ANTHROPIC_API_KEY.
+
+# File structure
+Components live in `src/lib/components/`.
+Stores live in `src/lib/stores/`.
+AI prompts live in `src/lib/ai/`.
+Shared types live in `src/lib/types.ts`.
+
+# Stores
+Never use localStorage directly in components. Always use the store wrappers in `src/lib/stores/`.
+inputStore persists to localStorage. outputsStore is in-memory only.
+
+# Auth
+All routes except `/` and `/auth` require authentication.
+Auth is handled by Better Auth. Session is available via `locals.user` in server routes.
+Never expose user data in client-side stores.
+
+# Rate limiting
+All API routes that call Anthropic must check rate limiting by IP before processing.
+Rate limit is 10 requests per IP per hour.
+
+# Styling
+Use CSS variables defined in `src/app.css`. Never hardcode colours.
+Dark theme only. Background is `--bg: #111111`.
+Font families: `--font-sans` for body, `--font-mono` for labels, metadata, and code.
+Minimum contrast ratio 4.5:1 for normal text (WCAG AA).
+
+# Components
+Always include `aria-label` on icon-only buttons.
+Always use semantic HTML — `<button>` for actions, `<a>` for navigation.
+Never use `<div>` for interactive elements.
+
+# Decisions flow
+The decision input flow lives at `/decisions/new`.
+The outputs page lives at `/decisions/outputs`.
+Never navigate to `/decisions/outputs` without first setting `outputsStore` with at least `prepare`.
