@@ -7,9 +7,11 @@
 
 	<section class="card">
 		<div class="eyebrow">Decidr</div>
-		<h2 class="title">Ready to write your next decision?</h2>
+		<h2 class="title">For teams who take decision conversations seriously.</h2>
 		<p class="subtitle">
-			This takes you through a short input flow and then generates your argument structure for leadership.
+			Decidr helps product and design teams structure their discourse before it reaches the business table.
+			It was built to turn scattered opinions into clear, shared reasoning so cross-functional decisions move
+			with more trust and less noise.
 		</p>
 
 		<div class="ctaRow">

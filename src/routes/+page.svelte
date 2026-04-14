@@ -1,3 +1,478 @@
-<!-- Landing / home page. Placeholder content; replace with hero and CTA to /decisions/new. -->
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+	const SURVEY_URL = 'https://YOUR_SURVEY_LINK_HERE';
+</script>
+
+<svelte:head>
+	<title>Decidr - Good design decisions die for lack of business translation</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap"
+		rel="stylesheet"
+	/>
+</svelte:head>
+
+<main class="page">
+	<section class="hero">
+		<div class="beta-badge">
+			<span class="beta-dot" aria-hidden="true"></span>
+			Private beta
+		</div>
+
+		<h1 class="hero-title">
+			Good design decisions die<br />
+			<span class="hero-accent">for lack of business translation.</span>
+		</h1>
+
+		<p class="hero-subtitle">
+			Decidr helps designers who report to non-design leadership structure their thinking and
+			communicate decisions in language that lands - with leadership, in exec updates, and in
+			portfolio work.
+		</p>
+
+		<div class="cta-group">
+			<span class="cta-group-label">Invite only - Private beta</span>
+			<p class="cta-group-title">Want early access? Fill in a short form and we'll be in touch.</p>
+			<a href={SURVEY_URL} class="btn-primary landing-btn-primary" target="_blank" rel="noopener noreferrer">
+				Request access
+				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+					<path
+						d="M5 3l4 4-4 4"
+						stroke="white"
+						stroke-width="1.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</a>
+		</div>
+	</section>
+
+	<section class="problem" aria-labelledby="problem-title">
+		<div class="problem-inner">
+			<h2 class="problem-title" id="problem-title">
+				Design decisions shape products. Most of them never reach the room where business decisions are
+				made.
+			</h2>
+			<div class="problem-body">
+				<p>
+					Not because the thinking was wrong. Because it wasn't translated - or because it wasn't ready
+					to be.
+				</p>
+				<p>
+					Every time a designer can't frame their initiative in business language, something is lost: a
+					chance to improve the product, measurable impact the company will never see, a career that
+					stays tactical when it could be strategic.
+				</p>
+				<p>
+					Decidr is a sparring partner for designers who want to change that. It asks the hard
+					questions before leadership does. It challenges your assumptions, sharpens your reasoning, and
+					pushes back on initiatives that aren't ready. Only then does it help you communicate - in
+					language that lands with the people who make business decisions.
+				</p>
+				<p class="problem-coda">Structure your thinking. Sharpen your narrative. Show your impact.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="how" aria-labelledby="how-title">
+		<p class="section-label" id="how-title">How it works</p>
+		<p class="how-desc">One structured input. Three outputs built for different moments.</p>
+
+		<div class="outputs-grid">
+			<div class="output-card">
+				<div class="output-num one" aria-hidden="true">1</div>
+				<div class="output-card-body">
+					<h3 class="output-title">Prepare Decision</h3>
+					<p class="output-desc">
+						Before you commit. Decidr stress-tests your reasoning - surfaces gaps, challenges
+						assumptions, and tells you what leadership will push back on first.
+					</p>
+					<div class="output-tag">For you</div>
+				</div>
+			</div>
+
+			<div class="output-card">
+				<div class="output-num two" aria-hidden="true">2</div>
+				<div class="output-card-body">
+					<h3 class="output-title">Communicate to Leadership</h3>
+					<p class="output-desc">
+						Your decision translated into exec-ready language. Business impact, risk, and a clear
+						recommendation - framed for the room you're walking into.
+					</p>
+					<div class="output-tag">For them</div>
+				</div>
+			</div>
+
+			<div class="output-card">
+				<div class="output-num three" aria-hidden="true">3</div>
+				<div class="output-card-body">
+					<h3 class="output-title">Portfolio Case</h3>
+					<p class="output-desc">
+						The same decision structured as a case study - with context, reasoning, tradeoffs, and what
+						it demonstrates about your thinking as a design leader.
+					</p>
+					<div class="output-tag">For your career</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="cta-section">
+		<div class="cta-inner">
+			<p class="cta-label">Currently in private beta</p>
+			<h2 class="cta-title">Built for designers who speak business.</h2>
+			<p class="cta-desc">
+				Decidr is invite-only right now. If you're a designer who reports to non-design leadership and
+				wants early access, fill in a short form and we'll be in touch.
+			</p>
+			<a
+				href={SURVEY_URL}
+				class="landing-btn-primary-center"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				Request access
+				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+					<path
+						d="M5 3l4 4-4 4"
+						stroke="white"
+						stroke-width="1.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</a>
+		</div>
+	</section>
+</main>
+
+<style>
+	.page {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 0 24px 100px;
+	}
+
+	.hero {
+		padding: 80px 0 88px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 24px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.beta-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 5px 12px;
+		border: 1px solid var(--border);
+		border-radius: 20px;
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-secondary);
+		background: var(--surface);
+	}
+
+	.beta-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--orange);
+		animation: pulse 2s ease-in-out infinite;
+		flex-shrink: 0;
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.35;
+		}
+	}
+
+	.hero-title {
+		font-size: clamp(30px, 5vw, 48px);
+		font-weight: 700;
+		letter-spacing: -0.04em;
+		line-height: 1.1;
+		color: var(--text-primary);
+		max-width: 640px;
+	}
+
+	.hero-accent {
+		color: var(--orange);
+	}
+
+	.hero-subtitle {
+		font-size: 16px;
+		color: var(--text-secondary);
+		line-height: 1.7;
+		max-width: 500px;
+	}
+
+	.cta-group {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		margin-top: 12px;
+		padding: 28px 32px;
+		border: 1px solid var(--surface-2);
+		border-radius: 14px;
+		background: var(--surface);
+		width: 100%;
+		max-width: 440px;
+	}
+
+	.cta-group-label {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+
+	.cta-group-title {
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--text-primary);
+		letter-spacing: -0.02em;
+		line-height: 1.4;
+	}
+
+	.problem {
+		padding: 80px 0;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.problem-inner {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 64px;
+		align-items: start;
+	}
+
+	@media (max-width: 640px) {
+		.problem-inner {
+			grid-template-columns: 1fr;
+			gap: 32px;
+		}
+	}
+
+	.problem-title {
+		font-size: 22px;
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		color: var(--text-primary);
+		line-height: 1.3;
+		position: sticky;
+		top: 72px;
+	}
+
+	.problem-body {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.problem-body p {
+		font-size: 15px;
+		color: var(--text-secondary);
+		line-height: 1.75;
+	}
+
+	.problem-coda {
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--text-primary) !important;
+		letter-spacing: -0.02em;
+		margin-top: 8px;
+	}
+
+	.how {
+		padding: 80px 0;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.section-label {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		margin-bottom: 12px;
+	}
+
+	.how-desc {
+		font-size: 20px;
+		font-weight: 600;
+		letter-spacing: -0.03em;
+		color: var(--text-primary);
+		line-height: 1.3;
+		max-width: 460px;
+		margin-bottom: 44px;
+	}
+
+	.outputs-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 14px;
+	}
+
+	@media (max-width: 640px) {
+		.outputs-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.output-card {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 22px;
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		background: var(--surface);
+		transition: border-color 0.15s;
+	}
+
+	.output-card:hover {
+		border-color: var(--border-focus);
+	}
+
+	.output-num {
+		font-family: var(--font-mono);
+		font-size: 11px;
+		width: 28px;
+		height: 28px;
+		border-radius: 7px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.output-num.one {
+		background: var(--orange-bg);
+		color: var(--orange);
+	}
+
+	.output-num.two {
+		background: var(--green-bg);
+		color: var(--green-text);
+	}
+
+	.output-num.three {
+		background: rgb(167 139 250 / 12%);
+		color: #a78bfa;
+	}
+
+	.output-card-body {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.output-title {
+		font-size: 14px;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		color: var(--text-primary);
+		line-height: 1.3;
+	}
+
+	.output-desc {
+		font-size: 12px;
+		color: var(--text-secondary);
+		line-height: 1.65;
+		flex: 1;
+	}
+
+	.output-tag {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		margin-top: 4px;
+	}
+
+	.landing-btn-primary {
+		padding: 14px 28px;
+		font-size: 14px;
+		letter-spacing: -0.01em;
+		border-radius: 9px;
+		text-decoration: none;
+		width: 100%;
+		justify-content: center;
+	}
+
+	.cta-section {
+		padding: 80px 0 0;
+		display: flex;
+		justify-content: center;
+	}
+
+	.cta-inner {
+		max-width: 480px;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.cta-label {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+
+	.cta-title {
+		font-size: 28px;
+		font-weight: 700;
+		letter-spacing: -0.04em;
+		color: var(--text-primary);
+		line-height: 1.2;
+	}
+
+	.cta-desc {
+		font-size: 14px;
+		color: var(--text-secondary);
+		line-height: 1.7;
+	}
+
+	.landing-btn-primary-center {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 14px 28px;
+		background: var(--orange);
+		color: white;
+		font-family: var(--font-sans);
+		font-size: 14px;
+		font-weight: 600;
+		border-radius: 9px;
+		text-decoration: none;
+		border: none;
+		cursor: pointer;
+		transition: background 0.15s, transform 0.1s;
+	}
+
+	.landing-btn-primary-center:hover {
+		background: #ea6d0e;
+		transform: translateY(-1px);
+	}
+
+	.landing-btn-primary-center:active {
+		transform: translateY(0);
+	}
+</style>
