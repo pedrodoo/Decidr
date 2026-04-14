@@ -81,9 +81,9 @@
 </svelte:head>
 
 <a href="#main" class="skip-link">Skip to main content</a>
-{#if data.user}
-	<TopNav user={data.user} onReportBug={openBugModal} onLogOut={handleLogOut} />
+<TopNav user={data.user} onReportBug={openBugModal} onLogOut={handleLogOut} />
 
+{#if data.user}
 	<BugReportModal
 		open={isBugModalOpen}
 		email={defaultEmail}

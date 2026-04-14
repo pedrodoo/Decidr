@@ -88,6 +88,8 @@
 					></path>
 				</svg>
 			</button>
+		{:else}
+			<a class="btn-secondary nav-login-link" href="/login">Log in</a>
 		{/if}
 	</div>
 </header>

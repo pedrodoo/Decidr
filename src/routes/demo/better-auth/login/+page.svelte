@@ -21,6 +21,13 @@
 		<input name="name" />
 	</label>
 	<button>Login</button>
-	<button formaction="?/signUpEmail">Register</button>
+	<button
+		formaction="?/signUpEmail"
+		disabled
+		aria-disabled="true"
+		title="Invite only. Request access from the homepage form."
+	>
+		Invite only - request access on homepage
+	</button>
 </form>
 <p style="color: red">{form?.message ?? ''}</p>

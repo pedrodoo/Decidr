@@ -49,8 +49,15 @@
 					Log in
 				</button>
 
-				<button class="btn-secondary" type="submit" formaction={actionSignUp}>
-					Register
+				<button
+					class="btn-secondary"
+					type="submit"
+					formaction={actionSignUp}
+					disabled
+					aria-disabled="true"
+					title="Invite only. Request access from the homepage form."
+				>
+					Invite only - request access on homepage
 				</button>
 			</div>
 

@@ -218,6 +218,13 @@ textarea:focus-visible {
   color: var(--text-primary);
 }
 
+.nav-login-link {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
 .nav-avatar {
   width: 26px;
   height: 26px;
