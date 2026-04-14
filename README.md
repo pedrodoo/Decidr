@@ -17,9 +17,10 @@ SvelteKit · Neon · Drizzle ORM · Better Auth · Anthropic API
 
 ## Getting started
 
+Create a `.env` file in the project root (see [Environment variables](#environment-variables) below), then:
+
 ```bash
 pnpm install
-cp .env.example .env   # add your keys
 pnpm dev
 ```
 
@@ -27,11 +28,14 @@ App runs at `localhost:5173`.
 
 ## Environment variables
 
-```
-ANTHROPIC_API_KEY=        # Anthropic API key
-DATABASE_URL=             # Neon connection string
-BETTER_AUTH_SECRET=       # Better Auth secret
-```
+Required for local development:
+
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | Neon Postgres connection string (required by Drizzle; app throws if unset). |
+| `ORIGIN` | Public base URL of the app (e.g. `http://localhost:5173`). Used as Better Auth `baseURL` for cookies and redirects. |
+| `BETTER_AUTH_SECRET` | Secret for Better Auth session signing ([docs](https://www.better-auth.com/docs/installation)). |
+| `ANTHROPIC_API_KEY` | Anthropic API key for `POST /api/decisions/generate`. |
 
 ## Project structure
 

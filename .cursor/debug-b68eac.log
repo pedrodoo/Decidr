@@ -22,3 +22,14 @@
 {"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":true,"hasUser":true},"timestamp":1773942255282}
 {"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":true,"hasUser":true},"timestamp":1773942255380}
 {"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":true},"timestamp":1773942255381}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":false,"hasUser":false},"timestamp":1773942515422}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":false},"timestamp":1773942515424}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome unauthenticated redirecting","data":{"target":"/login"},"timestamp":1773942515424}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":false,"hasUser":false},"timestamp":1773942515428}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":false,"hasUser":false},"timestamp":1773942898942}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":false,"hasUser":false},"timestamp":1773942925650}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H2","location":"src/routes/+page.server.ts:load","message":"root route auth-based redirect decision","data":{"hasUser":false},"timestamp":1773942925651}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":false,"hasUser":false},"timestamp":1773942925652}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":true},"timestamp":1773943144696}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":true},"timestamp":1773943376023}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":true},"timestamp":1773943391325}
