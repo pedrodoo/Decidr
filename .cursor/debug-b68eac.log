@@ -17,3 +17,8 @@
 {"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":true,"hasUser":true},"timestamp":1773942147723}
 {"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":true,"hasUser":true},"timestamp":1773942147830}
 {"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":true},"timestamp":1773942147830}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":true,"hasUser":true},"timestamp":1773942244038}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":true},"timestamp":1773942244039}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":true,"hasUser":true},"timestamp":1773942255282}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/hooks.server.ts:handleBetterAuth","message":"better-auth session lookup","data":{"hasSession":true,"hasUser":true},"timestamp":1773942255380}
+{"sessionId":"b68eac","runId":"pre-fix","hypothesisId":"H3","location":"src/routes/welcome/+page.server.ts:load","message":"welcome route load hit","data":{"hasUser":true},"timestamp":1773942255381}
