@@ -42,53 +42,15 @@
 
 	async function handleLogOut() {
 		try {
-			// #region agent log
-			fetch('http://127.0.0.1:7361/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2', {
+			await fetch('/api/auth/sign-out', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9dda78' },
-				body: JSON.stringify({
-					sessionId: '9dda78',
-					runId: 'post-fix',
-					hypothesisId: 'H2',
-					location: 'src/routes/+layout.svelte:handleLogOut:start',
-					message: 'Starting signout request',
-					data: { url: '/api/auth/sign-out' },
-					timestamp: Date.now()
-				})
-			}).catch(() => {});
-			// #endregion
-			const response = await fetch('/api/auth/sign-out', { method: 'POST', credentials: 'include' });
-			// #region agent log
-			fetch('http://127.0.0.1:7361/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9dda78' },
-				body: JSON.stringify({
-					sessionId: '9dda78',
-					runId: 'post-fix',
-					hypothesisId: 'H2',
-					location: 'src/routes/+layout.svelte:handleLogOut:response',
-					message: 'Signout request completed',
-					data: { ok: response.ok, status: response.status, url: '/api/auth/sign-out' },
-					timestamp: Date.now()
-				})
-			}).catch(() => {});
-			// #endregion
-		} catch (error) {
-			// #region agent log
-			fetch('http://127.0.0.1:7361/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9dda78' },
-				body: JSON.stringify({
-					sessionId: '9dda78',
-					runId: 'post-fix',
-					hypothesisId: 'H2',
-					location: 'src/routes/+layout.svelte:handleLogOut:catch',
-					message: 'Signout request threw',
-					data: { error: error instanceof Error ? error.message : 'unknown' },
-					timestamp: Date.now()
-				})
-			}).catch(() => {});
-			// #endregion
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: '{}'
+			});
+		} catch {
 		} finally {
 			window.location.href = '/login';
 		}

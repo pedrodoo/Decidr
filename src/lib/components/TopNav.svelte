@@ -25,21 +25,6 @@
 	}
 
 	function handleLogOut() {
-		// #region agent log
-		fetch('http://127.0.0.1:7361/ingest/27341e39-35f0-4dcf-9555-2b08ee4dceb2', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9dda78' },
-			body: JSON.stringify({
-				sessionId: '9dda78',
-				runId: 'pre-fix',
-				hypothesisId: 'H1',
-				location: 'src/lib/components/TopNav.svelte:handleLogOut',
-				message: 'Sign out button handler invoked',
-				data: { isAccountModalOpen },
-				timestamp: Date.now()
-			})
-		}).catch(() => {});
-		// #endregion
 		closeAccountModal();
 		onLogOut();
 	}
