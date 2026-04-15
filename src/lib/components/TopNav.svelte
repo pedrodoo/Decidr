@@ -1,20 +1,18 @@
 <script lang="ts">
-	type NavUser = {
-		name?: string | null;
-		email: string;
-	};
+	import type { SessionLayoutUser } from '$lib/types/session';
+	import { getUserDisplayName, getUserInitial } from '$lib/utils/userDisplay';
 
 	type Props = {
-		user: NavUser | null;
+		user: SessionLayoutUser;
 		onReportBug: () => void;
-		onLogOut: () => void;
+		onLogOut: () => void | Promise<void>;
 	};
 
 	let { user, onReportBug, onLogOut }: Props = $props();
 	let isAccountModalOpen = $state(false);
 
-	const displayName = $derived(getDisplayName(user?.name ?? undefined, user?.email ?? undefined));
-	const avatarInitial = $derived(getInitial(user?.name ?? undefined, user?.email ?? undefined));
+	const displayName = $derived(getUserDisplayName(user?.name, user?.email));
+	const avatarInitial = $derived(getUserInitial(user?.name, user?.email));
 
 	function openAccountModal() {
 		isAccountModalOpen = true;
@@ -35,17 +33,6 @@
 		}
 	}
 
-	function getInitial(name?: string, email?: string): string {
-		if (name?.trim()) return name.trim()[0].toUpperCase();
-		if (email?.trim()) return email.trim()[0].toUpperCase();
-		return '?';
-	}
-
-	function getDisplayName(name?: string, email?: string): string {
-		if (name?.trim()) return name.trim().split(' ')[0];
-		if (email?.trim()) return email.trim().split('@')[0];
-		return 'Account';
-	}
 </script>
 
 <svelte:window onkeydown={handleWindowKeyDown} />
