@@ -14,6 +14,11 @@ export interface DecisionInput {
   expectedOutcome: string;
 }
 
+export interface PromptParts {
+  system: string;
+  user: string;
+}
+
 // Shared context block — injected into every prompt
 function buildContext(input: DecisionInput): string {
   return `
@@ -38,14 +43,16 @@ Target Audience: ${input.audienceLabel}
 // Tone: direct, structured, honest — for the designer's eyes only
 // Length: medium — structured sections, not prose
 // ─────────────────────────────────────────
-export function buildPreparePrompt(input: DecisionInput): string {
-  return `
+export function buildPreparePrompt(input: DecisionInput): PromptParts {
+  const system = `
 You are a senior product strategist helping a designer pressure-test a decision before they commit to it.
 
 Your job is not to validate their thinking — it is to stress-test it. Be direct. Surface gaps. Ask the hard questions they haven't asked themselves. Do not soften criticism.
 
 This output is for the designer only — not for leadership. Write as if you are their most trusted, most demanding colleague.
+`.trim();
 
+  const user = `
 ${buildContext(input)}
 
 Produce a structured decision review with the following sections. Use plain headers (no markdown decorations beyond ##). Be concise within each section.
@@ -67,6 +74,8 @@ Rate the current state of this decision: Not Ready / Needs Work / Ready to Prese
 
 Write in plain English. No bullet points within sections — use short paragraphs. Do not start any sentence with "I".
 `.trim();
+
+  return { system, user };
 }
 
 // ─────────────────────────────────────────
@@ -75,7 +84,7 @@ Write in plain English. No bullet points within sections — use short paragraph
 // Tone: business language — no design jargon
 // Length: short and dense — leadership reads fast
 // ─────────────────────────────────────────
-export function buildCommunicatePrompt(input: DecisionInput): string {
+export function buildCommunicatePrompt(input: DecisionInput): PromptParts {
   const audienceGuidance: Record<string, string> = {
     ceo: `You are writing for a CEO. They care about business impact, risk, and strategic fit. They do not want design rationale or UX detail. Frame everything in terms of revenue, growth, retention, or competitive position. They need to understand the decision, the risk of inaction, and what you are recommending — in under 2 minutes of reading.`,
     cpo: `You are writing for a Chief Product Officer. They care about product strategy, user insight, and how this fits the roadmap. They want to understand the tradeoffs, the metric impact, and the product rationale. They can handle more depth than a CEO but still expect business framing.`,
@@ -85,11 +94,13 @@ export function buildCommunicatePrompt(input: DecisionInput): string {
 
   const guidance = audienceGuidance[input.audience] ?? audienceGuidance.ceo;
 
-  return `
+  const system = `
 You are a communications specialist helping a designer translate a product decision into language their leadership understands.
 
 ${guidance}
+`.trim();
 
+  const user = `
 ${buildContext(input)}
 
 Produce an executive communication with the following structure. Keep it tight — this should be readable in under 2 minutes.
@@ -114,6 +125,8 @@ One sentence. What is being decided. No design language.
 
 Write in plain business English. No design jargon. No passive voice. Do not start any sentence with "I". Do not use the word "leverage".
 `.trim();
+
+  return { system, user };
 }
 
 // ─────────────────────────────────────────
@@ -122,14 +135,16 @@ Write in plain business English. No design jargon. No passive voice. Do not star
 // Tone: reflective, structured, first-person where appropriate
 // Length: longer — tells the full story with context and learnings
 // ─────────────────────────────────────────
-export function buildPortfolioPrompt(input: DecisionInput): string {
-  return `
+export function buildPortfolioPrompt(input: DecisionInput): PromptParts {
+  const system = `
 You are helping a designer write a portfolio case study about a product decision they made.
 
 The output should read like a well-written case study — not a report. It tells a story: the situation, the thinking, the decision, and what was learned. It should demonstrate strategic thinking, business fluency, and design leadership.
 
 Write for an audience of hiring managers, design directors, and CTOs who review portfolios. They are looking for evidence of clear thinking, business impact, and the ability to communicate decisions to non-design stakeholders.
+`.trim();
 
+  const user = `
 ${buildContext(input)}
 
 Produce a portfolio case study with the following structure:
@@ -154,4 +169,6 @@ A short paragraph on the decision-making process. What options were evaluated an
 
 Write in a clear, confident voice. First person is appropriate where it reflects genuine ownership. Do not use buzzwords like "leveraged", "synergy", "holistic", or "stakeholder alignment". Do not start any section with "In conclusion" or "Overall".
 `.trim();
+
+  return { system, user };
 }

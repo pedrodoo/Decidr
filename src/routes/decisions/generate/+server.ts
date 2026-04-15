@@ -6,7 +6,8 @@ import {
   buildPreparePrompt,
   buildCommunicatePrompt,
   buildPortfolioPrompt,
-  type DecisionInput
+  type DecisionInput,
+  type PromptParts
 } from '$lib/ai/prompts';
 
 const ipRequestLog = new Map<string, number[]>();
@@ -32,11 +33,18 @@ const MAX_TOKENS: Record<string, number> = {
   portfolio:   900
 };
 
-async function callClaude(prompt: string, maxTokens: number): Promise<string> {
+async function callClaude(promptParts: PromptParts, maxTokens: number): Promise<string> {
   const response = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: maxTokens,
-    messages: [{ role: 'user', content: prompt }]
+    // Cache static instruction blocks to reduce repeated prompt processing.
+    system: [{ type: 'text', text: promptParts.system, cache_control: { type: 'ephemeral' } }],
+    messages: [
+      {
+        role: 'user',
+        content: [{ type: 'text', text: promptParts.user }]
+      }
+    ]
   });
   const block = response.content[0];
   if (block.type !== 'text') throw new Error('Unexpected response type');
@@ -66,12 +74,12 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
   }
 
   try {
-    let prompt: string;
-    if (mode === 'prepare') prompt = buildPreparePrompt(input);
-    else if (mode === 'communicate') prompt = buildCommunicatePrompt(input);
-    else prompt = buildPortfolioPrompt(input);
+    let promptParts: PromptParts;
+    if (mode === 'prepare') promptParts = buildPreparePrompt(input);
+    else if (mode === 'communicate') promptParts = buildCommunicatePrompt(input);
+    else promptParts = buildPortfolioPrompt(input);
 
-    const output = await callClaude(prompt, MAX_TOKENS[mode]);
+    const output = await callClaude(promptParts, MAX_TOKENS[mode]);
     return json({ [mode]: output });
 
   } catch (err) {
