@@ -36,9 +36,10 @@ function isRateLimited(ip: string): boolean {
 
 // ─── Anthropic ────────────────────────────────────────────────
 const MODEL = 'claude-sonnet-4-5';
+type GenerateMode = 'prepare' | 'communicate' | 'portfolio';
 
 // Max tokens per mode — keeps outputs focused and costs predictable
-const MAX_TOKENS = {
+const MAX_TOKENS: Record<GenerateMode, number> = {
   prepare:     600,
   communicate: 400,
   portfolio:   800
@@ -75,14 +76,22 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
   }
 
   // Parse and validate input
+  let mode: GenerateMode;
   let input: DecisionInput;
+  let raw: unknown;
   try {
-    const raw = await request.json();
-    // Client sends { mode, input }; API expects flat DecisionInput — use nested input when present
-    input = raw?.input && typeof raw.input === 'object' && raw.input !== null ? raw.input as DecisionInput : raw as DecisionInput;
+    raw = await request.json();
   } catch {
     throw error(400, 'Invalid request body');
   }
+  const parsedMode = (raw as { mode?: unknown })?.mode;
+  if (!['prepare', 'communicate', 'portfolio'].includes(String(parsedMode))) {
+    throw error(400, 'Invalid mode');
+  }
+  mode = parsedMode as GenerateMode;
+  // Client sends { mode, input }; keep flat DecisionInput fallback for compatibility.
+  const nestedInput = (raw as { input?: unknown })?.input;
+  input = nestedInput && typeof nestedInput === 'object' ? nestedInput as DecisionInput : raw as DecisionInput;
 
   const required: (keyof DecisionInput)[] = [
     'decision',
@@ -97,24 +106,18 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
     }
   }
 
-  // Build prompts
-  const preparePrompt     = buildPreparePrompt(input);
-  const communicatePrompt = buildCommunicatePrompt(input);
-  const portfolioPrompt   = buildPortfolioPrompt(input);
+  let prompt: string;
+  if (mode === 'prepare') prompt = buildPreparePrompt(input);
+  else if (mode === 'communicate') prompt = buildCommunicatePrompt(input);
+  else prompt = buildPortfolioPrompt(input);
 
-  // Run three calls in parallel (client created only when apiKey is set)
   const client = new Anthropic({ apiKey });
   try {
-    const [prepare, communicate, portfolio] = await Promise.all([
-      callClaude(client, preparePrompt,     MAX_TOKENS.prepare),
-      callClaude(client, communicatePrompt, MAX_TOKENS.communicate),
-      callClaude(client, portfolioPrompt,   MAX_TOKENS.portfolio)
-    ]);
-
-    return json({ prepare, communicate, portfolio });
+    const output = await callClaude(client, prompt, MAX_TOKENS[mode]);
+    return json({ [mode]: output });
 
   } catch (err) {
     console.error('Anthropic API error:', err);
-    throw error(500, 'Failed to generate outputs. Please try again.');
+    throw error(500, 'Failed to generate output. Please try again.');
   }
 };

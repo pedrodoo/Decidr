@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { outputsStore } from '$lib/stores/outputs';
+  import { outputsStore, type DecisionOutputs } from '$lib/stores/outputs';
   import { inputStore } from '$lib/stores/input';
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { marked } from 'marked';
   import { get } from 'svelte/store';
 
-  let outputs = $state({});
+  let outputs = $state<DecisionOutputs>({});
   let loading = $state<string | null>(null);
   let generateError = $state<string | null>(null);
 
