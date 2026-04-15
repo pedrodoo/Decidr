@@ -48,22 +48,30 @@ Follow only the structure below.
 `.trim();
 }
 
+function line(label: string, value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const t = value.trim();
+  if (t === '') return undefined;
+  return `${label}: ${t}`;
+}
+
 // Shared context block — injected into every prompt
 function buildContext(input: DecisionInput): string {
-  return `
-DECISION INPUT
-==============
-Decision: ${input.decision}
-Problem: ${input.problem}
-Business Area: ${input.businessArea}
-Options Considered: ${input.options}
-Data & Signals: ${input.data}
-Tradeoffs Accepted: ${input.tradeoffs}
-Primary Metric: ${input.primaryMetric}
-Guardrail Metric: ${input.guardrailMetric}
-Expected Outcome: ${input.expectedOutcome}
-Target Audience: ${input.audienceLabel}
-`.trim();
+  const rows = [
+    'DECISION INPUT',
+    '==============',
+    line('Decision', input.decision),
+    line('Problem', input.problem),
+    line('Business Area', input.businessArea),
+    line('Options Considered', input.options),
+    line('Data & Signals', input.data),
+    line('Tradeoffs Accepted', input.tradeoffs),
+    line('Primary Metric', input.primaryMetric),
+    line('Guardrail Metric', input.guardrailMetric),
+    line('Expected Outcome', input.expectedOutcome),
+    line('Target Audience', input.audienceLabel),
+  ].filter((x): x is string => x !== undefined);
+  return rows.join('\n');
 }
 
 // ─────────────────────────────────────────
