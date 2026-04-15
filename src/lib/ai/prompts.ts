@@ -19,6 +19,35 @@ export interface PromptParts {
   user: string;
 }
 
+/** Optional context when generating communicate/portfolio after prepare. */
+export interface PromptBuildOptions {
+  prepareReview?: string;
+}
+
+function buildPrepareReviewBlockCommunicate(text: string): string {
+  return `
+INTERNAL DESIGNER REVIEW (already produced — for your context only; not the leadership deliverable)
+================================================================================
+${text}
+
+The designer completed this internal review before this step. Use it to inform your framing: strengthen the recommendation and "What We're Accepting" where gaps or tradeoffs matter; reflect decision readiness in tone and substance where appropriate; ensure the substance anticipates the hardest leadership question without naming this as an internal exercise.
+
+Your output must be a clean executive brief only. Write in appropriate executive language. Do not paste or echo raw internal-review wording. Do not add a section that presents this review. Follow only the structure below.
+`.trim();
+}
+
+function buildPrepareReviewBlockPortfolio(text: string): string {
+  return `
+INTERNAL DESIGNER REVIEW (already produced — for your context only)
+================================================================================
+${text}
+
+The designer completed this internal review before this step. Use it to inform the case study: you may integrate honest reflection on gaps, tradeoffs, confidence, and how they would handle the hardest leadership question, in first person where it reads naturally. The output must still read as a polished portfolio narrative, not a verbatim reuse of the review above.
+
+Follow only the structure below.
+`.trim();
+}
+
 // Shared context block — injected into every prompt
 function buildContext(input: DecisionInput): string {
   return `
@@ -84,7 +113,7 @@ Write in plain English. No bullet points within sections — use short paragraph
 // Tone: business language — no design jargon
 // Length: short and dense — leadership reads fast
 // ─────────────────────────────────────────
-export function buildCommunicatePrompt(input: DecisionInput): PromptParts {
+export function buildCommunicatePrompt(input: DecisionInput, options?: PromptBuildOptions): PromptParts {
   const audienceGuidance: Record<string, string> = {
     ceo: `You are writing for a CEO. They care about business impact, risk, and strategic fit. They do not want design rationale or UX detail. Frame everything in terms of revenue, growth, retention, or competitive position. They need to understand the decision, the risk of inaction, and what you are recommending — in under 2 minutes of reading.`,
     cpo: `You are writing for a Chief Product Officer. They care about product strategy, user insight, and how this fits the roadmap. They want to understand the tradeoffs, the metric impact, and the product rationale. They can handle more depth than a CEO but still expect business framing.`,
@@ -100,9 +129,13 @@ You are a communications specialist helping a designer translate a product decis
 ${guidance}
 `.trim();
 
-  const user = `
-${buildContext(input)}
+  const prepareReview = options?.prepareReview?.trim();
+  const reviewSection = prepareReview
+    ? `\n\n${buildPrepareReviewBlockCommunicate(prepareReview)}\n\n`
+    : '\n\n';
 
+  const user = `
+${buildContext(input)}${reviewSection}
 Produce an executive communication with the following structure. Keep it tight — this should be readable in under 2 minutes.
 
 ## The Decision
@@ -135,7 +168,7 @@ Write in plain business English. No design jargon. No passive voice. Do not star
 // Tone: reflective, structured, first-person where appropriate
 // Length: longer — tells the full story with context and learnings
 // ─────────────────────────────────────────
-export function buildPortfolioPrompt(input: DecisionInput): PromptParts {
+export function buildPortfolioPrompt(input: DecisionInput, options?: PromptBuildOptions): PromptParts {
   const system = `
 You are helping a designer write a portfolio case study about a product decision they made.
 
@@ -144,9 +177,13 @@ The output should read like a well-written case study — not a report. It tells
 Write for an audience of hiring managers, design directors, and CTOs who review portfolios. They are looking for evidence of clear thinking, business impact, and the ability to communicate decisions to non-design stakeholders.
 `.trim();
 
-  const user = `
-${buildContext(input)}
+  const prepareReview = options?.prepareReview?.trim();
+  const reviewSection = prepareReview
+    ? `\n\n${buildPrepareReviewBlockPortfolio(prepareReview)}\n\n`
+    : '\n\n';
 
+  const user = `
+${buildContext(input)}${reviewSection}
 Produce a portfolio case study with the following structure:
 
 ## Overview

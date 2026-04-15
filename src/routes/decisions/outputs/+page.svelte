@@ -38,6 +38,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mode,
+          prepareReview: outputs.prepare?.trim() || undefined,
           input: {
             audience: stored.audience.id,
             audienceLabel: stored.audience.label,

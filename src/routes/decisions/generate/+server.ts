@@ -7,7 +7,8 @@ import {
   buildCommunicatePrompt,
   buildPortfolioPrompt,
   type DecisionInput,
-  type PromptParts
+  type PromptParts,
+  type PromptBuildOptions
 } from '$lib/ai/prompts';
 
 const ipRequestLog = new Map<string, number[]>();
@@ -55,7 +56,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
   const ip = getClientAddress();
   if (isRateLimited(ip)) throw error(429, 'Too many requests. Try again later.');
 
-  let body: { mode: string; input: DecisionInput };
+  let body: { mode: string; input: DecisionInput; prepareReview?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -63,6 +64,10 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
   }
 
   const { mode, input } = body;
+  const rawPrepareReview = body.prepareReview;
+  const prepareReview =
+    typeof rawPrepareReview === 'string' && rawPrepareReview.trim() !== '' ? rawPrepareReview.trim() : undefined;
+  const buildOptions: PromptBuildOptions | undefined = prepareReview ? { prepareReview } : undefined;
 
   if (!['prepare', 'communicate', 'portfolio'].includes(mode)) {
     throw error(400, 'Invalid mode');
@@ -76,8 +81,8 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
   try {
     let promptParts: PromptParts;
     if (mode === 'prepare') promptParts = buildPreparePrompt(input);
-    else if (mode === 'communicate') promptParts = buildCommunicatePrompt(input);
-    else promptParts = buildPortfolioPrompt(input);
+    else if (mode === 'communicate') promptParts = buildCommunicatePrompt(input, buildOptions);
+    else promptParts = buildPortfolioPrompt(input, buildOptions);
 
     const output = await callClaude(promptParts, MAX_TOKENS[mode]);
     return json({ [mode]: output });

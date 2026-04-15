@@ -9,7 +9,8 @@ import {
   buildCommunicatePrompt,
   buildPortfolioPrompt,
   type DecisionInput,
-  type PromptParts
+  type PromptParts,
+  type PromptBuildOptions
 } from '$lib/ai/prompts';
 
 // ─── Rate limiting ───────────────────────────────────────────
@@ -101,6 +102,10 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
   const nestedInput = (raw as { input?: unknown })?.input;
   input = nestedInput && typeof nestedInput === 'object' ? nestedInput as DecisionInput : raw as DecisionInput;
 
+  const rawPrepareReview = (raw as { prepareReview?: unknown })?.prepareReview;
+  const prepareReview =
+    typeof rawPrepareReview === 'string' && rawPrepareReview.trim() !== '' ? rawPrepareReview.trim() : undefined;
+
   const required: (keyof DecisionInput)[] = [
     'decision',
     'problem',
@@ -114,10 +119,12 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
     }
   }
 
+  const buildOptions: PromptBuildOptions | undefined = prepareReview ? { prepareReview } : undefined;
+
   let promptParts: PromptParts;
   if (mode === 'prepare') promptParts = buildPreparePrompt(input);
-  else if (mode === 'communicate') promptParts = buildCommunicatePrompt(input);
-  else promptParts = buildPortfolioPrompt(input);
+  else if (mode === 'communicate') promptParts = buildCommunicatePrompt(input, buildOptions);
+  else promptParts = buildPortfolioPrompt(input, buildOptions);
 
   const client = new Anthropic({ apiKey });
   try {
