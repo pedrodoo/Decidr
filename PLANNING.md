@@ -45,7 +45,7 @@ Auth required for all users. The constraint is intentional — measures real int
 **Three separate Anthropic API calls in parallel via `Promise.all`.**  
 Easier to prompt, easier to iterate. Each mode is independent — changing one prompt doesn't affect the others. Cost is manageable at ~$0.03 per submission.
 
-**Max tokens per mode: Prepare 600 / Communicate 400 / Portfolio 800.**  
+**Max tokens per mode: Prepare 600 / Communicate 550 / Portfolio 800.**  
 Keeps outputs focused and costs predictable.
 
 **Coaching history not passed to output prompts.**  

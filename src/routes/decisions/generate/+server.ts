@@ -30,7 +30,7 @@ const client = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 
 const MAX_TOKENS: Record<string, number> = {
   prepare:     700,
-  communicate: 500,
+  communicate: 550,
   portfolio:   900
 };
 

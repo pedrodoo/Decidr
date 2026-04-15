@@ -43,7 +43,7 @@ type GenerateMode = 'prepare' | 'communicate' | 'portfolio';
 // Max tokens per mode — keeps outputs focused and costs predictable
 const MAX_TOKENS: Record<GenerateMode, number> = {
   prepare:     600,
-  communicate: 400,
+  communicate: 550,
   portfolio:   800
 };
 

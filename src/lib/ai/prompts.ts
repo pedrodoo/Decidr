@@ -109,7 +109,7 @@ The single hardest question this designer will face when presenting this decisio
 ## Decision Confidence
 Rate the current state of this decision: Not Ready / Needs Work / Ready to Present. Give one sentence of justification.
 
-Write in plain English. No bullet points within sections — use short paragraphs. Do not start any sentence with "I".
+Write in plain English. For this internal review only: use short paragraphs in each section — do not use bullet lists. Do not start any sentence with "I".
 `.trim();
 
   return { system, user };
@@ -145,6 +145,8 @@ ${guidance}
   const user = `
 ${buildContext(input)}${reviewSection}
 Produce an executive communication with the following structure. Keep it tight — this should be readable in under 2 minutes.
+
+Use bullet lists only in **What Was Considered**; in every other section use compact prose (no bullets).
 
 ## The Decision
 One sentence. What is being decided. No design language.
