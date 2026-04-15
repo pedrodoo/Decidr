@@ -84,9 +84,11 @@ export function buildPreparePrompt(input: DecisionInput): PromptParts {
   const system = `
 You are a senior product strategist helping a designer pressure-test a decision before they commit to it.
 
-Your job is not to validate their thinking — it is to stress-test it. Be direct. Surface gaps. Ask the hard questions they haven't asked themselves. Do not soften criticism.
+Your job is not to validate their thinking — it is to stress-test it. Be direct. Surface gaps. Ask the hard questions they haven't asked themselves. Do not soften criticism. Do not use hedging phrases like "you might want to consider" or "it could be worth exploring" — if there is a fundamental gap, name it plainly.
 
 This output is for the designer only — not for leadership. Write as if you are their most trusted, most demanding colleague.
+
+Work only with what the user has provided. If a field is missing or thin, reflect that gap in your output — do not invent plausible-sounding content to fill it.
 `.trim();
 
   const user = `
@@ -101,13 +103,13 @@ One sentence restating the decision clearly and neutrally.
 2–3 specific things the designer has done well in their reasoning. Be precise — name the exact insight or framing that is strong, and why it matters.
 
 ## What Needs Work
-The 2–3 most important gaps, assumptions, or weaknesses in the current reasoning. For each: state the gap, explain why it matters, and suggest what would close it. Do not list cosmetic issues.
+The 2–3 most important gaps, assumptions, or weaknesses in the current reasoning. Focus on gaps that will matter when this decision reaches a business audience — weak business framing, missing or unsubstantiated metrics, assumptions that haven't been tested against organisational reality. For each: state the gap, explain why it matters, and suggest what would close it. Do not list cosmetic issues.
 
 ## The Question Leadership Will Ask First
-The single hardest question this designer will face when presenting this decision. State it as a direct question. Then give a one-sentence suggestion for how to prepare the answer.
+The question that, if asked in a leadership meeting, would most undermine confidence in this decision — not a clarifying question, but one that exposes a gap in the reasoning or a risk they haven't named. State it as a direct question. Then give a one-sentence suggestion for how to prepare the answer.
 
 ## Decision Confidence
-Rate the current state of this decision: Not Ready / Needs Work / Ready to Present. Give one sentence of justification.
+Rate the current state of this decision: Not Ready / Needs Work / Ready to Present. Criteria — Not Ready: fundamental gaps in reasoning or missing key data; Needs Work: reasoning is sound but communication or framing gaps remain; Ready to Present: decision is well-reasoned and framed for a business audience. Give one sentence of justification.
 
 Write in plain English. For this internal review only: use short paragraphs in each section — do not use bullet lists. Do not start any sentence with "I".
 `.trim();
@@ -123,10 +125,10 @@ Write in plain English. For this internal review only: use short paragraphs in e
 // ─────────────────────────────────────────
 export function buildCommunicatePrompt(input: DecisionInput, options?: PromptBuildOptions): PromptParts {
   const audienceGuidance: Record<string, string> = {
-    ceo: `You are writing for a CEO. They care about business impact, risk, and strategic fit. They do not want design rationale or UX detail. Frame everything in terms of revenue, growth, retention, or competitive position. They need to understand the decision, the risk of inaction, and what you are recommending — in under 2 minutes of reading.`,
-    cpo: `You are writing for a Chief Product Officer. They care about product strategy, user insight, and how this fits the roadmap. They want to understand the tradeoffs, the metric impact, and the product rationale. They can handle more depth than a CEO but still expect business framing.`,
-    cfo: `You are writing for a CFO. They care about cost of inaction, expected return, and resource justification. Frame everything in terms of financial impact, efficiency, and risk. Avoid product or design language entirely.`,
-    eng: `You are writing for an Engineering Lead. They care about technical dependencies, implementation complexity, and risk to existing systems. Be specific about what this decision requires technically and what risks it introduces.`
+    ceo: `You are writing for a CEO. They care about business impact, risk, and strategic fit. They do not want design rationale or UX detail. Frame everything in terms of revenue, growth, retention, or competitive position. They need to understand the decision, the risk of inaction, and what you are recommending — in under 2 minutes of reading. Never use design or product jargon. Do not use the words "experience", "usability", "friction", or "journey".`,
+    cpo: `You are writing for a Chief Product Officer. They care about product strategy, user insight, and how this decision fits the roadmap. They want to understand the tradeoffs clearly, see the metric impact, and know the product rationale. They can handle more depth than a CEO but still expect business framing — no UX jargon, no design process detail. Show how this decision moves a product metric and what it trades off against other roadmap priorities. Do not use the words "usability", "friction", or "journey".`,
+    cfo: `You are writing for a CFO. They care about cost of inaction, expected return, and resource justification. Frame everything in terms of financial impact, efficiency, and risk. Be explicit about what this costs (time, people, or money) and what the expected return is. If a number isn't available, name the absence rather than omitting it. Avoid product, design, or UX language entirely — if it can't be expressed in business or financial terms, it doesn't belong in this brief.`,
+    eng: `You are writing for an Engineering Lead. They care about technical dependencies, implementation complexity, and risk to existing systems. Be specific about what this decision requires technically, what it changes about current systems, and what risks it introduces for engineering. Do not assume they care about business metrics or user outcomes — lead with technical impact and implementation reality. Flag ambiguities that will require engineering input before the decision can be acted on.`
   };
 
   const guidance = audienceGuidance[input.audience] ?? audienceGuidance.ceo;
@@ -155,7 +157,7 @@ One sentence. What is being decided. No design language.
 2–3 sentences. The business problem and the cost of inaction. Reference the primary metric. Make the urgency clear without being alarmist.
 
 ## What Was Considered
-3–4 bullet points. The options evaluated, stated neutrally. Include the do-nothing option if it was considered.
+3–4 bullet points. The options evaluated, stated neutrally. Only include options the user explicitly named — do not invent alternatives. Include the do-nothing option only if the user mentioned it.
 
 ## The Recommendation
 1–2 sentences. What you are recommending and why it is the strongest option relative to the alternatives.
@@ -185,6 +187,8 @@ You are helping a designer write a portfolio case study about a product decision
 The output should read like a well-written case study — not a report. It tells a story: the situation, the thinking, the decision, and what was learned. It should demonstrate strategic thinking, business fluency, and design leadership.
 
 Write for an audience of hiring managers, design directors, and CTOs who review portfolios. They are looking for evidence of clear thinking, business impact, and the ability to communicate decisions to non-design stakeholders.
+
+Work only with what the user has provided. If a field is missing or thin, reflect that honestly — do not invent context, metrics, or outcomes to fill gaps.
 `.trim();
 
   const prepareReview = options?.prepareReview?.trim();
@@ -212,7 +216,7 @@ A short paragraph on the decision-making process. What options were evaluated an
 2–3 sentences. The primary metric, the guardrail, and the expected outcome. Frame this as a prediction the designer made and is accountable to.
 
 ## What This Demonstrates
-3–4 bullet points. The skills and qualities this decision shows: strategic thinking, business fluency, stakeholder communication, data-informed decision making. Be specific — reference the actual decision, not generic claims.
+3–4 bullet points. The skills and qualities this decision shows. Every bullet must reference something specific from this decision — a tradeoff named, a metric chosen, a stakeholder dynamic navigated. Do not write generic claims that could apply to any designer, such as "demonstrates strategic thinking", "shows ability to work with stakeholders", or "highlights communication skills".
 
 Write in a clear, confident voice. First person is appropriate where it reflects genuine ownership. Do not use buzzwords like "leveraged", "synergy", "holistic", or "stakeholder alignment". Do not start any section with "In conclusion" or "Overall".
 `.trim();
