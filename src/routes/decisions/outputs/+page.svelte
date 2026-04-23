@@ -144,21 +144,34 @@
         <p class="gate-reason">{parsed.reason}</p>
       {/if}
       {#if !outputs.prepare}
+        {@const gv = confidenceVariant(parseConfidence(outputs.confidence ?? '').rating)}
         <div class="gate-actions">
-          <button
-            class="btn-primary"
-            type="button"
-            onclick={generatePrepare}
-            disabled={loading === 'prepare'}
-          >
-            {loading === 'prepare' ? 'Generating...' : 'Generate full review'}
-            {#if loading !== 'prepare'}
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M5 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            {/if}
-          </button>
-          <a class="btn-ghost" href="/decisions/new">Back to inputs</a>
+          {#if gv === 'ready'}
+            <button
+              class="btn-primary"
+              type="button"
+              onclick={generatePrepare}
+              disabled={loading === 'prepare'}
+            >
+              {loading === 'prepare' ? 'Generating...' : 'Generate full review'}
+              {#if loading !== 'prepare'}
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M5 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              {/if}
+            </button>
+            <a class="btn-ghost" href="/decisions/new">Back to inputs</a>
+          {:else}
+            <a class="btn-primary" href="/decisions/new">Back to inputs</a>
+            <button
+              class="btn-ghost"
+              type="button"
+              onclick={generatePrepare}
+              disabled={loading === 'prepare'}
+            >
+              {loading === 'prepare' ? 'Generating...' : 'Generate full review anyway'}
+            </button>
+          {/if}
         </div>
         {#if generateError}
           <p class="generate-error">{generateError}</p>
@@ -397,9 +410,14 @@
     text-decoration: none;
     padding: 10px 4px;
     transition: color 0.15s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
   }
 
   .btn-ghost:hover { color: var(--text-primary); }
+  .btn-ghost:disabled { opacity: 0.6; cursor: not-allowed; }
 
   /* OUTPUT BLOCKS */
   .output-block {
