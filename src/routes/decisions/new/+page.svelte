@@ -11,11 +11,17 @@
   import { inputStore } from '$lib/stores/input';
   import { outputsStore } from '../../../lib/stores/outputs';
   import { goto } from '$app/navigation';
+  import { get } from 'svelte/store';
 
-  // Clean stores when new decision starts
   import { onMount } from 'svelte';
   onMount(() => {
     outputsStore.set({} as any);
+    const stored = get(inputStore);
+    if (stored) {
+      audience = stored.audience;
+      form = { ...stored.form };
+      phase = 'steps';
+    }
   });
 
   type Phase = 'gate' | 'steps';
@@ -65,6 +71,18 @@
   }
 
   function handleAudienceReset() {
+    inputStore.clear();
+    form = {
+      decision: '',
+      problem: '',
+      businessArea: '',
+      options: '',
+      data: '',
+      tradeoffs: '',
+      primaryMetric: '',
+      guardrailMetric: '',
+      expectedOutcome: ''
+    };
     phase = 'gate';
     currentStep = 1;
     coachVisible = { 1: false, 2: false, 3: false };

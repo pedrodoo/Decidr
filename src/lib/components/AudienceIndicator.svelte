@@ -8,10 +8,10 @@
   let { label = 'CEO', onReset } = $props();
 </script>
 
-<button class="indicator" onclick={onReset} type="button" aria-label={strings.audienceIndicator.changeAudienceAria}>
+<button class="indicator" onclick={onReset} type="button" aria-label={strings.audienceIndicator.startFreshAria}>
   <span class="label">{strings.audienceIndicator.label}</span>
   <span class="value">{label}</span>
-  <span class="change">{strings.common.change}</span>
+  <span class="change">{strings.audienceIndicator.startFresh}</span>
 </button>
 
 <style>

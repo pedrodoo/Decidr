@@ -63,7 +63,8 @@ export const strings = {
   // ---------------------------------------------------------------------------
   audienceIndicator: {
     label: 'Audience',
-    changeAudienceAria: 'Change audience',
+    startFresh: 'Start fresh decision',
+    startFreshAria: 'Discard current decision and start fresh',
   },
 
   // ---------------------------------------------------------------------------
