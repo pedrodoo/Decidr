@@ -5,6 +5,7 @@ import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import Anthropic from '@anthropic-ai/sdk';
 import {
+  buildConfidencePrompt,
   buildPreparePrompt,
   buildCommunicatePrompt,
   buildPortfolioPrompt,
@@ -38,10 +39,11 @@ function isRateLimited(ip: string): boolean {
 
 // ─── Anthropic ────────────────────────────────────────────────
 const MODEL = 'claude-sonnet-4-5';
-type GenerateMode = 'prepare' | 'communicate' | 'portfolio';
+type GenerateMode = 'confidence' | 'prepare' | 'communicate' | 'portfolio';
 
 // Max tokens per mode — keeps outputs focused and costs predictable
 const MAX_TOKENS: Record<GenerateMode, number> = {
+  confidence:  100,
   prepare:     600,
   communicate: 550,
   portfolio:   800
@@ -94,7 +96,7 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
     throw error(400, 'Invalid request body');
   }
   const parsedMode = (raw as { mode?: unknown })?.mode;
-  if (!['prepare', 'communicate', 'portfolio'].includes(String(parsedMode))) {
+  if (!['confidence', 'prepare', 'communicate', 'portfolio'].includes(String(parsedMode))) {
     throw error(400, 'Invalid mode');
   }
   mode = parsedMode as GenerateMode;
@@ -122,7 +124,8 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
   const buildOptions: PromptBuildOptions | undefined = prepareReview ? { prepareReview } : undefined;
 
   let promptParts: PromptParts;
-  if (mode === 'prepare') promptParts = buildPreparePrompt(input);
+  if (mode === 'confidence') promptParts = buildConfidencePrompt(input);
+  else if (mode === 'prepare') promptParts = buildPreparePrompt(input);
   else if (mode === 'communicate') promptParts = buildCommunicatePrompt(input, buildOptions);
   else promptParts = buildPortfolioPrompt(input, buildOptions);
 

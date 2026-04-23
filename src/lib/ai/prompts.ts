@@ -75,6 +75,36 @@ function buildContext(input: DecisionInput): string {
 }
 
 // ─────────────────────────────────────────
+// MODE 0: CONFIDENCE CHECK
+// Purpose: fast gate before full prepare review
+// Tone: direct, structured
+// Length: minimal — two lines only
+// ─────────────────────────────────────────
+export function buildConfidencePrompt(input: DecisionInput): PromptParts {
+  const system = `
+You are a senior product strategist doing a quick triage of a design decision before a full review.
+
+Your job is to assess, in one pass, whether this decision is ready to be reviewed in depth. Be ruthlessly honest. Do not inflate confidence to be encouraging.
+`.trim();
+
+  const user = `
+${buildContext(input)}
+
+Assess the readiness of this decision. Respond with exactly two lines:
+
+Rating: [Not Ready | Needs Work | Ready to Present]
+Reason: [one sentence — the single most important reason for your rating]
+
+Criteria:
+- Not Ready: fundamental gaps in reasoning or missing key data that would make a full review premature
+- Needs Work: reasoning is sound but framing, metric grounding, or business case has gaps
+- Ready to Present: decision is well-reasoned and framed for a business audience
+`.trim();
+
+  return { system, user };
+}
+
+// ─────────────────────────────────────────
 // MODE 1: PREPARE DECISION
 // Purpose: help the designer think before committing
 // Tone: direct, structured, honest — for the designer's eyes only
@@ -100,10 +130,11 @@ Produce a structured decision review with the following sections. Use plain head
 One sentence restating the decision clearly and neutrally.
 
 ## What's Strong
-2–3 specific things the designer has done well in their reasoning. Be precise — name the exact insight or framing that is strong, and why it matters.
+2–3 bullets. Format: [the insight] — [why it matters in one clause]. No full sentences.
 
 ## What Needs Work
-The 2–3 most important gaps, assumptions, or weaknesses in the current reasoning. Focus on gaps that will matter when this decision reaches a business audience — weak business framing, missing or unsubstantiated metrics, assumptions that haven't been tested against organisational reality. For each: state the gap, explain why it matters, and suggest what would close it. Do not list cosmetic issues.
+2–3 bullets. Each uses this exact format:
+**[Gap label]**: [one sentence — the gap and why it will matter in front of a business audience]. Fix: [one sentence — what closes it].
 
 ## The Question Leadership Will Ask First
 The question that, if asked in a leadership meeting, would most undermine confidence in this decision — not a clarifying question, but one that exposes a gap in the reasoning or a risk they haven't named. State it as a direct question. Then give a one-sentence suggestion for how to prepare the answer.
@@ -111,7 +142,7 @@ The question that, if asked in a leadership meeting, would most undermine confid
 ## Decision Confidence
 Rate the current state of this decision: Not Ready / Needs Work / Ready to Present. Criteria — Not Ready: fundamental gaps in reasoning or missing key data; Needs Work: reasoning is sound but communication or framing gaps remain; Ready to Present: decision is well-reasoned and framed for a business audience. Give one sentence of justification.
 
-Write in plain English. For this internal review only: use short paragraphs in each section — do not use bullet lists. Do not start any sentence with "I".
+Write in plain English. Do not start any sentence with "I".
 `.trim();
 
   return { system, user };
@@ -154,7 +185,7 @@ Use bullet lists only in **What Was Considered**; in every other section use com
 One sentence. What is being decided. No design language.
 
 ## Why This Matters Now
-2–3 sentences. The business problem and the cost of inaction. Reference the primary metric. Make the urgency clear without being alarmist.
+2–3 sentences, max 35 words. The business problem and the cost of inaction. Reference the primary metric. Make the urgency clear without being alarmist.
 
 ## What Was Considered
 3–4 bullet points. The options evaluated, stated neutrally. Only include options the user explicitly named — do not invent alternatives. Include the do-nothing option only if the user mentioned it.
@@ -163,7 +194,7 @@ One sentence. What is being decided. No design language.
 1–2 sentences. What you are recommending and why it is the strongest option relative to the alternatives.
 
 ## Expected Impact
-2–3 sentences. What success looks like. Reference the primary metric and guardrail metric by name. State the expected outcome as a prediction, not a guarantee.
+2–3 sentences, max 35 words. What success looks like. Reference the primary metric and guardrail metric by name. State the expected outcome as a prediction, not a guarantee.
 
 ## What We're Accepting
 1–2 sentences. The tradeoff, stated plainly. Leadership should never discover a downside you didn't name.
@@ -204,10 +235,10 @@ Produce a portfolio case study with the following structure:
 2–3 sentences. The context, the challenge, and the outcome. This is the hook — write it to make the reader want to continue.
 
 ## The Situation
-3–5 sentences. What was happening, why it mattered, and what the stakes were. Include relevant business context. Set the scene without excessive background.
+2–3 sentences. What was happening, why it mattered, and what the stakes were. Include relevant business context. Set the scene without excessive background.
 
 ## How I Approached It
-A short paragraph on the decision-making process. What options were evaluated and why. How data and signals informed the thinking. What made this decision difficult or non-obvious.
+2–3 sentences. What options were evaluated and why. How data and signals informed the thinking. What made this decision difficult or non-obvious.
 
 ## The Decision
 2–3 sentences. What was decided and why this was the strongest path relative to the alternatives. State the tradeoff accepted and why it was acceptable.

@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Decidr - Good design decisions die for lack of business translation</title>
+	<title>Decidr - Build the business case behind design decisions</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
@@ -20,21 +20,20 @@
 		</div>
 
 		<h1 class="hero-title">
-			Good design decisions die<br />
-			<span class="hero-accent">for lack of business translation.</span>
+			Your design decisions shape business outcomes.<br />
+			<span class="hero-accent">They just rarely reach the room where it matters.</span>
 		</h1>
 
 		<p class="hero-subtitle">
-			Decidr helps designers who report to non-design leadership structure their thinking and
-			communicate decisions in language that lands - with leadership, in exec updates, and in
-			portfolio work.
+			Decidr helps you build the business case behind your design decisions - before leadership asks
+			for one.
 		</p>
 
 		<div class="cta-group">
-			<span class="cta-group-label">Invite only - Private beta</span>
-			<p class="cta-group-title">Want early access? Fill in a short form and we'll be in touch.</p>
+			<span class="cta-group-label">Private beta</span>
+			<p class="cta-group-title">If that's you, request early access below.</p>
 			<a href={SURVEY_URL} class="btn-primary landing-btn-primary" target="_blank" rel="noopener noreferrer">
-				Request access
+				Request early access
 				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 					<path
 						d="M5 3l4 4-4 4"
@@ -51,33 +50,29 @@
 	<section class="problem" aria-labelledby="problem-title">
 		<div class="problem-inner">
 			<h2 class="problem-title" id="problem-title">
-				Design decisions shape products. Most of them never reach the room where business decisions are
-				made.
+				Design has always shaped business outcomes. The problem isn't the thinking.
 			</h2>
 			<div class="problem-body">
 				<p>
-					Not because the thinking was wrong. Because it wasn't translated - or because it wasn't ready
-					to be.
+					It's that most designers were never given the tools to prove it.
 				</p>
 				<p>
-					Every time a designer can't frame their initiative in business language, something is lost: a
-					chance to improve the product, measurable impact the company will never see, a career that
-					stays tactical when it could be strategic.
+					When a design decision can't be framed in business language, it doesn't just get rejected - it
+					disappears. The product stalls. Impact goes unmeasured. And talented designers stay tactical
+					when they could be driving strategy.
 				</p>
 				<p>
-					Decidr is a sparring partner for designers who want to change that. It asks the hard
-					questions before leadership does. It challenges your assumptions, sharpens your reasoning, and
-					pushes back on initiatives that aren't ready. Only then does it help you communicate - in
-					language that lands with the people who make business decisions.
+					Decidr closes that gap. It helps you pressure-test your reasoning, anticipate leadership
+					questions, and frame decisions in language that connects design directly to business outcomes.
 				</p>
-				<p class="problem-coda">Structure your thinking. Sharpen your narrative. Show your impact.</p>
+				<p class="problem-coda">Design has always been strategic. Now it can be seen that way.</p>
 			</div>
 		</div>
 	</section>
 
 	<section class="how" aria-labelledby="how-title">
 		<p class="section-label" id="how-title">How it works</p>
-		<p class="how-desc">One structured input. Three outputs built for different moments.</p>
+		<p class="how-desc">One input. Three outputs. Built for the moments that matter.</p>
 
 		<div class="outputs-grid">
 			<div class="output-card">
@@ -85,10 +80,10 @@
 				<div class="output-card-body">
 					<h3 class="output-title">Prepare Decision</h3>
 					<p class="output-desc">
-						Before you commit. Decidr stress-tests your reasoning - surfaces gaps, challenges
-						assumptions, and tells you what leadership will push back on first.
+						Before anyone else sees your decision, know where your reasoning is weak. Decidr surfaces
+						gaps and flags what leadership is most likely to challenge.
 					</p>
-					<div class="output-tag">For you</div>
+					<div class="output-tag">Before the room</div>
 				</div>
 			</div>
 
@@ -97,10 +92,10 @@
 				<div class="output-card-body">
 					<h3 class="output-title">Communicate to Leadership</h3>
 					<p class="output-desc">
-						Your decision translated into exec-ready language. Business impact, risk, and a clear
-						recommendation - framed for the room you're walking into.
+						Your decision, translated into exec-ready language: business impact, risk, and a clear
+						recommendation for the people who need to say yes.
 					</p>
-					<div class="output-tag">For them</div>
+					<div class="output-tag">In the room</div>
 				</div>
 			</div>
 
@@ -109,10 +104,10 @@
 				<div class="output-card-body">
 					<h3 class="output-title">Portfolio Case</h3>
 					<p class="output-desc">
-						The same decision structured as a case study - with context, reasoning, tradeoffs, and what
-						it demonstrates about your thinking as a design leader.
+						The same decision, structured as a design leadership case study - context, reasoning,
+						trade-offs, and what it reveals about how you think.
 					</p>
-					<div class="output-tag">For your career</div>
+					<div class="output-tag">Beyond the room</div>
 				</div>
 			</div>
 		</div>
@@ -121,10 +116,10 @@
 	<section class="cta-section">
 		<div class="cta-inner">
 			<p class="cta-label">Currently in private beta</p>
-			<h2 class="cta-title">Built for designers who speak business.</h2>
+			<h2 class="cta-title">Design deserves a seat at the table. Decidr helps you claim it.</h2>
 			<p class="cta-desc">
-				Decidr is invite-only right now. If you're a designer who reports to non-design leadership and
-				wants early access, fill in a short form and we'll be in touch.
+				We're opening access to designers who report to non-design leadership and are ready to turn
+				strong thinking into real business influence.
 			</p>
 			<a
 				href={SURVEY_URL}
@@ -132,7 +127,7 @@
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				Request access
+				Request early access
 				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 					<path
 						d="M5 3l4 4-4 4"

@@ -13,13 +13,68 @@
   onMount(() => {
     const unsubscribe = outputsStore.subscribe(value => {
       outputs = value ?? {};
-      if (!value?.prepare) goto('/decisions/new');
+      if (!value?.confidence && !value?.prepare) goto('/decisions/new');
     });
     return unsubscribe;
   });
 
   function renderMarkdown(text: string): string {
     return marked(text) as string;
+  }
+
+  function parseConfidence(text: string): { rating: string; reason: string } {
+    const lines = text.trim().split('\n');
+    const ratingLine = lines.find(l => l.startsWith('Rating:')) ?? '';
+    const reasonLine = lines.find(l => l.startsWith('Reason:')) ?? '';
+    return {
+      rating: ratingLine.replace('Rating:', '').trim(),
+      reason: reasonLine.replace('Reason:', '').trim()
+    };
+  }
+
+  function confidenceVariant(rating: string): 'not-ready' | 'needs-work' | 'ready' {
+    if (rating === 'Not Ready') return 'not-ready';
+    if (rating === 'Ready to Present') return 'ready';
+    return 'needs-work';
+  }
+
+  async function generatePrepare() {
+    loading = 'prepare';
+    generateError = null;
+
+    const stored = get(inputStore);
+    if (!stored) {
+      goto('/decisions/new');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/decisions/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mode: 'prepare',
+          input: {
+            audience: stored.audience.id,
+            audienceLabel: stored.audience.label,
+            ...stored.form
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message ?? 'Something went wrong');
+      }
+
+      const result = await response.json();
+      outputsStore.update(o => ({ ...o, prepare: result.prepare }));
+
+    } catch (e) {
+      generateError = e instanceof Error ? e.message : 'Unknown error';
+    } finally {
+      loading = null;
+    }
   }
 
   async function generateMode(mode: 'communicate' | 'portfolio') {
@@ -76,8 +131,46 @@
     </div>
   </div>
 
-  <!-- PREPARE — always shown -->
+  <!-- CONFIDENCE GATE — always visible once confidence is set -->
+  {#if outputs.confidence}
+    {@const parsed = parseConfidence(outputs.confidence)}
+    {@const variant = confidenceVariant(parsed.rating)}
+    <div class="gate gate-{variant}">
+      <div class="gate-header">
+        <span class="gate-label">Decision Confidence</span>
+        <span class="gate-rating gate-rating-{variant}">{parsed.rating}</span>
+      </div>
+      {#if parsed.reason}
+        <p class="gate-reason">{parsed.reason}</p>
+      {/if}
+      {#if !outputs.prepare}
+        <div class="gate-actions">
+          <button
+            class="btn-primary"
+            type="button"
+            onclick={generatePrepare}
+            disabled={loading === 'prepare'}
+          >
+            {loading === 'prepare' ? 'Generating...' : 'Generate full review'}
+            {#if loading !== 'prepare'}
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M5 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            {/if}
+          </button>
+          <a class="btn-ghost" href="/decisions/new">Back to inputs</a>
+        </div>
+        {#if generateError}
+          <p class="generate-error">{generateError}</p>
+        {/if}
+      {/if}
+    </div>
+  {/if}
+
+  <!-- PREPARE — shown after full review is generated -->
   {#if outputs.prepare}
+    {@const parsed = parseConfidence(outputs.confidence ?? '')}
+    {@const variant = confidenceVariant(parsed.rating)}
     <div class="output-block">
       <div class="output-header">
         <span class="output-num one">1</span>
@@ -89,6 +182,12 @@
       <div class="output-body prose">
         {@html renderMarkdown(outputs.prepare)}
       </div>
+      {#if variant === 'not-ready' || variant === 'needs-work'}
+        <div class="refine-footer">
+          <p class="refine-hint">Address the gaps above before moving forward.</p>
+          <a class="btn-ghost-inline" href="/decisions/new">Refine inputs →</a>
+        </div>
+      {/if}
     </div>
   {/if}
 
@@ -221,6 +320,88 @@
     color: var(--text-secondary);
   }
 
+  /* CONFIDENCE GATE */
+  .gate {
+    border: 1px solid;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .gate-not-ready  { border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.05); }
+  .gate-needs-work { border-color: rgba(245, 158, 11, 0.3);  background: rgba(245, 158, 11, 0.05);  }
+  .gate-ready      { border-color: rgba(52, 211, 153, 0.3);  background: rgba(52, 211, 153, 0.05);  }
+
+  .gate-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .gate-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .gate-rating {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .gate-rating-not-ready  { color: #f87171; }
+  .gate-rating-needs-work { color: #f59e0b; }
+  .gate-rating-ready      { color: #34d399; }
+
+  .gate-reason {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+
+  .gate-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: var(--orange);
+    color: white;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-primary:hover:not(:disabled) { background: #ea6d0e; transform: translateY(-1px); }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .btn-ghost {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 10px 4px;
+    transition: color 0.15s;
+  }
+
+  .btn-ghost:hover { color: var(--text-primary); }
+
+  /* OUTPUT BLOCKS */
   .output-block {
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -256,6 +437,31 @@
   .output-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
   .output-desc  { font-size: 12px; color: var(--text-secondary); }
   .output-body  { padding: 24px; }
+
+  .refine-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .refine-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .btn-ghost-inline {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.15s;
+  }
+
+  .btn-ghost-inline:hover { color: var(--text-primary); }
 
   /* NEXT STEP CARDS */
   .next-section {

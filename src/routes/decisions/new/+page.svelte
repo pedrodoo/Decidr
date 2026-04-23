@@ -101,7 +101,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          mode: 'prepare',
+          mode: 'confidence',
           input: {
             audience: audience.id,
             audienceLabel: audience.label,
@@ -116,7 +116,7 @@
       }
 
       const result = await response.json();
-      outputsStore.set({ prepare: result.prepare });
+      outputsStore.set({ confidence: result.confidence });
       inputStore.set({ audience, form });
       goto('/decisions/outputs');
 
