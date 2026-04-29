@@ -6,7 +6,6 @@
   import AudienceGate from '$lib/components/AudienceGate.svelte';
   import AudienceIndicator from '$lib/components/AudienceIndicator.svelte';
   import StepProgress from '$lib/components/StepProgress.svelte';
-  import CoachResponse from '$lib/components/CoachResponse.svelte';
   import { strings } from '$lib/strings.js';
   import { inputStore } from '$lib/stores/input';
   import { outputsStore } from '../../../lib/stores/outputs';
@@ -55,6 +54,35 @@
     expectedOutcome: ''
   });
 
+  let fieldValidation = $state<Record<string, string>>({});
+
+  function validate(step: Step) {
+    const next: Record<string, string> = {};
+    if (step === 1) {
+      if (!form.decision.trim()) next.decision = "Looks empty — without this the output won't have much to work with.";
+      if (!form.problem.trim()) next.problem = "Looks empty — without this the output won't have much to work with.";
+    }
+    if (step === 2) {
+      if (!form.options.trim()) {
+        next.options = "Looks empty — without this the output won't have much to work with.";
+      } else if (form.options.split('\n').filter(l => l.trim().length > 2).length < 2) {
+        next.options = "We only detected one option — usually we'd expect to see alternatives here.";
+      }
+      if (!form.data.trim()) next.data = "Looks empty — without evidence, the output may feel thin.";
+      if (!form.tradeoffs.trim()) next.tradeoffs = "Nothing here — outputs tend to be stronger when tradeoffs are acknowledged.";
+    }
+    if (step === 3) {
+      if (!form.primaryMetric.trim()) {
+        next.primaryMetric = "Looks empty — without a metric, success is hard to define.";
+      } else if (!/[\d%]/.test(form.primaryMetric)) {
+        next.primaryMetric = "No number or % detected — a metric without a target is hard to evaluate.";
+      }
+      if (!form.guardrailMetric.trim()) next.guardrailMetric = "Nothing here — consider what you're not willing to sacrifice.";
+      if (!form.expectedOutcome.trim()) next.expectedOutcome = "Looks empty — without a prediction, the output has less to anchor to.";
+    }
+    fieldValidation = next;
+  }
+
   const s = strings.newDecision;
   const businessAreas = s.businessAreas;
   const prompts = s.prompts as Record<string, any>;
@@ -86,17 +114,19 @@
     phase = 'gate';
     currentStep = 1;
     coachVisible = { 1: false, 2: false, 3: false };
+    fieldValidation = {};
   }
 
   function submitStep(n: Step) {
+    validate(n);
     coachVisible[n] = true;
-    // Scroll to coach after tick
     setTimeout(() => {
       document.getElementById(`coach-${n}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 50);
   }
 
   function goToStep(n: Step) {
+    fieldValidation = {};
     currentStep = n;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -110,6 +140,7 @@
   let generateError = $state<string | null>(null);
 
   async function handleGenerate() {
+    validate(3);
     loading = true;
     generateError = null;
 
@@ -179,9 +210,13 @@
           <input
             id="f-decision"
             type="text"
+            class:warned={!!fieldValidation.decision}
             bind:value={form.decision}
             placeholder={s.placeholders.decision}
           />
+          {#if fieldValidation.decision}
+            <p class="field-message">{fieldValidation.decision}</p>
+          {/if}
         </div>
 
         <div class="field">
@@ -190,9 +225,13 @@
           <textarea
             id="f-problem"
             class="short"
+            class:warned={!!fieldValidation.problem}
             bind:value={form.problem}
             placeholder={s.placeholders.problem}
           ></textarea>
+          {#if fieldValidation.problem}
+            <p class="field-message">{fieldValidation.problem}</p>
+          {/if}
         </div>
 
         <fieldset class="field fieldset-reset">
@@ -212,6 +251,10 @@
           </div>
         </fieldset>
 
+        {#if coachVisible[1] && Object.keys(fieldValidation).length > 0}
+          <p class="validation-disclaimer">These are rule-based checks, not a full review — you know your context better than we do.</p>
+        {/if}
+
         <div class="step-actions">
           <span class="step-counter">{stepCounter(1, 3)}</span>
           <button class="btn-primary" type="button" onclick={() => submitStep(1)}>
@@ -222,19 +265,17 @@
           </button>
         </div>
 
-        <div id="coach-1">
-          <CoachResponse
-            visible={coachVisible[1]}
-            stepLabel={s.stepLabels.contextReview}
-            audienceLabel={audience.label}
-            intro={c[1].intro}
-            questions={c[1].questions}
-            challenge={c[1].challenge}
-            challengeIsPositive={c[1].challengeIsPositive}
-            continueLabel={c[1].continueLabel}
-            onContinue={() => goToStep(2)}
-          />
-        </div>
+        {#if coachVisible[1]}
+          <div id="coach-1" class="coach-placeholder">
+            <div class="coach-placeholder-header">
+              <span class="coach-placeholder-badge">Coming soon</span>
+              <span class="coach-placeholder-title">Input-aware coaching</span>
+            </div>
+            <p class="coach-placeholder-body">Based on what you've written, this space will surface questions worth sitting with before you move on — gaps in your reasoning, assumptions to pressure-test, and angles a {audience.label} will likely push back on. Powered by NLP analysis of your specific inputs, not preset prompts.</p>
+            <p class="coach-placeholder-sub">For now, take a moment to re-read what you've written above.</p>
+            <button class="btn-primary" type="button" onclick={() => goToStep(2)}>Continue to Analysis →</button>
+          </div>
+        {/if}
       </div>
     {/if}
 
@@ -244,20 +285,33 @@
         <div class="field">
           <label class="field-label" for="f-options">{s.fieldLabels.options}</label>
           <p class="field-prompt">{@html p.options}</p>
-          <textarea id="f-options" class="medium" bind:value={form.options} placeholder={s.placeholders.options}></textarea>
+          <textarea id="f-options" class="medium" class:warned={!!fieldValidation.options} bind:value={form.options} placeholder={s.placeholders.options}></textarea>
+          {#if fieldValidation.options}
+            <p class="field-message">{fieldValidation.options}</p>
+          {/if}
         </div>
 
         <div class="field">
           <label class="field-label" for="f-data">{s.fieldLabels.data}</label>
           <p class="field-prompt">{@html p.data}</p>
-          <textarea id="f-data" class="short" bind:value={form.data} placeholder={s.placeholders.data}></textarea>
+          <textarea id="f-data" class="short" class:warned={!!fieldValidation.data} bind:value={form.data} placeholder={s.placeholders.data}></textarea>
+          {#if fieldValidation.data}
+            <p class="field-message">{fieldValidation.data}</p>
+          {/if}
         </div>
 
         <div class="field">
           <label class="field-label" for="f-tradeoffs">{s.fieldLabels.tradeoffs}</label>
           <p class="field-prompt">{@html p.tradeoffs}</p>
-          <textarea id="f-tradeoffs" class="short" bind:value={form.tradeoffs} placeholder={s.placeholders.tradeoffs}></textarea>
+          <textarea id="f-tradeoffs" class="short" class:warned={!!fieldValidation.tradeoffs} bind:value={form.tradeoffs} placeholder={s.placeholders.tradeoffs}></textarea>
+          {#if fieldValidation.tradeoffs}
+            <p class="field-message">{fieldValidation.tradeoffs}</p>
+          {/if}
         </div>
+
+        {#if coachVisible[2] && Object.keys(fieldValidation).length > 0}
+          <p class="validation-disclaimer">These are rule-based checks, not a full review — you know your context better than we do.</p>
+        {/if}
 
         <div class="step-actions">
           <button class="btn-secondary" type="button" onclick={() => goToStep(1)}>
@@ -277,19 +331,17 @@
           </div>
         </div>
 
-        <div id="coach-2">
-          <CoachResponse
-            visible={coachVisible[2]}
-            stepLabel={s.stepLabels.analysisReview}
-            audienceLabel={audience.label}
-            intro={c[2].intro}
-            questions={c[2].questions}
-            challenge={c[2].challenge}
-            challengeIsPositive={c[2].challengeIsPositive}
-            continueLabel={c[2].continueLabel}
-            onContinue={() => goToStep(3)}
-          />
-        </div>
+        {#if coachVisible[2]}
+          <div id="coach-2" class="coach-placeholder">
+            <div class="coach-placeholder-header">
+              <span class="coach-placeholder-badge">Coming soon</span>
+              <span class="coach-placeholder-title">Input-aware coaching</span>
+            </div>
+            <p class="coach-placeholder-body">Based on what you've written, this space will surface questions worth sitting with before you move on — gaps in your reasoning, assumptions to pressure-test, and angles a {audience.label} will likely push back on. Powered by NLP analysis of your specific inputs, not preset prompts.</p>
+            <p class="coach-placeholder-sub">For now, take a moment to re-read what you've written above.</p>
+            <button class="btn-primary" type="button" onclick={() => goToStep(3)}>Continue to Outcomes →</button>
+          </div>
+        {/if}
       </div>
     {/if}
 
@@ -300,19 +352,28 @@
           <div class="field">
             <label class="field-label" for="f-metric">{s.fieldLabels.primaryMetric}</label>
             <p class="field-prompt">{@html p.primaryMetric}</p>
-            <input id="f-metric" type="text" bind:value={form.primaryMetric} placeholder={s.placeholders.primaryMetric} />
+            <input id="f-metric" type="text" class:warned={!!fieldValidation.primaryMetric} bind:value={form.primaryMetric} placeholder={s.placeholders.primaryMetric} />
+            {#if fieldValidation.primaryMetric}
+              <p class="field-message">{fieldValidation.primaryMetric}</p>
+            {/if}
           </div>
           <div class="field">
             <label class="field-label" for="f-guardrail">{s.fieldLabels.guardrailMetric}</label>
             <p class="field-prompt">{@html p.guardrailMetric}</p>
-            <input id="f-guardrail" type="text" bind:value={form.guardrailMetric} placeholder={s.placeholders.guardrailMetric} />
+            <input id="f-guardrail" type="text" class:warned={!!fieldValidation.guardrailMetric} bind:value={form.guardrailMetric} placeholder={s.placeholders.guardrailMetric} />
+            {#if fieldValidation.guardrailMetric}
+              <p class="field-message">{fieldValidation.guardrailMetric}</p>
+            {/if}
           </div>
         </div>
 
         <div class="field">
           <label class="field-label" for="f-outcome">{s.fieldLabels.expectedOutcome}</label>
           <p class="field-prompt">{@html p.expectedOutcome}</p>
-          <input id="f-outcome" type="text" bind:value={form.expectedOutcome} placeholder={s.placeholders.expectedOutcome} />
+          <input id="f-outcome" type="text" class:warned={!!fieldValidation.expectedOutcome} bind:value={form.expectedOutcome} placeholder={s.placeholders.expectedOutcome} />
+          {#if fieldValidation.expectedOutcome}
+            <p class="field-message">{fieldValidation.expectedOutcome}</p>
+          {/if}
         </div>
 
         <div class="divider"></div>
@@ -344,6 +405,10 @@
             </div>
           </div>
         </div>
+
+        {#if Object.keys(fieldValidation).length > 0}
+          <p class="validation-disclaimer">These are rule-based checks, not a full review — you know your context better than we do.</p>
+        {/if}
 
         <div class="step-actions">
           <span class="step-counter">{stepCounter(3, 3)}</span>
@@ -508,4 +573,62 @@
 
   .output-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
   .output-desc  { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.4; }
+
+  /* Field validation */
+  :global(input.warned), :global(textarea.warned) { border-color: var(--orange) !important; }
+  .field-message {
+    font-size: 12px;
+    color: var(--orange);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .validation-disclaimer {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  /* Coach placeholder */
+  .coach-placeholder {
+    margin-top: 32px;
+    padding: 24px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .coach-placeholder-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .coach-placeholder-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+  .coach-placeholder-title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .coach-placeholder-body {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .coach-placeholder-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
 </style>
