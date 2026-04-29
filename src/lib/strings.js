@@ -154,15 +154,17 @@ export const strings = {
         problem:
           'Frame this as a business problem, not a UX observation. <strong>What is the cost of not acting?</strong> A CEO will want to know that before anything else.',
         options:
-          "<strong>Include the option to do nothing.</strong> A CEO will ask why you're not running a test first, or why you're not trying a less drastic change. Anticipate that.",
+          "<strong>Include the option to do nothing.</strong> A CEO will ask why you're not running a test first, or why you're not trying a less drastic change. Anticipate that. If you only have one option, you haven't explored the space yet.",
         data:
-          'Qualitative signals count — but <strong>name them as signals, not facts.</strong> A CEO will probe anything that looks like assumption dressed as data.',
+          'Qualitative signals count — but <strong>name them as signals, not facts.</strong> A CEO will probe anything that looks like assumption dressed as data. "Users seem confused" is not data. Name your source: session recordings, support tickets, a survey. Even one number beats a vague impression.',
         tradeoffs:
           "A CEO needs to know what you're giving up — <strong>and that you've thought about whether the business can absorb it.</strong> Don't hide the downside.",
-        primaryMetric: 'The number that tells you this decision worked.',
-        guardrailMetric: "The metric you're <strong>not willing to sacrifice.</strong>",
+        primaryMetric:
+          'Name the metric <strong>and the target.</strong> "Signup rate" is a field name. "Signup completion above 65%" is something you can be held to.',
+        guardrailMetric:
+          "What breaks if this goes wrong? Even if the primary metric wins, <strong>name the number that would make this decision a failure</strong> regardless.",
         expectedOutcome:
-          '<strong>Make a prediction you can be held to.</strong> A CEO will remember what you said. Vague expectations are worse than honest uncertainty.',
+          '<strong>Make a prediction you can be held to.</strong> A CEO will remember what you said. Vague expectations are worse than honest uncertainty. A good prediction has three parts: what changes, by how much, and by when.',
       },
       // Add cpo, cfo, eng when those audiences are enabled
     },
