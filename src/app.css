@@ -381,8 +381,8 @@ textarea:focus-visible {
 }
 
 .btn-logout:hover {
-  border-color: #f87171;
-  color: #f87171;
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 /* ─── Bug modal content ──────────────────────────────────────────────── */
@@ -404,7 +404,7 @@ textarea:focus-visible {
 }
 
 .required {
-  color: #f87171;
+  color: var(--danger);
 }
 
 textarea.short {
@@ -424,5 +424,5 @@ textarea.short {
 
 .error-msg {
   font-size: 12px;
-  color: #f87171;
+  color: var(--danger);
 }

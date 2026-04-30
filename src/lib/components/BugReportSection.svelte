@@ -1,6 +1,7 @@
 <script lang="ts">
 	import BugReportModal from '$lib/components/BugReportModal.svelte';
 	import TopNav from '$lib/components/TopNav.svelte';
+	import type { Theme } from '$lib/theme';
 	import type { SessionLayoutUser } from '$lib/types/session';
 
 	type BugReportValues = {
@@ -12,9 +13,11 @@
 	type Props = {
 		user: SessionLayoutUser;
 		onLogOut: () => void | Promise<void>;
+		theme: Theme;
+		onThemeToggle: () => void;
 	};
 
-	let { user, onLogOut }: Props = $props();
+	let { user, onLogOut, theme, onThemeToggle }: Props = $props();
 	let isBugModalOpen = $state(false);
 	let isSubmittingBug = $state(false);
 	let bugSubmitError = $state('');
@@ -60,7 +63,13 @@
 	}
 </script>
 
-<TopNav user={user} onReportBug={openBugModal} onLogOut={onLogOut} />
+<TopNav
+	user={user}
+	onReportBug={openBugModal}
+	onLogOut={onLogOut}
+	theme={theme}
+	onThemeToggle={onThemeToggle}
+/>
 
 {#if user}
 	<BugReportModal

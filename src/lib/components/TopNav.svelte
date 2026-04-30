@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Theme } from '$lib/theme';
 	import type { SessionLayoutUser } from '$lib/types/session';
 	import { getUserDisplayName, getUserInitial } from '$lib/utils/userDisplay';
 
@@ -6,9 +7,11 @@
 		user: SessionLayoutUser;
 		onReportBug: () => void;
 		onLogOut: () => void | Promise<void>;
+		theme: Theme;
+		onThemeToggle: () => void;
 	};
 
-	let { user, onReportBug, onLogOut }: Props = $props();
+	let { user, onReportBug, onLogOut, theme, onThemeToggle }: Props = $props();
 	let isAccountModalOpen = $state(false);
 
 	const displayName = $derived(getUserDisplayName(user?.name, user?.email));
@@ -48,6 +51,38 @@
 	</a>
 
 	<div class="nav-actions">
+		<button
+			class="nav-btn"
+			type="button"
+			aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+			title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+			onclick={onThemeToggle}
+		>
+			{#if theme === 'dark'}
+				<svg class="nav-btn__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"></circle>
+					<path d="M12 2.8V5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+					<path d="M12 18.8V21.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+					<path d="M5.5 5.5L7.2 7.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+					<path d="M16.8 16.8L18.5 18.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+					<path d="M2.8 12H5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+					<path d="M18.8 12H21.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+					<path d="M5.5 18.5L7.2 16.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+					<path d="M16.8 7.2L18.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+				</svg>
+			{:else}
+				<svg class="nav-btn__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path
+						d="M20.1 14.3A8.3 8.3 0 1 1 9.7 3.9a7 7 0 1 0 10.4 10.4Z"
+						stroke="currentColor"
+						stroke-width="1.8"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					></path>
+				</svg>
+			{/if}
+		</button>
+
 		{#if user}
 			<button class="nav-btn" type="button" aria-label="Report a bug" title="Report a bug" onclick={onReportBug}>
 				<svg class="nav-btn__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">

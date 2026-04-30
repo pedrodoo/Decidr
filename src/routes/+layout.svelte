@@ -3,7 +3,9 @@
 	import { dev } from '$app/environment';
 	import favicon from '$lib/assets/favicon.svg';
 	import BugReportSection from '$lib/components/BugReportSection.svelte';
+	import { applyTheme, getPreferredTheme, toggleTheme, type Theme } from '$lib/theme';
 	import type { LayoutData } from './$types';
+	import { onMount } from 'svelte';
 	import '@fontsource/sora/300.css';
 	import '@fontsource/sora/400.css';
 	import '@fontsource/sora/500.css';
@@ -14,6 +16,7 @@
 	import '../app.css';
 
 	let { children, data } = $props<{ children: () => unknown; data: LayoutData }>();
+	let theme = $state<Theme>('dark');
 
 	async function handleLogOut() {
 		try {
@@ -33,14 +36,44 @@
 			window.location.href = '/login';
 		}
 	}
+
+	onMount(() => {
+		theme = getPreferredTheme();
+		applyTheme(theme);
+	});
+
+	function handleThemeToggle() {
+		theme = toggleTheme(theme);
+	}
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<script>
+		(() => {
+			try {
+				const saved = localStorage.getItem('theme');
+				const theme =
+					saved === 'dark' || saved === 'light'
+						? saved
+						: window.matchMedia('(prefers-color-scheme: dark)').matches
+							? 'dark'
+							: 'light';
+				document.documentElement.dataset.theme = theme;
+			} catch {
+				document.documentElement.dataset.theme = 'dark';
+			}
+		})();
+	</script>
 </svelte:head>
 
 <a href="#main" class="skip-link">Skip to main content</a>
-<BugReportSection user={data.user} onLogOut={handleLogOut} />
+<BugReportSection
+	user={data.user}
+	onLogOut={handleLogOut}
+	theme={theme}
+	onThemeToggle={handleThemeToggle}
+/>
 
 <div id="main">
 	{@render children()}
