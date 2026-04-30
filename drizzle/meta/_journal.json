@@ -15,6 +15,13 @@
       "when": 1776176884824,
       "tag": "0001_lively_arachne",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777558120822,
+      "tag": "0002_clever_major_mapleleaf",
+      "breakpoints": true
     }
   ]
 }
