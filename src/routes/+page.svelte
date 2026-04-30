@@ -1,5 +1,5 @@
 <script lang="ts">
-	const SURVEY_URL = 'https://YOUR_SURVEY_LINK_HERE';
+const SURVEY_URL = 'https://tally.so/r/KYB58A';
 </script>
 
 <svelte:head>

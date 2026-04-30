@@ -55,9 +55,9 @@
 					formaction={actionSignUp}
 					disabled
 					aria-disabled="true"
-					title="Invite only. Request access from the homepage form."
+					title="Invite only. Request access via the survey on the homepage."
 				>
-					Invite only - request access on homepage
+					Invite only - request access via survey
 				</button>
 			</div>
 
