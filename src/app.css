@@ -255,7 +255,8 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 200;
+  /* Above route-level stacking (e.g. decision form z-index hacks); keep account/bug modals on top */
+  z-index: 12000;
   padding: 24px;
 }
 

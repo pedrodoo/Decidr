@@ -445,7 +445,6 @@
     margin: 0 auto;
     padding: 48px 24px 100px;
     position: relative;
-    z-index: 10000;
   }
 
   .sr-only {
