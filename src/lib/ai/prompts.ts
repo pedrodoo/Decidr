@@ -90,10 +90,10 @@ Your job is to assess, in one pass, whether this decision is ready to be reviewe
   const user = `
 ${buildContext(input)}
 
-Assess the readiness of this decision. Respond with exactly two lines:
+Assess the readiness of this decision. Use this format:
 
 Rating: [Not Ready | Needs Work | Ready to Present]
-Reason: [one sentence — the single most important reason for your rating]
+Reason: [2–3 sentences. First, state what is strong or what is missing. Then name the specific gap(s) concretely — e.g. "no baseline for account creation rate", "expected outcome is not anchored to a current metric". If the rating is not Ready to Present, end with one sentence saying exactly what would close the gap.]
 
 Criteria:
 - Not Ready: fundamental gaps in reasoning or missing key data that would make a full review premature

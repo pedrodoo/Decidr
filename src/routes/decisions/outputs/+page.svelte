@@ -25,10 +25,16 @@
   function parseConfidence(text: string): { rating: string; reason: string } {
     const lines = text.trim().split('\n');
     const ratingLine = lines.find(l => l.startsWith('Rating:')) ?? '';
-    const reasonLine = lines.find(l => l.startsWith('Reason:')) ?? '';
+    const reasonIdx = lines.findIndex(l => l.startsWith('Reason:'));
+    let reason = '';
+    if (reasonIdx !== -1) {
+      const firstPart = lines[reasonIdx].replace('Reason:', '').trim();
+      const rest = lines.slice(reasonIdx + 1).filter(l => l.trim()).join(' ').trim();
+      reason = [firstPart, rest].filter(Boolean).join(' ');
+    }
     return {
       rating: ratingLine.replace('Rating:', '').trim(),
-      reason: reasonLine.replace('Reason:', '').trim()
+      reason
     };
   }
 
