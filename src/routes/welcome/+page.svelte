@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { listRecentDecisions, type DecisionHistoryItem } from '$lib/decisions/storage';
+	import {
+		listRecentDecisions,
+		resolveDecisionLink,
+		STATUS_LABELS,
+		type DecisionRecord
+	} from '$lib/decisions/storage';
 
-	let recentDecisions = $state<DecisionHistoryItem[]>([]);
+	let recentDecisions = $state<DecisionRecord[]>([]);
 
 	function formatDate(isoDate: string): string {
 		const date = new Date(isoDate);
@@ -11,6 +16,10 @@
 			month: 'short'
 		}).format(date);
 	}
+
+	const ctaLabel = $derived(
+		recentDecisions.length === 0 ? 'Start your first decision' : 'Start a new decision'
+	);
 
 	onMount(() => {
 		recentDecisions = listRecentDecisions(3);
@@ -35,7 +44,7 @@
 
 		<div class="ctaRow">
 			<a class="btn-primary cta" href="/decisions/new">
-				Start your first decision
+				{ctaLabel}
 				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 					<path
 						d="M5 3l4 4-4 4"
@@ -56,14 +65,19 @@
 				<a class="view-all" href="/decisions">View all</a>
 			</div>
 			<div class="recent-list">
-				{#each recentDecisions as decision}
-					<article class="recent-item">
-						<div>
+				{#each recentDecisions as decision (decision.id)}
+					<a class="recent-item" href={resolveDecisionLink(decision)}>
+						<div class="recent-item-main">
 							<h3>{decision.title}</h3>
 							<p>{decision.audienceLabel}</p>
 						</div>
-						<span>{formatDate(decision.updatedAt)}</span>
-					</article>
+						<div class="recent-item-meta">
+							<span class="status-pill status-{decision.status}">
+								{STATUS_LABELS[decision.status]}
+							</span>
+							<span class="recent-item-date">{formatDate(decision.updatedAt)}</span>
+						</div>
+					</a>
 				{/each}
 			</div>
 		</section>
@@ -161,21 +175,35 @@
 	.recent-list {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
 	}
 
 	.recent-item {
 		display: flex;
 		justify-content: space-between;
-		align-items: baseline;
+		align-items: center;
 		gap: 12px;
-		padding: 10px 0;
+		padding: 12px 0;
 		border-top: 1px solid var(--border);
+		text-decoration: none;
+		color: inherit;
+		transition: background 0.15s;
+		border-radius: 6px;
+		margin: 0 -8px;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+
+	.recent-item:hover {
+		background: var(--surface-2);
 	}
 
 	.recent-item:first-child {
 		border-top: 0;
-		padding-top: 0;
+	}
+
+	.recent-item-main {
+		min-width: 0;
+		flex: 1;
 	}
 
 	.recent-item h3 {
@@ -183,6 +211,9 @@
 		font-weight: 600;
 		color: var(--text-primary);
 		margin-bottom: 2px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.recent-item p {
@@ -190,11 +221,47 @@
 		color: var(--text-secondary);
 	}
 
-	.recent-item span {
+	.recent-item-meta {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-shrink: 0;
+	}
+
+	.recent-item-date {
 		font-family: var(--font-mono);
 		font-size: 11px;
 		color: var(--text-muted);
-		flex-shrink: 0;
+	}
+
+	.status-pill {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		border-radius: 999px;
+		padding: 3px 8px;
+		border: 1px solid var(--border);
+		color: var(--text-secondary);
+		background: var(--surface);
+	}
+
+	.status-pill.status-draft {
+		color: var(--text-muted);
+	}
+	.status-pill.status-not-ready {
+		color: #f87171;
+		border-color: rgba(248, 113, 113, 0.3);
+		background: rgba(248, 113, 113, 0.06);
+	}
+	.status-pill.status-needs-work {
+		color: #f59e0b;
+		border-color: rgba(245, 158, 11, 0.3);
+		background: rgba(245, 158, 11, 0.06);
+	}
+	.status-pill.status-ready {
+		color: #34d399;
+		border-color: rgba(52, 211, 153, 0.3);
+		background: rgba(52, 211, 153, 0.06);
 	}
 </style>
-

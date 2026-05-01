@@ -9,24 +9,21 @@
   import { strings } from '$lib/strings.js';
   import { inputStore } from '$lib/stores/input';
   import { outputsStore } from '../../../lib/stores/outputs';
-  import { saveDecision } from '$lib/decisions/storage';
+  import {
+    appendIteration,
+    getDecision,
+    upsertDraft,
+    EMPTY_FORM,
+    type AudienceSelection,
+    type DecisionForm
+  } from '$lib/decisions/storage';
   import { goto } from '$app/navigation';
-  import { get } from 'svelte/store';
+  import { page } from '$app/state';
 
   import { onMount } from 'svelte';
-  onMount(() => {
-    outputsStore.set({} as any);
-    const stored = get(inputStore);
-    if (stored) {
-      audience = stored.audience;
-      form = { ...stored.form };
-      phase = 'steps';
-    }
-  });
 
   type Phase = 'gate' | 'steps';
   type Step = 1 | 2 | 3;
-  type AudienceSelection = { id: string; label: string; icon: string; description: string; available: boolean };
 
   // --- State ---
   let phase = $state<Phase>('gate');
@@ -38,21 +35,61 @@
     available: true
   });
   let currentStep = $state<Step>(1);
+  let currentId = $state<string | null>(null);
+  let hydrated = $state(false);
 
   // Coach visibility per step
   let coachVisible = $state<Record<Step, boolean>>({ 1: false, 2: false, 3: false });
 
   // Form values
-  let form = $state({
-    decision: '',
-    problem: '',
-    businessArea: '',
-    options: '',
-    data: '',
-    tradeoffs: '',
-    primaryMetric: '',
-    guardrailMetric: '',
-    expectedOutcome: ''
+  let form = $state<DecisionForm>({ ...EMPTY_FORM });
+
+  onMount(() => {
+    outputsStore.set({});
+    const idParam = page.url.searchParams.get('id');
+    if (idParam) {
+      const record = getDecision(idParam);
+      if (record) {
+        currentId = record.id;
+        audience = { ...record.audience };
+        form = { ...record.form };
+        phase = 'steps';
+      }
+    }
+    hydrated = true;
+  });
+
+  // Debounced auto-save: persist as draft once the user has typed into the
+  // primary fields (decision or problem). This avoids creating empty records
+  // when the user merely opens the page.
+  let saveTimer: ReturnType<typeof setTimeout> | null = null;
+  $effect(() => {
+    if (!hydrated) return;
+    if (phase !== 'steps') return;
+    const hasContent = form.decision.trim().length > 0 || form.problem.trim().length > 0;
+    if (!hasContent && !currentId) return;
+
+    // Snapshot reactive state so the timer body uses the latest values.
+    const snapshot = {
+      id: currentId ?? undefined,
+      audience: { ...audience },
+      form: { ...form }
+    };
+
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      const saved = upsertDraft(snapshot);
+      if (saved && !currentId) {
+        currentId = saved.id;
+      }
+    }, 600);
+
+    return () => {
+      if (saveTimer) {
+        clearTimeout(saveTimer);
+        saveTimer = null;
+      }
+    };
   });
 
   let fieldValidation = $state<Record<string, string>>({});
@@ -101,17 +138,8 @@
 
   function handleAudienceReset() {
     inputStore.clear();
-    form = {
-      decision: '',
-      problem: '',
-      businessArea: '',
-      options: '',
-      data: '',
-      tradeoffs: '',
-      primaryMetric: '',
-      guardrailMetric: '',
-      expectedOutcome: ''
-    };
+    form = { ...EMPTY_FORM };
+    currentId = null;
     phase = 'gate';
     currentStep = 1;
     coachVisible = { 1: false, 2: false, 3: false };
@@ -146,6 +174,15 @@
     generateError = null;
 
     try {
+      // Ensure we have a persisted draft before appending an iteration so the
+      // record exists even if the user reloads mid-generation.
+      const drafted = upsertDraft({
+        id: currentId ?? undefined,
+        audience,
+        form
+      });
+      if (drafted) currentId = drafted.id;
+
       const url = '/api/decisions/generate';
       const response = await fetch(url, {
         method: 'POST',
@@ -166,15 +203,22 @@
       }
 
       const result = await response.json();
-      outputsStore.set({ confidence: result.confidence });
-      inputStore.set({ audience, form });
-      saveDecision({
-        title: form.decision,
-        audienceLabel: audience.label,
-        summary: form.problem,
-        status: 'generated'
+      const idForIteration = currentId;
+      if (!idForIteration) {
+        throw new Error('Could not persist decision before generating outputs.');
+      }
+
+      const updated = appendIteration(idForIteration, {
+        audience,
+        form,
+        outputs: { confidence: result.confidence }
       });
-      goto('/decisions/outputs');
+
+      outputsStore.set({ confidence: result.confidence });
+      inputStore.set({ id: idForIteration, audience, form });
+
+      const targetId = updated?.id ?? idForIteration;
+      goto(`/decisions/outputs?id=${encodeURIComponent(targetId)}`);
 
     } catch (e) {
       generateError = e instanceof Error ? e.message : 'Unknown error';

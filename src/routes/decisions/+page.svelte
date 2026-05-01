@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { listDecisions, type DecisionHistoryItem } from '$lib/decisions/storage';
+	import {
+		listDecisions,
+		resolveDecisionLink,
+		STATUS_LABELS,
+		type DecisionRecord
+	} from '$lib/decisions/storage';
 
-	let decisions = $state<DecisionHistoryItem[]>([]);
+	let decisions = $state<DecisionRecord[]>([]);
 
 	function formatDate(isoDate: string): string {
 		const date = new Date(isoDate);
@@ -40,22 +45,27 @@
 		</section>
 	{:else}
 		<section class="list">
-			{#each decisions as decision}
-				<article class="card">
+			{#each decisions as decision (decision.id)}
+				<a class="card" href={resolveDecisionLink(decision)}>
 					<div class="card-head">
 						<h2>{decision.title}</h2>
 						<span class="date">{formatDate(decision.updatedAt)}</span>
 					</div>
 					<div class="meta-row">
 						<span class="pill">{decision.audienceLabel}</span>
-						{#if decision.status}
-							<span class="pill">{decision.status}</span>
+						<span class="pill status-pill status-{decision.status}">
+							{STATUS_LABELS[decision.status]}
+						</span>
+						{#if decision.iterations.length > 0}
+							<span class="pill">
+								{decision.iterations.length} iteration{decision.iterations.length === 1 ? '' : 's'}
+							</span>
 						{/if}
 					</div>
 					{#if decision.summary}
 						<p class="summary">{decision.summary}</p>
 					{/if}
-				</article>
+				</a>
 			{/each}
 		</section>
 	{/if}
@@ -130,6 +140,15 @@
 		background: var(--surface);
 		border-radius: 10px;
 		padding: 18px;
+		text-decoration: none;
+		color: inherit;
+		display: block;
+		transition: border-color 0.15s, transform 0.1s;
+	}
+
+	.card:hover {
+		border-color: var(--border-focus);
+		transform: translateY(-1px);
 	}
 
 	.card-head {
@@ -169,6 +188,25 @@
 		border: 1px solid var(--border);
 		border-radius: 999px;
 		padding: 4px 8px;
+	}
+
+	.status-pill.status-draft {
+		color: var(--text-muted);
+	}
+	.status-pill.status-not-ready {
+		color: #f87171;
+		border-color: rgba(248, 113, 113, 0.3);
+		background: rgba(248, 113, 113, 0.06);
+	}
+	.status-pill.status-needs-work {
+		color: #f59e0b;
+		border-color: rgba(245, 158, 11, 0.3);
+		background: rgba(245, 158, 11, 0.06);
+	}
+	.status-pill.status-ready {
+		color: #34d399;
+		border-color: rgba(52, 211, 153, 0.3);
+		background: rgba(52, 211, 153, 0.06);
 	}
 
 	.summary {

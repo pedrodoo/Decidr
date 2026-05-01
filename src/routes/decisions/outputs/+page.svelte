@@ -1,7 +1,13 @@
 <script lang="ts">
   import { outputsStore, type DecisionOutputs } from '$lib/stores/outputs';
   import { inputStore } from '$lib/stores/input';
+  import {
+    getDecision,
+    getLatestIteration,
+    updateLatestIterationOutputs
+  } from '$lib/decisions/storage';
   import { goto } from '$app/navigation';
+  import { page } from '$app/state';
   import { onMount } from 'svelte';
   import { marked } from 'marked';
   import { get } from 'svelte/store';
@@ -9,13 +15,54 @@
   let outputs = $state<DecisionOutputs>({});
   let loading = $state<string | null>(null);
   let generateError = $state<string | null>(null);
+  let currentId = $state<string | null>(null);
+  let iterationCount = $state(0);
+  let iterationIndex = $state(0);
+  let lastGeneratedAt = $state<string | null>(null);
+
+  function refineHref(): string {
+    return currentId ? `/decisions/new?id=${encodeURIComponent(currentId)}` : '/decisions/new';
+  }
+
+  function formatTime(iso: string | null): string {
+    if (!iso) return '';
+    const date = new Date(iso);
+    return new Intl.DateTimeFormat('pt-PT', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
 
   onMount(() => {
-    const unsubscribe = outputsStore.subscribe(value => {
-      outputs = value ?? {};
-      if (!value?.confidence && !value?.prepare) goto('/decisions/new');
+    const idParam = page.url.searchParams.get('id');
+    if (!idParam) {
+      goto('/decisions');
+      return;
+    }
+    const record = getDecision(idParam);
+    if (!record) {
+      goto('/decisions');
+      return;
+    }
+    const latest = getLatestIteration(record);
+    if (!latest) {
+      goto(`/decisions/new?id=${encodeURIComponent(record.id)}`);
+      return;
+    }
+
+    currentId = record.id;
+    iterationCount = record.iterations.length;
+    iterationIndex = record.iterations.length;
+    lastGeneratedAt = latest.generatedAt;
+    outputs = { ...latest.outputs };
+    outputsStore.set({ ...latest.outputs });
+    inputStore.set({
+      id: record.id,
+      audience: latest.inputSnapshot.audience,
+      form: latest.inputSnapshot.form
     });
-    return unsubscribe;
   });
 
   function renderMarkdown(text: string): string {
@@ -50,7 +97,7 @@
 
     const stored = get(inputStore);
     if (!stored) {
-      goto('/decisions/new');
+      goto(refineHref());
       return;
     }
 
@@ -74,7 +121,11 @@
       }
 
       const result = await response.json();
+      outputs = { ...outputs, prepare: result.prepare };
       outputsStore.update(o => ({ ...o, prepare: result.prepare }));
+      if (currentId) {
+        updateLatestIterationOutputs(currentId, { prepare: result.prepare });
+      }
 
     } catch (e) {
       generateError = e instanceof Error ? e.message : 'Unknown error';
@@ -89,7 +140,7 @@
 
     const stored = get(inputStore);
     if (!stored) {
-      goto('/decisions/new');
+      goto(refineHref());
       return;
     }
 
@@ -114,7 +165,11 @@
       }
 
       const result = await response.json();
+      outputs = { ...outputs, [mode]: result[mode] };
       outputsStore.update(o => ({ ...o, [mode]: result[mode] }));
+      if (currentId) {
+        updateLatestIterationOutputs(currentId, { [mode]: result[mode] });
+      }
 
     } catch (e) {
       generateError = e instanceof Error ? e.message : 'Unknown error';
@@ -126,14 +181,16 @@
 
 <div class="page">
   <div class="page-header">
-    <a class="back-btn" href="/decisions/new" aria-label="New decision">
+    <a class="back-btn" href={refineHref()} aria-label="Refine inputs">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
         <path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </a>
     <div>
       <h1 class="page-title">Your outputs</h1>
-      <p class="page-subtitle">Three views of the same decision</p>
+      <p class="page-subtitle">
+        Iteration {iterationIndex} of {iterationCount}{#if lastGeneratedAt} · generated {formatTime(lastGeneratedAt)}{/if}
+      </p>
     </div>
   </div>
 
@@ -166,9 +223,9 @@
                 </svg>
               {/if}
             </button>
-            <a class="btn-ghost" href="/decisions/new">Back to inputs</a>
+            <a class="btn-ghost" href={refineHref()}>Back to inputs</a>
           {:else}
-            <a class="btn-primary" href="/decisions/new">Back to inputs</a>
+            <a class="btn-primary" href={refineHref()}>Back to inputs</a>
             <button
               class="btn-ghost"
               type="button"
@@ -204,7 +261,7 @@
       {#if variant === 'not-ready' || variant === 'needs-work'}
         <div class="refine-footer">
           <p class="refine-hint">Address the gaps above before moving forward.</p>
-          <a class="btn-ghost-inline" href="/decisions/new">Refine inputs →</a>
+          <a class="btn-ghost-inline" href={refineHref()}>Refine inputs →</a>
         </div>
       {/if}
     </div>
