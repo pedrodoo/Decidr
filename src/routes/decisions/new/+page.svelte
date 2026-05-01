@@ -9,6 +9,7 @@
   import { strings } from '$lib/strings.js';
   import { inputStore } from '$lib/stores/input';
   import { outputsStore } from '../../../lib/stores/outputs';
+  import { saveDecision } from '$lib/decisions/storage';
   import { goto } from '$app/navigation';
   import { get } from 'svelte/store';
 
@@ -167,6 +168,12 @@
       const result = await response.json();
       outputsStore.set({ confidence: result.confidence });
       inputStore.set({ audience, form });
+      saveDecision({
+        title: form.decision,
+        audienceLabel: audience.label,
+        summary: form.problem,
+        status: 'generated'
+      });
       goto('/decisions/outputs');
 
     } catch (e) {

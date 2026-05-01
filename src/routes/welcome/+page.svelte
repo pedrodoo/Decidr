@@ -1,3 +1,22 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { listRecentDecisions, type DecisionHistoryItem } from '$lib/decisions/storage';
+
+	let recentDecisions = $state<DecisionHistoryItem[]>([]);
+
+	function formatDate(isoDate: string): string {
+		const date = new Date(isoDate);
+		return new Intl.DateTimeFormat('pt-PT', {
+			day: '2-digit',
+			month: 'short'
+		}).format(date);
+	}
+
+	onMount(() => {
+		recentDecisions = listRecentDecisions(3);
+	});
+</script>
+
 <svelte:head>
 	<title>Welcome</title>
 </svelte:head>
@@ -29,6 +48,26 @@
 			</a>
 		</div>
 	</section>
+
+	{#if recentDecisions.length > 0}
+		<section class="recent">
+			<div class="recent-header">
+				<h2>Recent decisions</h2>
+				<a class="view-all" href="/decisions">View all</a>
+			</div>
+			<div class="recent-list">
+				{#each recentDecisions as decision}
+					<article class="recent-item">
+						<div>
+							<h3>{decision.title}</h3>
+							<p>{decision.audienceLabel}</p>
+						</div>
+						<span>{formatDate(decision.updatedAt)}</span>
+					</article>
+				{/each}
+			</div>
+		</section>
+	{/if}
 </main>
 
 <style>
@@ -55,6 +94,7 @@
 		background: var(--surface);
 		border-radius: 10px;
 		padding: 28px;
+		margin-bottom: 16px;
 	}
 
 	.eyebrow {
@@ -89,6 +129,72 @@
 
 	.cta {
 		text-decoration: none;
+	}
+
+	.recent {
+		border: 1px solid var(--border);
+		background: var(--surface);
+		border-radius: 10px;
+		padding: 22px;
+	}
+
+	.recent-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 14px;
+	}
+
+	.recent-header h2 {
+		font-size: 17px;
+		font-weight: 600;
+		color: var(--text-primary);
+	}
+
+	.view-all {
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--text-secondary);
+		text-decoration: none;
+	}
+
+	.recent-list {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.recent-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 12px;
+		padding: 10px 0;
+		border-top: 1px solid var(--border);
+	}
+
+	.recent-item:first-child {
+		border-top: 0;
+		padding-top: 0;
+	}
+
+	.recent-item h3 {
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: 2px;
+	}
+
+	.recent-item p {
+		font-size: 12px;
+		color: var(--text-secondary);
+	}
+
+	.recent-item span {
+		font-family: var(--font-mono);
+		font-size: 11px;
+		color: var(--text-muted);
+		flex-shrink: 0;
 	}
 </style>
 
