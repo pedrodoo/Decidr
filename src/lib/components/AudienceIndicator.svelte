@@ -3,57 +3,71 @@
   Props: label (audience label, e.g. "CEO"), onReset() — called when user clicks to change audience.
 -->
 <script>
-  import { strings } from '$lib/strings.js';
+	import { strings } from '$lib/strings.js';
 
-  let { label = 'CEO', onReset } = $props();
+	let { label = 'CEO', onReset, showResetLabel = true } = $props();
 </script>
 
-<button class="indicator" onclick={onReset} type="button" aria-label={strings.audienceIndicator.startFreshAria}>
-  <span class="label">{strings.audienceIndicator.label}</span>
-  <span class="value">{label}</span>
-  <span class="change">{strings.audienceIndicator.startFresh}</span>
+<button
+	class="indicator"
+	onclick={onReset}
+	type="button"
+	aria-label={showResetLabel
+		? strings.audienceIndicator.startFreshAria
+		: strings.audienceIndicator.changeAudienceAria}
+>
+	<span class="label">{strings.audienceIndicator.label}</span>
+	<span class="value">{label}</span>
+	{#if showResetLabel}
+		<span class="change">{strings.audienceIndicator.startFresh}</span>
+	{/if}
 </button>
 
 <style>
-  .indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 8px 14px;
-    background: var(--orange-bg);
-    border: 1px solid var(--orange-border);
-    border-radius: 7px;
-    margin-bottom: 32px;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    transition: background 0.15s;
-  }
+	.indicator {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 44px;
+		padding: 8px 14px;
+		background: var(--orange-bg);
+		border: 1px solid var(--orange-border);
+		border-radius: 7px;
+		margin-bottom: 32px;
+		cursor: pointer;
+		width: 100%;
+		text-align: left;
+		transition: background 0.15s;
+	}
 
-  .indicator:hover { background: rgba(249, 115, 22, 0.16); }
-  .indicator:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+	.indicator:hover {
+		background: rgba(249, 115, 22, 0.16);
+	}
+	.indicator:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+	}
 
-  .label {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
+	.label {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
 
-  .value {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--orange);
-    font-weight: 500;
-  }
+	.value {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		color: var(--accent-text-orange);
+		font-weight: 500;
+	}
 
-  .change {
-    margin-left: auto;
-    font-size: var(--text-xs);
-    color: var(--text-muted);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
+	.change {
+		margin-left: auto;
+		font-size: var(--text-xs);
+		color: var(--text-muted);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
 </style>

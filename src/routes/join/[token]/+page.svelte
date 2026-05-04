@@ -37,7 +37,13 @@
 
 				<label class="field" for="password">
 					<span class="label">Password</span>
-					<input id="password" type="password" name="password" autocomplete="new-password" required />
+					<input
+						id="password"
+						type="password"
+						name="password"
+						autocomplete="new-password"
+						required
+					/>
 				</label>
 			</div>
 
@@ -69,7 +75,7 @@
 		font-size: var(--text-xs);
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
-		color: var(--orange);
+		color: var(--accent-text-orange);
 		margin-bottom: 12px;
 	}
 
@@ -111,7 +117,7 @@
 		font-size: var(--text-xs);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--orange);
+		color: var(--accent-text-orange);
 	}
 
 	.field input {
@@ -123,7 +129,9 @@
 		font-family: var(--font-sans);
 		font-size: var(--text-base);
 		color: var(--text-primary);
-		transition: border-color var(--dt-duration-normal), background var(--dt-duration-normal);
+		transition:
+			border-color var(--dt-duration-normal),
+			background var(--dt-duration-normal);
 		line-height: var(--dt-line-height-normal);
 	}
 
@@ -138,13 +146,13 @@
 	}
 
 	.field input:focus-visible {
-		outline: 2px solid var(--orange);
+		outline: 2px solid var(--focus-ring);
 		outline-offset: 2px;
 	}
 
 	.error {
 		font-size: 13px;
-		color: #f87171;
+		color: var(--semantic-danger);
 		margin-top: 6px;
 	}
 </style>

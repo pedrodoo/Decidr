@@ -65,6 +65,7 @@ export const strings = {
     label: 'Audience',
     startFresh: 'Start fresh decision',
     startFreshAria: 'Discard current decision and start fresh',
+    changeAudienceAria: 'Change audience',
   },
 
   // ---------------------------------------------------------------------------

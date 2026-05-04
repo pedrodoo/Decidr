@@ -30,4 +30,4 @@
 		Invite only - request access via survey
 	</button>
 </form>
-<p style="color: red">{form?.message ?? ''}</p>
+<p style="color: var(--semantic-danger)">{form?.message ?? ''}</p>

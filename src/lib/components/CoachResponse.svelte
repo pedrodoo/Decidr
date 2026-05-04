@@ -4,163 +4,190 @@
   Used once per step on /decisions/new; parent toggles visible and scrolls to coach (id coach-{n}) after submit.
 -->
 <script>
-  import { strings } from '$lib/strings.js';
+	import { strings } from '$lib/strings.js';
 
-  let {
-    visible = false,
-    stepLabel = '',
-    audienceLabel = '',
-    intro = '',
-    questions = [],
-    challenge = '',
-    challengeIsPositive = false,
-    onContinue,
-    continueLabel = strings.coach.defaultContinueLabel
-  } = $props();
+	let {
+		visible = false,
+		stepLabel = '',
+		audienceLabel = '',
+		intro = '',
+		questions = [],
+		challenge = '',
+		challengeIsPositive = false,
+		onContinue,
+		continueLabel = strings.coach.defaultContinueLabel
+	} = $props();
 </script>
 
 {#if visible}
-  <div class="coach" role="region" aria-label={strings.coach.regionAria}>
-    <div class="header">
-      <div class="avatar" aria-hidden="true">
-        <svg viewBox="0 0 12 12" fill="var(--coach-accent)">
-          <path d="M6 1l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
-        </svg>
-      </div>
-      <span class="name">Decidr · {stepLabel} · {audienceLabel}</span>
-    </div>
+	<div class="coach" role="region" aria-label={strings.coach.regionAria}>
+		<div class="header">
+			<div class="avatar" aria-hidden="true">
+				<svg viewBox="0 0 12 12" fill="var(--coach-accent)">
+					<path d="M6 1l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" />
+				</svg>
+			</div>
+			<span class="name">Decidr · {stepLabel} · {audienceLabel}</span>
+		</div>
 
-    <div class="body">
-      <p class="intro">{@html intro}</p>
+		<div class="body">
+			<p class="intro">{@html intro}</p>
 
-      {#if questions.length}
-        <div class="questions">
-          {#each questions as q}
-            <div class="question">
-              <span class="q-icon" aria-hidden="true">→</span>
-              <span>{@html q}</span>
-            </div>
-          {/each}
-        </div>
-      {/if}
+			{#if questions.length}
+				<div class="questions">
+					{#each questions as q}
+						<div class="question">
+							<span class="q-icon" aria-hidden="true">→</span>
+							<span>{@html q}</span>
+						</div>
+					{/each}
+				</div>
+			{/if}
 
-      {#if challenge}
-        <div class="challenge" class:positive={challengeIsPositive}>
-          {@html challenge}
-        </div>
-      {/if}
+			{#if challenge}
+				<div class="challenge" class:positive={challengeIsPositive}>
+					{@html challenge}
+				</div>
+			{/if}
 
-      <div class="footer">
-        <span class="footer-text">{strings.coach.footerText}</span>
-        <button class="btn-primary" onclick={onContinue} type="button">
-          {continueLabel}
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M5 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
+			<div class="footer">
+				<span class="footer-text">{strings.coach.footerText}</span>
+				<button class="btn-primary" onclick={onContinue} type="button">
+					{continueLabel}
+					<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+						<path
+							d="M5 3l4 4-4 4"
+							stroke="white"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
 {/if}
 
 <style>
-  .coach {
-    margin-top: 28px;
-    border: 1px solid var(--coach-border);
-    border-radius: 12px;
-    background: var(--coach-bg);
-    overflow: hidden;
-    animation: fadeUp 0.25s ease;
-  }
+	.coach {
+		margin-top: 28px;
+		border: 1px solid var(--coach-border);
+		border-radius: 12px;
+		background: var(--coach-bg);
+		overflow: hidden;
+		animation: fadeUp 0.25s ease;
+	}
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+	@keyframes fadeUp {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
 
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 13px 18px;
-    border-bottom: 1px solid var(--coach-border);
-  }
+	.header {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 13px 18px;
+		border-bottom: 1px solid var(--coach-border);
+	}
 
-  .avatar {
-    width: 22px;
-    height: 22px;
-    border-radius: 5px;
-    background: rgba(96, 165, 250, 0.15);
-    border: 1px solid var(--coach-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
+	.avatar {
+		width: 22px;
+		height: 22px;
+		border-radius: 5px;
+		background: rgba(96, 165, 250, 0.15);
+		border: 1px solid var(--coach-border);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
 
-  .avatar svg { width: 11px; height: 11px; }
+	.avatar svg {
+		width: 11px;
+		height: 11px;
+	}
 
-  .name {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--coach-accent);
-  }
+	.name {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--coach-accent);
+	}
 
-  .body {
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+	.body {
+		padding: 18px;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
 
-  .intro {
-    font-size: var(--text-sm);
-    color: var(--coach-text);
-    line-height: 1.7;
-  }
+	.intro {
+		font-size: var(--text-sm);
+		color: var(--coach-text);
+		line-height: 1.7;
+	}
 
-  .questions { display: flex; flex-direction: column; gap: 8px; }
+	.questions {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
 
-  .question {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 14px;
-    background: rgba(96, 165, 250, 0.05);
-    border: 1px solid rgba(96, 165, 250, 0.1);
-    border-radius: 8px;
-    font-size: var(--text-sm);
-    color: var(--coach-text);
-    line-height: 1.55;
-  }
+	.question {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 10px 14px;
+		background: rgba(96, 165, 250, 0.05);
+		border: 1px solid rgba(96, 165, 250, 0.1);
+		border-radius: 8px;
+		font-size: var(--text-sm);
+		color: var(--coach-text);
+		line-height: 1.55;
+	}
 
-  .q-icon { color: var(--coach-accent); flex-shrink: 0; margin-top: 1px; font-size: var(--text-sm); }
+	.q-icon {
+		color: var(--coach-accent);
+		flex-shrink: 0;
+		margin-top: 1px;
+		font-size: var(--text-sm);
+	}
 
-  .challenge {
-    padding: 12px 14px;
-    background: rgba(249, 115, 22, 0.07);
-    border: 1px solid rgba(249, 115, 22, 0.18);
-    border-radius: 8px;
-    font-size: var(--text-sm);
-    color: #ffd0a8;
-    line-height: 1.65;
-  }
+	.challenge {
+		padding: 12px 14px;
+		background: rgba(249, 115, 22, 0.07);
+		border: 1px solid rgba(249, 115, 22, 0.18);
+		border-radius: 8px;
+		font-size: var(--text-sm);
+		color: var(--coach-challenge-text);
+		line-height: 1.65;
+	}
 
-  .challenge.positive {
-    background: rgba(74, 222, 128, 0.07);
-    border-color: rgba(74, 222, 128, 0.18);
-    color: #b3f0c8;
-  }
+	.challenge.positive {
+		background: rgba(74, 222, 128, 0.07);
+		border-color: rgba(74, 222, 128, 0.18);
+		color: var(--coach-challenge-positive-text);
+	}
 
-  .footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 4px;
-    gap: 16px;
-  }
+	.footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-top: 4px;
+		gap: 16px;
+	}
 
-  .footer-text { font-size: var(--text-sm); color: var(--text-muted); }
+	.footer-text {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
 </style>

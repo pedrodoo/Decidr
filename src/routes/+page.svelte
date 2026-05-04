@@ -1,27 +1,27 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-  const SURVEY_URL = 'https://tally.so/r/KYB58A';
+	const SURVEY_URL = 'https://tally.so/r/KYB58A';
 
-  onMount(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
+	onMount(() => {
+		const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (prefersReduced) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('is-visible');
-            observer.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.08 }
-    );
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((e) => {
+					if (e.isIntersecting) {
+						e.target.classList.add('is-visible');
+						observer.unobserve(e.target);
+					}
+				});
+			},
+			{ threshold: 0.08 }
+		);
 
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  });
+		document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+		return () => observer.disconnect();
+	});
 </script>
 
 <svelte:head>
@@ -53,7 +53,12 @@
 
 		<div class="cta-group">
 			<p class="cta-group-title">If that's you, request early access below.</p>
-			<a href={SURVEY_URL} class="landing-btn landing-btn--full" target="_blank" rel="noopener noreferrer">
+			<a
+				href={SURVEY_URL}
+				class="landing-btn landing-btn--full"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				Request early access
 				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 					<path
@@ -74,17 +79,16 @@
 				Design has always shaped business outcomes. The problem isn't the thinking.
 			</h2>
 			<div class="problem-body">
+				<p>It's that most designers were never given the tools to prove it.</p>
 				<p>
-					It's that most designers were never given the tools to prove it.
-				</p>
-				<p>
-					When a design decision can't be framed in business language, it doesn't just get rejected - it
-					disappears. The product stalls. Impact goes unmeasured. And talented designers stay tactical
-					when they could be driving strategy.
+					When a design decision can't be framed in business language, it doesn't just get rejected
+					- it disappears. The product stalls. Impact goes unmeasured. And talented designers stay
+					tactical when they could be driving strategy.
 				</p>
 				<p>
 					Decidr closes that gap. It helps you pressure-test your reasoning, anticipate leadership
-					questions, and frame decisions in language that connects design directly to business outcomes.
+					questions, and frame decisions in language that connects design directly to business
+					outcomes.
 				</p>
 				<p class="problem-coda">Design has always been strategic. Now it can be seen that way.</p>
 			</div>
@@ -101,8 +105,8 @@
 				<div class="output-card-body">
 					<h3 class="output-title">Prepare Decision</h3>
 					<p class="output-desc">
-						Before anyone else sees your decision, know where your reasoning is weak. Decidr surfaces
-						gaps and flags what leadership is most likely to challenge.
+						Before anyone else sees your decision, know where your reasoning is weak. Decidr
+						surfaces gaps and flags what leadership is most likely to challenge.
 					</p>
 					<div class="output-tag">Before the room</div>
 				</div>
@@ -169,7 +173,9 @@
 	.reveal {
 		opacity: 0;
 		transform: translateY(16px);
-		transition: opacity 0.5s ease, transform 0.5s ease;
+		transition:
+			opacity 0.5s ease,
+			transform 0.5s ease;
 	}
 
 	/* :global needed — class is added dynamically by IntersectionObserver */
@@ -179,8 +185,12 @@
 	}
 
 	/* Stagger output cards */
-	:global(.outputs-grid .reveal:nth-child(2)) { transition-delay: 0.12s; }
-	:global(.outputs-grid .reveal:nth-child(3)) { transition-delay: 0.24s; }
+	:global(.outputs-grid .reveal:nth-child(2)) {
+		transition-delay: 0.12s;
+	}
+	:global(.outputs-grid .reveal:nth-child(3)) {
+		transition-delay: 0.24s;
+	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.reveal {
@@ -225,8 +235,13 @@
 	}
 
 	@keyframes pulse {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.35; }
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.35;
+		}
 	}
 
 	.hero-title {
@@ -239,7 +254,7 @@
 	}
 
 	.hero-accent {
-		color: var(--orange);
+		color: var(--accent-text-orange);
 	}
 
 	.hero-subtitle {
@@ -380,7 +395,9 @@
 		border-radius: 12px;
 		background: var(--surface);
 		cursor: pointer;
-		transition: border-color 0.15s, transform 0.15s;
+		transition:
+			border-color 0.15s,
+			transform 0.15s;
 	}
 
 	.output-card:hover {
@@ -388,9 +405,15 @@
 		transform: translateY(-2px);
 	}
 
-	.output-card.accent-orange { border-top: 2px solid var(--orange); }
-	.output-card.accent-green  { border-top: 2px solid var(--green-text); }
-	.output-card.accent-purple { border-top: 2px solid #a78bfa; }
+	.output-card.accent-orange {
+		border-top: 2px solid var(--orange);
+	}
+	.output-card.accent-green {
+		border-top: 2px solid var(--accent-text-green);
+	}
+	.output-card.accent-purple {
+		border-top: 2px solid var(--accent-text-purple);
+	}
 
 	.output-num {
 		font-family: var(--font-mono);
@@ -403,9 +426,18 @@
 		justify-content: center;
 	}
 
-	.output-num.one   { background: var(--orange-bg); color: var(--orange); }
-	.output-num.two   { background: var(--green-bg);  color: var(--green-text); }
-	.output-num.three { background: rgb(167 139 250 / 12%); color: #a78bfa; }
+	.output-num.one {
+		background: var(--orange-bg);
+		color: var(--accent-text-orange);
+	}
+	.output-num.two {
+		background: var(--green-bg);
+		color: var(--accent-text-green);
+	}
+	.output-num.three {
+		background: rgb(167 139 250 / 12%);
+		color: var(--accent-text-purple);
+	}
 
 	.output-card-body {
 		display: flex;
@@ -492,7 +524,9 @@
 		text-decoration: none;
 		border: none;
 		cursor: pointer;
-		transition: background 0.15s, transform 0.1s;
+		transition:
+			background 0.15s,
+			transform 0.1s;
 	}
 
 	.landing-btn--full {
@@ -509,7 +543,7 @@
 	}
 
 	.landing-btn:focus-visible {
-		outline: 2px solid var(--orange);
+		outline: 2px solid var(--focus-ring);
 		outline-offset: 3px;
 	}
 

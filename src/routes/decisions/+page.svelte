@@ -91,7 +91,7 @@
 		font-size: var(--text-xs);
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
-		color: var(--orange);
+		color: var(--accent-text-orange);
 		margin-bottom: 10px;
 	}
 
@@ -143,7 +143,9 @@
 		text-decoration: none;
 		color: inherit;
 		display: block;
-		transition: border-color 0.15s, transform 0.1s;
+		transition:
+			border-color 0.15s,
+			transform 0.1s;
 	}
 
 	.card:hover {
@@ -194,17 +196,17 @@
 		color: var(--text-muted);
 	}
 	.status-pill.status-not-ready {
-		color: #f87171;
+		color: var(--semantic-danger);
 		border-color: rgba(248, 113, 113, 0.3);
 		background: rgba(248, 113, 113, 0.06);
 	}
 	.status-pill.status-needs-work {
-		color: #f59e0b;
+		color: var(--semantic-warning);
 		border-color: rgba(245, 158, 11, 0.3);
 		background: rgba(245, 158, 11, 0.06);
 	}
 	.status-pill.status-ready {
-		color: #34d399;
+		color: var(--semantic-success);
 		border-color: rgba(52, 211, 153, 0.3);
 		background: rgba(52, 211, 153, 0.06);
 	}
