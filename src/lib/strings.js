@@ -69,8 +69,8 @@ export const strings = {
   // ---------------------------------------------------------------------------
   audienceIndicator: {
     label: 'Audience',
-    startFresh: 'Start fresh case',
-    startFreshAria: 'Discard current case and start fresh',
+    startFresh: 'Start fresh decision',
+    startFreshAria: 'Discard current decision and start fresh',
     changeAudienceAria: 'Change audience',
   },
 
@@ -78,7 +78,7 @@ export const strings = {
   // Step progress (Context / Analysis / Outcomes)
   // ---------------------------------------------------------------------------
   stepProgress: {
-    ariaLabel: 'Case steps',
+    ariaLabel: 'Decision steps',
     steps: [
       { n: 1, label: 'Context' },
       { n: 2, label: 'Analysis' },
@@ -99,7 +99,7 @@ export const strings = {
   // New decision page
   // ---------------------------------------------------------------------------
   newDecision: {
-    pageTitle: 'New Case — Decidr',
+    pageTitle: 'New Decision — Decidr',
 
     fieldLabels: {
       decision: 'Decision',
@@ -138,7 +138,7 @@ export const strings = {
 
     stepCounter: 'Step {current} of {total}', // {current}, {total}
     generateOutputs: 'Generate outputs',
-    pageSrOnlyTitle: 'New Case',
+    pageSrOnlyTitle: 'New Decision',
     validation: {
       emptyGeneric: "Looks empty — without this the output won't have much to work with.",
       optionsOneDetected: "We only detected one option — usually we'd expect to see alternatives here.",
@@ -164,7 +164,7 @@ not preset prompts.`,
     },
 
     outputPreview: {
-      oneTitle: 'Prepare Case',
+      oneTitle: 'Prepare Decision',
       oneDesc: 'Structured reasoning to review before you commit. For you, not for them.',
       twoTitle: 'Communicate to Leadership',
       twoDesc: 'Exec-ready language for a {audienceLabel}. Business impact, risk, and clear recommendation.',
@@ -181,7 +181,7 @@ not preset prompts.`,
     prompts: {
       ceo: {
         decision:
-          'A CEO needs to understand this in one sentence — and it needs to sound like a business decision, not a design task. <strong>What are you deciding?</strong>',
+          'A CEO needs to understand this in one sentence. It needs to sound like a business decision, not a design task. <strong>What is your iniciative?</strong>',
         problem:
           'Frame this as a business problem, not a UX observation. <strong>What is the cost of not acting?</strong> A CEO will want to know that before anything else.',
         options:
@@ -246,14 +246,14 @@ not preset prompts.`,
   },
 
   decisionsDashboard: {
-    pageTitle: 'Cases',
+    pageTitle: 'Story Dashboard',
     eyebrow: 'Decidr',
-    title: 'Cases',
-    subtitle: 'All your past cases in one place.',
-    newDecisionCta: 'New case',
-    emptyTitle: 'No cases yet',
-    emptyBody: 'Once you generate outputs, your cases will appear here.',
-    emptyCta: 'Start your first case',
+    title: 'Story Dashboard',
+    subtitle: 'All your narratives in one place.',
+    newDecisionCta: 'New ',
+    emptyTitle: 'No narratives yet',
+    emptyBody: 'Once you generate hipothesis, your narratives will appear here.',
+    emptyCta: 'Start your first decision',
     iterations: {
       one: 'iteration',
       many: 'iterations',
@@ -261,11 +261,11 @@ not preset prompts.`,
   },
 
   decisionOutputs: {
-    pageTitle: 'Your outputs',
+    pageTitle: 'Your narratives',
     backToInputsAria: 'Refine inputs',
     iterationMeta: 'Iteration {current} of {total}',
     generatedAt: 'generated {time}',
-    gateLabel: 'Case Confidence',
+    gateLabel: 'Narrative Confidence',
     actions: {
       generateFullReview: 'Generate full review',
       generateFullReviewAnyway: 'Generate full review anyway',
@@ -273,32 +273,32 @@ not preset prompts.`,
       refineInputs: 'Refine inputs →',
     },
     prepare: {
-      title: 'Prepare Case',
+      title: 'Prepare narrative',
       desc: 'For you. Before you commit.',
     },
     communicate: {
       title: 'Communicate to Leadership',
       desc: 'Exec-ready. No design jargon.',
       cardDesc:
-        'Translate this case into exec-ready language. Framed for a CEO — business impact, risk, and a clear recommendation.',
+        'Translate this narrative into exec-ready language. Framed for a CEO — business impact, risk, and a clear recommendation.',
     },
     portfolio: {
       title: 'Portfolio Case',
       desc: 'Structured narrative for interviews.',
       cardDesc:
-        'Turn this case into a structured case study. Built for interviews and portfolio work — with context, reasoning, and what it demonstrates.',
+        'Turn this story into a structured case study. Built for interviews and portfolio work — with context, reasoning, and what it demonstrates.',
     },
     refineHint: 'Address the gaps above before moving forward.',
     nextLabel: 'What do you need next?',
-    persistError: 'Could not persist case before generating outputs.',
+    persistError: 'Could not persist decision before generating outputs.',
   },
 
   login: {
     pageTitle: 'Login',
     pageSrOnlyTitle: 'Login',
     eyebrow: 'Decidr',
-    title: 'Log in to build your next case',
-    subtitle: 'A quick setup so you can start your first case.',
+    title: 'Log in to write your next decision',
+    subtitle: 'A quick setup so you can start your first decision flow.',
     labels: {
       email: 'Email',
       password: 'Password',
@@ -335,14 +335,14 @@ not preset prompts.`,
     heroAccent: 'They just rarely reach the room where it matters.',
     heroSubtitle:
       'Decidr helps you build the business case behind your design decisions - before leadership asks for one.',
-    earlyAccessPrompt: "If that's you, request early access below.",
-    requestEarlyAccess: 'Request early access',
+    earlyAccessPrompt: "If that's you, request early access now.",
+    requestEarlyAccess: 'Get early access',
     problem: {
       title: "Design has always shaped business outcomes. The problem isn't the thinking.",
-      p1: "It's that most designers were never given the tools to prove it.",
-      p2: "When a design decision can't be framed in business language, it doesn't just get rejected - it disappears. The product stalls. Impact goes unmeasured. And talented designers stay tactical when they could be driving strategy.",
-      p3: 'Decidr closes that gap. It helps you pressure-test your reasoning, anticipate leadership questions, and frame decisions in language that connects design directly to business outcomes.',
-      coda: 'Design has always been strategic. Now it can be seen that way.',
+      p1: "It's that most designers were never taught how to prove it.",
+      p2: "When a design decision can't be framed in business language, it disappears. The product stalls. Impact goes unmeasured. And talented designers stay tactical when they could be driving strategy.",
+      p3: 'Decidr closes that gap. It helps you pressure-test your reasoning, anticipate leadership questions, and frame decisions in language that connects design directly to business impact.',
+      coda: 'Design has always been strategic. Now it can communicate value that way.',
     },
     how: {
       label: 'How it works',
@@ -350,17 +350,17 @@ not preset prompts.`,
       cards: {
         prepare: {
           title: 'Prepare Case',
-          desc: 'Before anyone else sees your case, know where your reasoning is weak. Decidr surfaces gaps and flags what leadership is most likely to challenge.',
-          tag: 'Before the room',
+          desc: 'Improve your reasoning before anyone else sees your case. Decidr surfaces gaps and flags what leadership is most likely to challenge.',
+          tag: 'Before presenting',
         },
         communicate: {
           title: 'Communicate to Leadership',
-          desc: 'Your case, translated into exec-ready language: business impact, risk, and a clear recommendation for the people who need to say yes.',
+          desc: 'Your design case, translated into exec-ready language: business impact, risk, and a clear recommendation for the people who need to say yes.',
           tag: 'In the room',
         },
         portfolio: {
           title: 'Portfolio Case',
-          desc: 'The same case, structured as a design leadership case study - context, reasoning, trade-offs, and what it reveals about how you think.',
+          desc: 'The same story, structured as a design leadership case study - context, reasoning, trade-offs, and what it reveals about how you think.',
           tag: 'Beyond the room',
         },
       },
