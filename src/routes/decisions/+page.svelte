@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { strings } from '$lib/strings.js';
 	import {
 		listDecisions,
 		resolveDecisionLink,
@@ -8,6 +9,7 @@
 	} from '$lib/decisions/storage';
 
 	let decisions = $state<DecisionRecord[]>([]);
+	const s = strings.decisionsDashboard;
 
 	function formatDate(isoDate: string): string {
 		const date = new Date(isoDate);
@@ -24,24 +26,24 @@
 </script>
 
 <svelte:head>
-	<title>Decision Dashboard</title>
+	<title>{s.pageTitle}</title>
 </svelte:head>
 
 <main id="main" class="page">
 	<div class="page-header">
 		<div>
-			<p class="eyebrow">Decidr</p>
-			<h1 class="title">Decision Dashboard</h1>
-			<p class="subtitle">All your past decisions in one place.</p>
+			<p class="eyebrow">{s.eyebrow}</p>
+			<h1 class="title">{s.title}</h1>
+			<p class="subtitle">{s.subtitle}</p>
 		</div>
-		<a class="btn-primary" href="/decisions/new">New decision</a>
+		<a class="btn-primary" href="/decisions/new">{s.newDecisionCta}</a>
 	</div>
 
 	{#if decisions.length === 0}
 		<section class="empty-state">
-			<h2>No decisions yet</h2>
-			<p>Once you generate outputs, your decisions will appear here.</p>
-			<a class="btn-secondary" href="/decisions/new">Start your first decision</a>
+			<h2>{s.emptyTitle}</h2>
+			<p>{s.emptyBody}</p>
+			<a class="btn-secondary" href="/decisions/new">{s.emptyCta}</a>
 		</section>
 	{:else}
 		<section class="list">
@@ -58,7 +60,9 @@
 						</span>
 						{#if decision.iterations.length > 0}
 							<span class="pill">
-								{decision.iterations.length} iteration{decision.iterations.length === 1 ? '' : 's'}
+								{decision.iterations.length} {decision.iterations.length === 1
+									? s.iterations.one
+									: s.iterations.many}
 							</span>
 						{/if}
 					</div>

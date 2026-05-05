@@ -1,34 +1,36 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
+	import { strings } from '$lib/strings.js';
 
 	let { form }: { form: ActionData } = $props();
 
 	const actionSignIn = '?/signInEmail';
 	const actionSignUp = '?/signUpEmail';
+	const s = strings.login;
 </script>
 
 <svelte:head>
-	<title>Login</title>
+	<title>{s.pageTitle}</title>
 </svelte:head>
 
 <main id="main" class="page">
-	<h1 class="sr-only">Login</h1>
+	<h1 class="sr-only">{s.pageSrOnlyTitle}</h1>
 
 	<section class="card">
-		<div class="eyebrow">Decidr</div>
-		<h2 class="title">Log in to write your next decision</h2>
-		<p class="subtitle">A quick setup so you can start your first decision flow.</p>
+		<div class="eyebrow">{s.eyebrow}</div>
+		<h2 class="title">{s.title}</h2>
+		<p class="subtitle">{s.subtitle}</p>
 
 		<form method="post" class="form" action={actionSignIn} use:enhance>
 			<div class="fields">
 				<label class="field" for="email">
-					<span class="label">Email</span>
+					<span class="label">{s.labels.email}</span>
 					<input id="email" type="email" name="email" autocomplete="email" required />
 				</label>
 
 				<label class="field" for="password">
-					<span class="label">Password</span>
+					<span class="label">{s.labels.password}</span>
 					<input
 						id="password"
 						type="password"
@@ -39,19 +41,19 @@
 				</label>
 
 				<label class="field" for="name">
-					<span class="label">Name</span>
+					<span class="label">{s.labels.name}</span>
 					<input
 						id="name"
 						type="text"
 						name="name"
 						autocomplete="name"
-						placeholder="For registration"
+						placeholder={s.placeholders.name}
 					/>
 				</label>
 			</div>
 
 			<div class="actions">
-				<button class="btn-primary" type="submit" formaction={actionSignIn}> Log in </button>
+				<button class="btn-primary" type="submit" formaction={actionSignIn}> {s.actions.login} </button>
 
 				<button
 					class="btn-secondary"
@@ -59,9 +61,9 @@
 					formaction={actionSignUp}
 					disabled
 					aria-disabled="true"
-					title="Invite only. Request access via the survey on the homepage."
+					title={s.inviteOnlyTitle}
 				>
-					Invite only - request access via survey
+					{s.actions.inviteOnly}
 				</button>
 			</div>
 

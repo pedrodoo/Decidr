@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { strings } from '$lib/strings.js';
 
-	const SURVEY_URL = 'https://tally.so/r/KYB58A';
+	const s = strings.landing;
+	const SURVEY_URL = s.surveyUrl;
 
 	onMount(() => {
 		const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -25,7 +27,7 @@
 </script>
 
 <svelte:head>
-	<title>Decidr - Build the business case behind design decisions</title>
+	<title>{s.pageTitle}</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
@@ -38,28 +40,25 @@
 	<section class="hero">
 		<div class="beta-badge">
 			<span class="beta-dot" aria-hidden="true"></span>
-			Private beta
+			{s.betaBadge}
 		</div>
 
 		<h1 class="hero-title">
-			Your design decisions shape business outcomes.<br />
-			<span class="hero-accent">They just rarely reach the room where it matters.</span>
+			{s.heroTitle}<br />
+			<span class="hero-accent">{s.heroAccent}</span>
 		</h1>
 
-		<p class="hero-subtitle">
-			Decidr helps you build the business case behind your design decisions - before leadership asks
-			for one.
-		</p>
+		<p class="hero-subtitle">{s.heroSubtitle}</p>
 
 		<div class="cta-group">
-			<p class="cta-group-title">If that's you, request early access below.</p>
+			<p class="cta-group-title">{s.earlyAccessPrompt}</p>
 			<a
 				href={SURVEY_URL}
 				class="landing-btn landing-btn--full"
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				Request early access
+				{s.requestEarlyAccess}
 				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 					<path
 						d="M5 3l4 4-4 4"
@@ -76,63 +75,46 @@
 	<section class="problem reveal" aria-labelledby="problem-title">
 		<div class="problem-inner">
 			<h2 class="problem-title" id="problem-title">
-				Design has always shaped business outcomes. The problem isn't the thinking.
+				{s.problem.title}
 			</h2>
 			<div class="problem-body">
-				<p>It's that most designers were never given the tools to prove it.</p>
-				<p>
-					When a design decision can't be framed in business language, it doesn't just get rejected
-					- it disappears. The product stalls. Impact goes unmeasured. And talented designers stay
-					tactical when they could be driving strategy.
-				</p>
-				<p>
-					Decidr closes that gap. It helps you pressure-test your reasoning, anticipate leadership
-					questions, and frame decisions in language that connects design directly to business
-					outcomes.
-				</p>
-				<p class="problem-coda">Design has always been strategic. Now it can be seen that way.</p>
+				<p>{s.problem.p1}</p>
+				<p>{s.problem.p2}</p>
+				<p>{s.problem.p3}</p>
+				<p class="problem-coda">{s.problem.coda}</p>
 			</div>
 		</div>
 	</section>
 
 	<section class="how" aria-labelledby="how-title">
-		<p class="section-label" id="how-title">How it works</p>
-		<p class="how-desc">One input. Three outputs. Built for the moments that matter.</p>
+		<p class="section-label" id="how-title">{s.how.label}</p>
+		<p class="how-desc">{s.how.desc}</p>
 
 		<div class="outputs-grid">
 			<div class="output-card accent-orange reveal">
 				<div class="output-num one" aria-hidden="true">1</div>
 				<div class="output-card-body">
-					<h3 class="output-title">Prepare Decision</h3>
-					<p class="output-desc">
-						Before anyone else sees your decision, know where your reasoning is weak. Decidr
-						surfaces gaps and flags what leadership is most likely to challenge.
-					</p>
-					<div class="output-tag">Before the room</div>
+					<h3 class="output-title">{s.how.cards.prepare.title}</h3>
+					<p class="output-desc">{s.how.cards.prepare.desc}</p>
+					<div class="output-tag">{s.how.cards.prepare.tag}</div>
 				</div>
 			</div>
 
 			<div class="output-card accent-green reveal">
 				<div class="output-num two" aria-hidden="true">2</div>
 				<div class="output-card-body">
-					<h3 class="output-title">Communicate to Leadership</h3>
-					<p class="output-desc">
-						Your decision, translated into exec-ready language: business impact, risk, and a clear
-						recommendation for the people who need to say yes.
-					</p>
-					<div class="output-tag">In the room</div>
+					<h3 class="output-title">{s.how.cards.communicate.title}</h3>
+					<p class="output-desc">{s.how.cards.communicate.desc}</p>
+					<div class="output-tag">{s.how.cards.communicate.tag}</div>
 				</div>
 			</div>
 
 			<div class="output-card accent-purple reveal">
 				<div class="output-num three" aria-hidden="true">3</div>
 				<div class="output-card-body">
-					<h3 class="output-title">Portfolio Case</h3>
-					<p class="output-desc">
-						The same decision, structured as a design leadership case study - context, reasoning,
-						trade-offs, and what it reveals about how you think.
-					</p>
-					<div class="output-tag">Beyond the room</div>
+					<h3 class="output-title">{s.how.cards.portfolio.title}</h3>
+					<p class="output-desc">{s.how.cards.portfolio.desc}</p>
+					<div class="output-tag">{s.how.cards.portfolio.tag}</div>
 				</div>
 			</div>
 		</div>
@@ -140,14 +122,11 @@
 
 	<section class="cta-section reveal">
 		<div class="cta-inner">
-			<p class="cta-label">Currently in private beta</p>
-			<h2 class="cta-title">Design deserves a seat at the table. Decidr helps you claim it.</h2>
-			<p class="cta-desc">
-				We're opening access to designers who report to non-design leadership and are ready to turn
-				strong thinking into real business influence.
-			</p>
+			<p class="cta-label">{s.cta.label}</p>
+			<h2 class="cta-title">{s.cta.title}</h2>
+			<p class="cta-desc">{s.cta.desc}</p>
 			<a href={SURVEY_URL} class="landing-btn" target="_blank" rel="noopener noreferrer">
-				Request early access
+				{s.requestEarlyAccess}
 				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 					<path
 						d="M5 3l4 4-4 4"

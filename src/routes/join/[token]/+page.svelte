@@ -1,29 +1,31 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
+	import { strings } from '$lib/strings.js';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
+	const s = strings.join;
 </script>
 
 <svelte:head>
-	<title>Join Decidr</title>
+	<title>{s.pageTitle}</title>
 </svelte:head>
 
 <main class="page">
 	<section class="card">
-		<div class="eyebrow">Decidr</div>
-		<h1 class="title">You've been invited</h1>
-		<p class="subtitle">Create your account to start making better decisions.</p>
+		<div class="eyebrow">{s.eyebrow}</div>
+		<h1 class="title">{s.title}</h1>
+		<p class="subtitle">{s.subtitle}</p>
 
 		<form method="post" class="form" use:enhance>
 			<div class="fields">
 				<label class="field" for="name">
-					<span class="label">Name</span>
+					<span class="label">{s.labels.name}</span>
 					<input id="name" type="text" name="name" autocomplete="name" required />
 				</label>
 
 				<label class="field" for="email">
-					<span class="label">Email</span>
+					<span class="label">{s.labels.email}</span>
 					<input
 						id="email"
 						type="email"
@@ -36,7 +38,7 @@
 				</label>
 
 				<label class="field" for="password">
-					<span class="label">Password</span>
+					<span class="label">{s.labels.password}</span>
 					<input
 						id="password"
 						type="password"
@@ -47,7 +49,7 @@
 				</label>
 			</div>
 
-			<button class="btn-primary" type="submit">Create account</button>
+			<button class="btn-primary" type="submit">{s.createAccount}</button>
 
 			{#if form?.message}
 				<p class="error" role="alert">{form.message}</p>

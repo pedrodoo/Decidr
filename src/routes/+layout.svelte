@@ -14,9 +14,11 @@
 	import '@fontsource/ibm-plex-mono/400.css';
 	import '@fontsource/ibm-plex-mono/500.css';
 	import '../app.css';
+	import { strings } from '$lib/strings.js';
 
 	let { children, data } = $props<{ children: () => unknown; data: LayoutData }>();
 	let theme = $state<Theme>('dark');
+	const s = strings.layout;
 
 	async function handleLogOut() {
 		try {
@@ -67,7 +69,7 @@
 	</script>
 </svelte:head>
 
-<a href="#main" class="skip-link">Skip to main content</a>
+<a href="#main" class="skip-link">{s.skipToMain}</a>
 <BugReportSection
 	user={data.user}
 	onLogOut={handleLogOut}

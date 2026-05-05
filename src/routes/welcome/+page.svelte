@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { strings } from '$lib/strings.js';
 	import {
 		listRecentDecisions,
 		resolveDecisionLink,
@@ -8,6 +9,7 @@
 	} from '$lib/decisions/storage';
 
 	let recentDecisions = $state<DecisionRecord[]>([]);
+	const s = strings.welcome;
 
 	function formatDate(isoDate: string): string {
 		const date = new Date(isoDate);
@@ -18,7 +20,7 @@
 	}
 
 	const ctaLabel = $derived(
-		recentDecisions.length === 0 ? 'Start your first decision' : 'Start a new decision'
+		recentDecisions.length === 0 ? s.startFirstDecision : s.startNewDecision
 	);
 
 	onMount(() => {
@@ -27,20 +29,16 @@
 </script>
 
 <svelte:head>
-	<title>Welcome</title>
+	<title>{s.pageTitle}</title>
 </svelte:head>
 
 <main id="main" class="page">
-	<h1 class="sr-only">Welcome</h1>
+	<h1 class="sr-only">{s.pageSrOnlyTitle}</h1>
 
 	<section class="card">
-		<div class="eyebrow">Decidr</div>
-		<h2 class="title">For teams who take decision conversations seriously.</h2>
-		<p class="subtitle">
-			Decidr helps product and design teams structure their discourse before it reaches the business
-			table. It was built to turn scattered opinions into clear, shared reasoning so
-			cross-functional decisions move with more trust and less noise.
-		</p>
+		<div class="eyebrow">{s.eyebrow}</div>
+		<h2 class="title">{s.title}</h2>
+		<p class="subtitle">{s.subtitle}</p>
 
 		<div class="ctaRow">
 			<a class="btn-primary cta" href="/decisions/new">
@@ -61,8 +59,8 @@
 	{#if recentDecisions.length > 0}
 		<section class="recent">
 			<div class="recent-header">
-				<h2>Recent decisions</h2>
-				<a class="view-all" href="/decisions">View all</a>
+				<h2>{s.recentTitle}</h2>
+				<a class="view-all" href="/decisions">{s.viewAll}</a>
 			</div>
 			<div class="recent-list">
 				{#each recentDecisions as decision (decision.id)}

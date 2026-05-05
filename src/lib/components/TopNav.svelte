@@ -2,6 +2,7 @@
 	import type { Theme } from '$lib/theme';
 	import type { SessionLayoutUser } from '$lib/types/session';
 	import { getUserDisplayName, getUserInitial } from '$lib/utils/userDisplay';
+	import { strings } from '$lib/strings.js';
 
 	type Props = {
 		user: SessionLayoutUser;
@@ -13,6 +14,7 @@
 
 	let { user, onReportBug, onLogOut, theme, onThemeToggle }: Props = $props();
 	let isAccountModalOpen = $state(false);
+	const s = strings.topNav;
 
 	const displayName = $derived(getUserDisplayName(user?.name, user?.email));
 	const avatarInitial = $derived(getUserInitial(user?.name, user?.email));
@@ -41,21 +43,21 @@
 <svelte:window onkeydown={handleWindowKeyDown} />
 
 <header class="nav">
-	<a class="logo" href="/" aria-label="Decidr home">
+	<a class="logo" href="/" aria-label={s.homeAria}>
 		<div class="logo-mark" aria-hidden="true">
 			<svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
 				<path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2zM8 8h4v2h-2v2H8z"></path>
 			</svg>
 		</div>
-		<span>Decidr</span>
+		<span>{strings.common.appName}</span>
 	</a>
 
 	<div class="nav-actions">
 		<button
 			class="nav-btn"
 			type="button"
-			aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-			title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+			aria-label={theme === 'dark' ? s.themeSwitchToLight : s.themeSwitchToDark}
+			title={theme === 'dark' ? s.lightModeTitle : s.darkModeTitle}
 			onclick={onThemeToggle}
 		>
 			{#if theme === 'dark'}
@@ -84,7 +86,7 @@
 		</button>
 
 		{#if user}
-			<button class="nav-btn" type="button" aria-label="Report a bug" title="Report a bug" onclick={onReportBug}>
+			<button class="nav-btn" type="button" aria-label={s.reportBug} title={s.reportBug} onclick={onReportBug}>
 				<svg class="nav-btn__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 					<path
 						d="M12 3L21 19H3L12 3Z"
@@ -97,7 +99,7 @@
 				</svg>
 			</button>
 
-			<button class="nav-user-btn" type="button" onclick={openAccountModal} aria-label="Account">
+			<button class="nav-user-btn" type="button" onclick={openAccountModal} aria-label={s.account}>
 				<div class="nav-avatar" aria-hidden="true">{avatarInitial}</div>
 				<span class="nav-username">{displayName}</span>
 				<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -111,19 +113,19 @@
 				</svg>
 			</button>
 		{:else}
-			<a class="btn-secondary nav-login-link" href="/login">Log in</a>
+			<a class="btn-secondary nav-login-link" href="/login">{s.login}</a>
 		{/if}
 	</div>
 </header>
 
 {#if user && isAccountModalOpen}
-	<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Account">
-		<button class="modal-backdrop-close" type="button" aria-label="Close account dialog" onclick={closeAccountModal}
+	<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label={s.account}>
+		<button class="modal-backdrop-close" type="button" aria-label={s.closeAccountDialog} onclick={closeAccountModal}
 		></button>
 		<div class="modal">
 			<div class="modal-header">
-				<div class="modal-title">Account</div>
-				<button class="modal-close" type="button" aria-label="Close" onclick={closeAccountModal}>✕</button>
+				<div class="modal-title">{s.account}</div>
+				<button class="modal-close" type="button" aria-label={s.close} onclick={closeAccountModal}>✕</button>
 			</div>
 
 			<div class="modal-body">
@@ -137,7 +139,7 @@
 					</div>
 				</div>
 
-				<button class="btn-logout" type="button" onclick={handleLogOut}>Sign out</button>
+				<button class="btn-logout" type="button" onclick={handleLogOut}>{s.signOut}</button>
 			</div>
 		</div>
 	</div>

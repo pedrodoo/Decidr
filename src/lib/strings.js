@@ -1,6 +1,8 @@
 /**
  * Single source of app copy. Edit here to change any user-facing text.
- * Main keys: common, audienceGate, audienceIndicator, stepProgress, newDecision (prompts, coachContent, businessAreas), coach.
+ * Main keys: common, audienceGate, audienceIndicator, stepProgress, coach, newDecision,
+ * welcome, decisionsDashboard, decisionOutputs, login, join, landing, topNav, bugReport,
+ * layout, demo.
  */
 
 export const strings = {
@@ -8,17 +10,21 @@ export const strings = {
   // Common
   // ---------------------------------------------------------------------------
   common: {
+    appName: 'Decidr',
     continue: 'Continue',
     back: 'Back',
     change: 'Change',
     soon: 'Soon',
+    generating: 'Generating...',
+    unknownError: 'Unknown error',
+    somethingWentWrong: 'Something went wrong',
   },
 
   // ---------------------------------------------------------------------------
   // Audience gate (who are you communicating to?)
   // ---------------------------------------------------------------------------
   audienceGate: {
-    title: 'Who are you communicating this decision to?',
+    title: 'Who are you communicating to?',
     intro:
       "Your answer shapes everything — the questions you'll be asked, the framing of your outputs, and the language that will land. Choose before you start.",
     startWith: 'Start with {label}', // {label} replaced with audience label
@@ -49,7 +55,7 @@ export const strings = {
       },
       {
         id: 'eng',
-        label: 'Engineering Lead',
+        label: 'CTO',
         icon: '⚙️',
         description:
           'Technical dependencies, implementation complexity, and risk to existing systems.',
@@ -132,6 +138,30 @@ export const strings = {
 
     stepCounter: 'Step {current} of {total}', // {current}, {total}
     generateOutputs: 'Generate outputs',
+    pageSrOnlyTitle: 'New Decision',
+    validation: {
+      emptyGeneric: "Looks empty — without this the output won't have much to work with.",
+      optionsOneDetected: "We only detected one option — usually we'd expect to see alternatives here.",
+      dataEmpty: 'Looks empty — without evidence, the output may feel thin.',
+      tradeoffsEmpty: 'Nothing here — outputs tend to be stronger when tradeoffs are acknowledged.',
+      primaryMetricEmpty: 'Looks empty — without a metric, success is hard to define.',
+      primaryMetricNoTarget: 'No number or % detected — a metric without a target is hard to evaluate.',
+      guardrailEmpty: "Nothing here — consider what you're not willing to sacrifice.",
+      expectedOutcomeEmpty: 'Looks empty — without a prediction, the output has less to anchor to.',
+      disclaimer:
+        'These are rule-based checks, not a full review — you know your context better than we do.',
+    },
+    coachPlaceholder: {
+      badge: 'Coming soon',
+      title: 'Input-aware coaching',
+      body: `Based on what you've written, this space will surface questions worth sitting with
+before you move on — gaps in your reasoning, assumptions to pressure-test, and angles
+a {audienceLabel} will likely push back on. Powered by NLP analysis of your specific inputs,
+not preset prompts.`,
+      sub: "For now, take a moment to re-read what you've written above.",
+      continueToAnalysis: 'Continue to Analysis →',
+      continueToOutcomes: 'Continue to Outcomes →',
+    },
 
     outputPreview: {
       oneTitle: 'Prepare Decision',
@@ -200,6 +230,197 @@ export const strings = {
         },
       },
     },
+  },
+
+  welcome: {
+    pageTitle: 'Welcome',
+    pageSrOnlyTitle: 'Welcome',
+    eyebrow: 'Decidr',
+    title: 'For teams who take decision-making seriously.',
+    subtitle:
+      'Decidr was buikd to help product and design teams turn scattered opinions into clear, shared reasoning so cross-functional decisions move with more trust and less noise.',
+    startFirstDecision: 'Start designing for impact',
+    startNewDecision: 'Start designing for impact',
+    recentTitle: 'Recent narratives',
+    viewAll: 'View all',
+  },
+
+  decisionsDashboard: {
+    pageTitle: 'Decision Dashboard',
+    eyebrow: 'Decidr',
+    title: 'Decision Dashboard',
+    subtitle: 'All your past decisions in one place.',
+    newDecisionCta: 'New decision',
+    emptyTitle: 'No decisions yet',
+    emptyBody: 'Once you generate outputs, your decisions will appear here.',
+    emptyCta: 'Start your first decision',
+    iterations: {
+      one: 'iteration',
+      many: 'iterations',
+    },
+  },
+
+  decisionOutputs: {
+    pageTitle: 'Your outputs',
+    backToInputsAria: 'Refine inputs',
+    iterationMeta: 'Iteration {current} of {total}',
+    generatedAt: 'generated {time}',
+    gateLabel: 'Decision Confidence',
+    actions: {
+      generateFullReview: 'Generate full review',
+      generateFullReviewAnyway: 'Generate full review anyway',
+      backToInputs: 'Back to inputs',
+      refineInputs: 'Refine inputs →',
+    },
+    prepare: {
+      title: 'Prepare Decision',
+      desc: 'For you. Before you commit.',
+    },
+    communicate: {
+      title: 'Communicate to Leadership',
+      desc: 'Exec-ready. No design jargon.',
+      cardDesc:
+        'Translate this decision into exec-ready language. Framed for a CEO — business impact, risk, and a clear recommendation.',
+    },
+    portfolio: {
+      title: 'Portfolio Case',
+      desc: 'Structured narrative for interviews.',
+      cardDesc:
+        'Turn this decision into a structured case study. Built for interviews and portfolio work — with context, reasoning, and what it demonstrates.',
+    },
+    refineHint: 'Address the gaps above before moving forward.',
+    nextLabel: 'What do you need next?',
+    persistError: 'Could not persist decision before generating outputs.',
+  },
+
+  login: {
+    pageTitle: 'Login',
+    pageSrOnlyTitle: 'Login',
+    eyebrow: 'Decidr',
+    title: 'Log in to write your next decision',
+    subtitle: 'A quick setup so you can start your first decision flow.',
+    labels: {
+      email: 'Email',
+      password: 'Password',
+      name: 'Name',
+    },
+    placeholders: {
+      name: 'For registration',
+    },
+    actions: {
+      login: 'Log in',
+      inviteOnly: 'Invite only - request access via survey',
+    },
+    inviteOnlyTitle: 'Invite only. Request access via the survey on the homepage.',
+  },
+
+  join: {
+    pageTitle: 'Join Decidr',
+    eyebrow: 'Decidr',
+    title: "You've been invited",
+    subtitle: 'Create your account to start making better decisions.',
+    labels: {
+      name: 'Name',
+      email: 'Email',
+      password: 'Password',
+    },
+    createAccount: 'Create account',
+  },
+
+  landing: {
+    pageTitle: 'Decidr - Build the business case behind design decisions',
+    surveyUrl: 'https://tally.so/r/KYB58A',
+    betaBadge: 'Private beta',
+    heroTitle: 'Your design decisions shape business outcomes.',
+    heroAccent: 'They just rarely reach the room where it matters.',
+    heroSubtitle:
+      'Decidr helps you build the business case behind your design decisions - before leadership asks for one.',
+    earlyAccessPrompt: "If that's you, request early access below.",
+    requestEarlyAccess: 'Request early access',
+    problem: {
+      title: "Design has always shaped business outcomes. The problem isn't the thinking.",
+      p1: "It's that most designers were never given the tools to prove it.",
+      p2: "When a design decision can't be framed in business language, it doesn't just get rejected - it disappears. The product stalls. Impact goes unmeasured. And talented designers stay tactical when they could be driving strategy.",
+      p3: 'Decidr closes that gap. It helps you pressure-test your reasoning, anticipate leadership questions, and frame decisions in language that connects design directly to business outcomes.',
+      coda: 'Design has always been strategic. Now it can be seen that way.',
+    },
+    how: {
+      label: 'How it works',
+      desc: 'One input. Three outputs. Built for the moments that matter.',
+      cards: {
+        prepare: {
+          title: 'Prepare Decision',
+          desc: 'Before anyone else sees your decision, know where your reasoning is weak. Decidr surfaces gaps and flags what leadership is most likely to challenge.',
+          tag: 'Before the room',
+        },
+        communicate: {
+          title: 'Communicate to Leadership',
+          desc: 'Your decision, translated into exec-ready language: business impact, risk, and a clear recommendation for the people who need to say yes.',
+          tag: 'In the room',
+        },
+        portfolio: {
+          title: 'Portfolio Case',
+          desc: 'The same decision, structured as a design leadership case study - context, reasoning, trade-offs, and what it reveals about how you think.',
+          tag: 'Beyond the room',
+        },
+      },
+    },
+    cta: {
+      label: 'Currently in private beta',
+      title: 'Design deserves a seat at the table. Decidr helps you claim it.',
+      desc: "We're opening access to designers who report to non-design leadership and are ready to turn strong thinking into real business influence.",
+    },
+  },
+
+  topNav: {
+    homeAria: 'Decidr home',
+    themeSwitchToLight: 'Switch to light mode',
+    themeSwitchToDark: 'Switch to dark mode',
+    lightModeTitle: 'Light mode',
+    darkModeTitle: 'Dark mode',
+    reportBug: 'Report a bug',
+    account: 'Account',
+    login: 'Log in',
+    closeAccountDialog: 'Close account dialog',
+    close: 'Close',
+    signOut: 'Sign out',
+  },
+
+  bugReport: {
+    submitFailed: 'Failed to submit bug report.',
+    title: 'Report a bug',
+    closeDialogAria: 'Close bug report dialog',
+    labels: {
+      happening: 'What is happening?',
+      where: 'Where did it happen?',
+      email: 'Your email',
+      required: 'required',
+    },
+    placeholders: {
+      description: 'Describe the bug as clearly as possible.',
+      where: 'e.g. outputs page after generating response',
+    },
+    actions: {
+      cancel: 'Cancel',
+      submitting: 'Sending...',
+      submit: 'Submit report',
+    },
+  },
+
+  layout: {
+    skipToMain: 'Skip to main content',
+  },
+
+  demo: {
+    betterAuth: 'better-auth',
+    playwright: 'playwright',
+    playwrightTitle: 'Playwright e2e test demo',
+    loginTitle: 'Login',
+    loginButton: 'Login',
+    nameForRegistration: 'Name (for registration)',
+    inviteOnlyTitle: 'Invite only. Request access via the survey on the homepage.',
+    inviteOnly: 'Invite only - request access via survey',
+    signOut: 'Sign out',
   },
 };
 

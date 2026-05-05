@@ -11,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import { marked } from 'marked';
 	import { get } from 'svelte/store';
+	import { strings } from '$lib/strings.js';
 
 	let outputs = $state<DecisionOutputs>({});
 	let loading = $state<string | null>(null);
@@ -19,6 +20,7 @@
 	let iterationCount = $state(0);
 	let iterationIndex = $state(0);
 	let lastGeneratedAt = $state<string | null>(null);
+	const s = strings.decisionOutputs;
 
 	function refineHref(): string {
 		return currentId ? `/decisions/new?id=${encodeURIComponent(currentId)}` : '/decisions/new';
@@ -121,7 +123,7 @@
 
 			if (!response.ok) {
 				const err = await response.json();
-				throw new Error(err.message ?? 'Something went wrong');
+				throw new Error(err.message ?? strings.common.somethingWentWrong);
 			}
 
 			const result = await response.json();
@@ -131,7 +133,7 @@
 				updateLatestIterationOutputs(currentId, { prepare: result.prepare });
 			}
 		} catch (e) {
-			generateError = e instanceof Error ? e.message : 'Unknown error';
+			generateError = e instanceof Error ? e.message : strings.common.unknownError;
 		} finally {
 			loading = null;
 		}
@@ -164,7 +166,7 @@
 
 			if (!response.ok) {
 				const err = await response.json();
-				throw new Error(err.message ?? 'Something went wrong');
+				throw new Error(err.message ?? strings.common.somethingWentWrong);
 			}
 
 			const result = await response.json();
@@ -174,7 +176,7 @@
 				updateLatestIterationOutputs(currentId, { [mode]: result[mode] });
 			}
 		} catch (e) {
-			generateError = e instanceof Error ? e.message : 'Unknown error';
+			generateError = e instanceof Error ? e.message : strings.common.unknownError;
 		} finally {
 			loading = null;
 		}
@@ -183,7 +185,7 @@
 
 <div class="page">
 	<div class="page-header">
-		<a class="back-btn" href={refineHref()} aria-label="Refine inputs">
+		<a class="back-btn" href={refineHref()} aria-label={s.backToInputsAria}>
 			<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
 				<path
 					d="M9 11L5 7l4-4"
@@ -195,10 +197,11 @@
 			</svg>
 		</a>
 		<div>
-			<h1 class="page-title">Your outputs</h1>
+			<h1 class="page-title">{s.pageTitle}</h1>
 			<p class="page-subtitle">
-				Iteration {iterationIndex} of {iterationCount}{#if lastGeneratedAt}
-					· generated {formatTime(lastGeneratedAt)}{/if}
+				{s.iterationMeta.replace('{current}', String(iterationIndex)).replace('{total}', String(iterationCount))}
+				{#if lastGeneratedAt}
+					· {s.generatedAt.replace('{time}', formatTime(lastGeneratedAt))}{/if}
 			</p>
 		</div>
 	</div>
@@ -209,7 +212,7 @@
 		{@const variant = confidenceVariant(parsed.rating)}
 		<div class="gate gate-{variant}">
 			<div class="gate-header">
-				<span class="gate-label">Decision Confidence</span>
+				<span class="gate-label">{s.gateLabel}</span>
 				<span class="gate-rating gate-rating-{variant}">{parsed.rating}</span>
 			</div>
 			{#if parsed.reason}
@@ -225,7 +228,7 @@
 							onclick={generatePrepare}
 							disabled={loading === 'prepare'}
 						>
-							{loading === 'prepare' ? 'Generating...' : 'Generate full review'}
+							{loading === 'prepare' ? strings.common.generating : s.actions.generateFullReview}
 							{#if loading !== 'prepare'}
 								<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 									<path
@@ -238,16 +241,16 @@
 								</svg>
 							{/if}
 						</button>
-						<a class="btn-ghost" href={refineHref()}>Back to inputs</a>
+						<a class="btn-ghost" href={refineHref()}>{s.actions.backToInputs}</a>
 					{:else}
-						<a class="btn-primary" href={refineHref()}>Back to inputs</a>
+						<a class="btn-primary" href={refineHref()}>{s.actions.backToInputs}</a>
 						<button
 							class="btn-ghost"
 							type="button"
 							onclick={generatePrepare}
 							disabled={loading === 'prepare'}
 						>
-							{loading === 'prepare' ? 'Generating...' : 'Generate full review anyway'}
+							{loading === 'prepare' ? strings.common.generating : s.actions.generateFullReviewAnyway}
 						</button>
 					{/if}
 				</div>
@@ -266,8 +269,8 @@
 			<div class="output-header">
 				<span class="output-num one">1</span>
 				<div>
-					<div class="output-title">Prepare Decision</div>
-					<div class="output-desc">For you. Before you commit.</div>
+					<div class="output-title">{s.prepare.title}</div>
+					<div class="output-desc">{s.prepare.desc}</div>
 				</div>
 			</div>
 			<div class="output-body prose">
@@ -275,8 +278,8 @@
 			</div>
 			{#if variant === 'not-ready' || variant === 'needs-work'}
 				<div class="refine-footer">
-					<p class="refine-hint">Address the gaps above before moving forward.</p>
-					<a class="btn-ghost-inline" href={refineHref()}>Refine inputs →</a>
+					<p class="refine-hint">{s.refineHint}</p>
+					<a class="btn-ghost-inline" href={refineHref()}>{s.actions.refineInputs}</a>
 				</div>
 			{/if}
 		</div>
@@ -285,7 +288,7 @@
 	<!-- NEXT STEP CARDS — shown after prepare, until communicate/portfolio are generated -->
 	{#if outputs.prepare && (!outputs.communicate || !outputs.portfolio)}
 		<div class="next-section">
-			<p class="next-label">What do you need next?</p>
+			<p class="next-label">{s.nextLabel}</p>
 			<div class="next-cards">
 				{#if !outputs.communicate}
 					<button
@@ -297,11 +300,12 @@
 						<div class="next-card-num two">2</div>
 						<div class="next-card-body">
 							<div class="next-card-title">
-								{loading === 'communicate' ? 'Generating...' : 'Communicate to Leadership'}
+								{loading === 'communicate'
+									? strings.common.generating
+									: s.communicate.title}
 							</div>
 							<div class="next-card-desc">
-								Translate this decision into exec-ready language. Framed for a CEO — business
-								impact, risk, and a clear recommendation.
+								{s.communicate.cardDesc}
 							</div>
 						</div>
 						<svg class="next-card-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -326,11 +330,10 @@
 						<div class="next-card-num three">3</div>
 						<div class="next-card-body">
 							<div class="next-card-title">
-								{loading === 'portfolio' ? 'Generating...' : 'Portfolio Case'}
+								{loading === 'portfolio' ? strings.common.generating : s.portfolio.title}
 							</div>
 							<div class="next-card-desc">
-								Turn this decision into a structured case study. Built for interviews and portfolio
-								work — with context, reasoning, and what it demonstrates.
+								{s.portfolio.cardDesc}
 							</div>
 						</div>
 						<svg class="next-card-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -357,8 +360,8 @@
 			<div class="output-header">
 				<span class="output-num two">2</span>
 				<div>
-					<div class="output-title">Communicate to Leadership</div>
-					<div class="output-desc">Exec-ready. No design jargon.</div>
+					<div class="output-title">{s.communicate.title}</div>
+					<div class="output-desc">{s.communicate.desc}</div>
 				</div>
 			</div>
 			<div class="output-body prose">
@@ -373,8 +376,8 @@
 			<div class="output-header">
 				<span class="output-num three">3</span>
 				<div>
-					<div class="output-title">Portfolio Case</div>
-					<div class="output-desc">Structured narrative for interviews.</div>
+					<div class="output-title">{s.portfolio.title}</div>
+					<div class="output-desc">{s.portfolio.desc}</div>
 				</div>
 			</div>
 			<div class="output-body prose">

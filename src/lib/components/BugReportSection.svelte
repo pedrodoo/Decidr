@@ -1,6 +1,7 @@
 <script lang="ts">
 	import BugReportModal from '$lib/components/BugReportModal.svelte';
 	import TopNav from '$lib/components/TopNav.svelte';
+	import { strings } from '$lib/strings.js';
 	import type { Theme } from '$lib/theme';
 	import type { SessionLayoutUser } from '$lib/types/session';
 
@@ -21,6 +22,7 @@
 	let isBugModalOpen = $state(false);
 	let isSubmittingBug = $state(false);
 	let bugSubmitError = $state('');
+	const s = strings.bugReport;
 
 	const defaultEmail = $derived(user?.email ?? '');
 
@@ -49,14 +51,14 @@
 			});
 
 			if (!response.ok) {
-				const payload = await response.json().catch(() => ({ message: 'Failed to submit bug report.' }));
-				bugSubmitError = payload.message || 'Failed to submit bug report.';
+				const payload = await response.json().catch(() => ({ message: s.submitFailed }));
+				bugSubmitError = payload.message || s.submitFailed;
 				return;
 			}
 
 			isBugModalOpen = false;
 		} catch {
-			bugSubmitError = 'Failed to submit bug report.';
+			bugSubmitError = s.submitFailed;
 		} finally {
 			isSubmittingBug = false;
 		}

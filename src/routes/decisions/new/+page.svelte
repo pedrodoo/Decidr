@@ -99,36 +99,26 @@
 	function validate(step: Step) {
 		const next: Record<string, string> = {};
 		if (step === 1) {
-			if (!form.decision.trim())
-				next.decision = "Looks empty — without this the output won't have much to work with.";
-			if (!form.problem.trim())
-				next.problem = "Looks empty — without this the output won't have much to work with.";
+			if (!form.decision.trim()) next.decision = s.validation.emptyGeneric;
+			if (!form.problem.trim()) next.problem = s.validation.emptyGeneric;
 		}
 		if (step === 2) {
 			if (!form.options.trim()) {
-				next.options = "Looks empty — without this the output won't have much to work with.";
+				next.options = s.validation.emptyGeneric;
 			} else if (form.options.split('\n').filter((l) => l.trim().length > 2).length < 2) {
-				next.options =
-					"We only detected one option — usually we'd expect to see alternatives here.";
+				next.options = s.validation.optionsOneDetected;
 			}
-			if (!form.data.trim())
-				next.data = 'Looks empty — without evidence, the output may feel thin.';
-			if (!form.tradeoffs.trim())
-				next.tradeoffs =
-					'Nothing here — outputs tend to be stronger when tradeoffs are acknowledged.';
+			if (!form.data.trim()) next.data = s.validation.dataEmpty;
+			if (!form.tradeoffs.trim()) next.tradeoffs = s.validation.tradeoffsEmpty;
 		}
 		if (step === 3) {
 			if (!form.primaryMetric.trim()) {
-				next.primaryMetric = 'Looks empty — without a metric, success is hard to define.';
+				next.primaryMetric = s.validation.primaryMetricEmpty;
 			} else if (!/[\d%]/.test(form.primaryMetric)) {
-				next.primaryMetric =
-					'No number or % detected — a metric without a target is hard to evaluate.';
+				next.primaryMetric = s.validation.primaryMetricNoTarget;
 			}
-			if (!form.guardrailMetric.trim())
-				next.guardrailMetric = "Nothing here — consider what you're not willing to sacrifice.";
-			if (!form.expectedOutcome.trim())
-				next.expectedOutcome =
-					'Looks empty — without a prediction, the output has less to anchor to.';
+			if (!form.guardrailMetric.trim()) next.guardrailMetric = s.validation.guardrailEmpty;
+			if (!form.expectedOutcome.trim()) next.expectedOutcome = s.validation.expectedOutcomeEmpty;
 		}
 		fieldValidation = next;
 	}
@@ -259,13 +249,13 @@
 
 			if (!response.ok) {
 				const err = await response.json();
-				throw new Error(err.message ?? 'Something went wrong');
+				throw new Error(err.message ?? strings.common.somethingWentWrong);
 			}
 
 			const result = await response.json();
 			const idForIteration = currentId;
 			if (!idForIteration) {
-				throw new Error('Could not persist decision before generating outputs.');
+				throw new Error(strings.decisionOutputs.persistError);
 			}
 
 			const updated = appendIteration(idForIteration, {
@@ -280,7 +270,7 @@
 			const targetId = updated?.id ?? idForIteration;
 			goto(`/decisions/outputs?id=${encodeURIComponent(targetId)}`);
 		} catch (e) {
-			generateError = e instanceof Error ? e.message : 'Unknown error';
+			generateError = e instanceof Error ? e.message : strings.common.unknownError;
 		} finally {
 			loading = false;
 		}
@@ -302,7 +292,7 @@
 </svelte:head>
 
 <main id="main" class="page">
-	<h1 class="sr-only">New Decision</h1>
+	<h1 class="sr-only">{s.pageSrOnlyTitle}</h1>
 
 	<!-- AUDIENCE GATE -->
 	{#if phase === 'gate'}
@@ -381,8 +371,7 @@
 
 				{#if coachVisible[1] && Object.keys(fieldValidation).length > 0}
 					<p class="validation-disclaimer">
-						These are rule-based checks, not a full review — you know your context better than we
-						do.
+						{s.validation.disclaimer}
 					</p>
 				{/if}
 
@@ -405,20 +394,17 @@
 				{#if coachVisible[1]}
 					<div id="coach-1" class="coach-placeholder">
 						<div class="coach-placeholder-header">
-							<span class="coach-placeholder-badge">Coming soon</span>
-							<span class="coach-placeholder-title">Input-aware coaching</span>
+							<span class="coach-placeholder-badge">{s.coachPlaceholder.badge}</span>
+							<span class="coach-placeholder-title">{s.coachPlaceholder.title}</span>
 						</div>
 						<p class="coach-placeholder-body">
-							Based on what you've written, this space will surface questions worth sitting with
-							before you move on — gaps in your reasoning, assumptions to pressure-test, and angles
-							a {audience.label} will likely push back on. Powered by NLP analysis of your specific inputs,
-							not preset prompts.
+							{s.coachPlaceholder.body.replace('{audienceLabel}', audience.label)}
 						</p>
 						<p class="coach-placeholder-sub">
-							For now, take a moment to re-read what you've written above.
+							{s.coachPlaceholder.sub}
 						</p>
 						<button class="btn-primary" type="button" onclick={() => goToStep(2)}
-							>Continue to Analysis →</button
+							>{s.coachPlaceholder.continueToAnalysis}</button
 						>
 					</div>
 				{/if}
@@ -475,8 +461,7 @@
 
 				{#if coachVisible[2] && Object.keys(fieldValidation).length > 0}
 					<p class="validation-disclaimer">
-						These are rule-based checks, not a full review — you know your context better than we
-						do.
+						{s.validation.disclaimer}
 					</p>
 				{/if}
 
@@ -513,20 +498,17 @@
 				{#if coachVisible[2]}
 					<div id="coach-2" class="coach-placeholder">
 						<div class="coach-placeholder-header">
-							<span class="coach-placeholder-badge">Coming soon</span>
-							<span class="coach-placeholder-title">Input-aware coaching</span>
+							<span class="coach-placeholder-badge">{s.coachPlaceholder.badge}</span>
+							<span class="coach-placeholder-title">{s.coachPlaceholder.title}</span>
 						</div>
 						<p class="coach-placeholder-body">
-							Based on what you've written, this space will surface questions worth sitting with
-							before you move on — gaps in your reasoning, assumptions to pressure-test, and angles
-							a {audience.label} will likely push back on. Powered by NLP analysis of your specific inputs,
-							not preset prompts.
+							{s.coachPlaceholder.body.replace('{audienceLabel}', audience.label)}
 						</p>
 						<p class="coach-placeholder-sub">
-							For now, take a moment to re-read what you've written above.
+							{s.coachPlaceholder.sub}
 						</p>
 						<button class="btn-primary" type="button" onclick={() => goToStep(3)}
-							>Continue to Outcomes →</button
+							>{s.coachPlaceholder.continueToOutcomes}</button
 						>
 					</div>
 				{/if}
@@ -616,8 +598,7 @@
 
 				{#if Object.keys(fieldValidation).length > 0}
 					<p class="validation-disclaimer">
-						These are rule-based checks, not a full review — you know your context better than we
-						do.
+						{s.validation.disclaimer}
 					</p>
 				{/if}
 
@@ -625,7 +606,7 @@
 					<span class="step-counter">{stepCounter(3, 3)}</span>
 					<button class="btn-primary" type="button" onclick={handleGenerate} disabled={loading}>
 						{#if loading}
-							Generating...
+							{strings.common.generating}
 						{:else}
 							<svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
 								<path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z" />

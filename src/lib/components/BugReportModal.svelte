@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { strings } from '$lib/strings.js';
 	type BugFormValues = {
 		description: string;
 		whereFound: string;
@@ -15,6 +16,7 @@
 	};
 
 	let { open, email, submitting, errorMessage, onClose, onSubmit }: Props = $props();
+	const s = strings.bugReport;
 
 	let description = $state('');
 	let whereFound = $state('');
@@ -40,43 +42,43 @@
 
 {#if open}
 	<div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="bug-report-title">
-		<button class="modal-backdrop-close" type="button" aria-label="Close bug report dialog" onclick={onClose}
+		<button class="modal-backdrop-close" type="button" aria-label={s.closeDialogAria} onclick={onClose}
 		></button>
 
 		<div class="modal bug-report-modal">
 			<div class="modal-header">
-				<h2 id="bug-report-title" class="modal-title">Report a bug</h2>
-				<button class="modal-close" type="button" aria-label="Close bug report dialog" onclick={onClose}>✕</button>
+				<h2 id="bug-report-title" class="modal-title">{s.title}</h2>
+				<button class="modal-close" type="button" aria-label={s.closeDialogAria} onclick={onClose}>✕</button>
 			</div>
 
 			<form class="modal-body bug-form" onsubmit={handleSubmit}>
 				<label class="field-label" for="bug-description">
-					What is happening? <span class="required" aria-label="required">*</span>
+					{s.labels.happening} <span class="required" aria-label={s.labels.required}>*</span>
 				</label>
 				<textarea
 					id="bug-description"
 					name="description"
 					rows="3"
-					placeholder="Describe the bug as clearly as possible."
+					placeholder={s.placeholders.description}
 					class="short"
 					bind:value={description}
 					required
 				></textarea>
 
 				<label class="field-label" for="bug-where-found">
-					Where did it happen? <span class="required" aria-label="required">*</span>
+					{s.labels.where} <span class="required" aria-label={s.labels.required}>*</span>
 				</label>
 				<input
 					id="bug-where-found"
 					name="whereFound"
 					type="text"
-					placeholder="e.g. outputs page after generating response"
+					placeholder={s.placeholders.where}
 					bind:value={whereFound}
 					required
 				/>
 
 				<label class="field-label" for="bug-email">
-					Your email <span class="required" aria-label="required">*</span>
+					{s.labels.email} <span class="required" aria-label={s.labels.required}>*</span>
 				</label>
 				<input
 					id="bug-email"
@@ -91,9 +93,11 @@
 				{/if}
 
 				<div class="bug-form-actions">
-					<button class="btn-secondary" type="button" onclick={onClose} disabled={submitting}>Cancel</button>
+					<button class="btn-secondary" type="button" onclick={onClose} disabled={submitting}
+						>{s.actions.cancel}</button
+					>
 					<button class="btn-primary bug-submit-btn" type="submit" disabled={submitting}>
-						{submitting ? 'Sending...' : 'Submit report'}
+						{submitting ? s.actions.submitting : s.actions.submit}
 					</button>
 				</div>
 			</form>
