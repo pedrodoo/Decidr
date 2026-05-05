@@ -75,46 +75,52 @@
 	<section class="problem reveal" aria-labelledby="problem-title">
 		<div class="problem-inner">
 			<h2 class="problem-title" id="problem-title">
-				{s.problem.title}
+				{@html s.problem.title}
 			</h2>
 			<div class="problem-body">
 				<p>{s.problem.p1}</p>
 				<p>{s.problem.p2}</p>
 				<p>{s.problem.p3}</p>
-				<p class="problem-coda">{s.problem.coda}</p>
+				<p class="problem-coda">{@html s.problem.coda}</p>
 			</div>
 		</div>
 	</section>
 
 	<section class="how" aria-labelledby="how-title">
 		<p class="section-label" id="how-title">{s.how.label}</p>
-		<p class="how-desc">{s.how.desc}</p>
+		<p class="how-desc">{@html s.how.desc}</p>
 
 		<div class="outputs-grid">
 			<div class="output-card accent-orange reveal">
-				<div class="output-num one" aria-hidden="true">1</div>
+				<div class="output-card-top">
+					<div class="output-num one" aria-hidden="true">1</div>
+					<div class="output-tag">{s.how.cards.prepare.tag}</div>
+				</div>
 				<div class="output-card-body">
 					<h3 class="output-title">{s.how.cards.prepare.title}</h3>
 					<p class="output-desc">{s.how.cards.prepare.desc}</p>
-					<div class="output-tag">{s.how.cards.prepare.tag}</div>
 				</div>
 			</div>
 
 			<div class="output-card accent-green reveal">
-				<div class="output-num two" aria-hidden="true">2</div>
+				<div class="output-card-top">
+					<div class="output-num two" aria-hidden="true">2</div>
+					<div class="output-tag">{s.how.cards.communicate.tag}</div>
+				</div>
 				<div class="output-card-body">
 					<h3 class="output-title">{s.how.cards.communicate.title}</h3>
 					<p class="output-desc">{s.how.cards.communicate.desc}</p>
-					<div class="output-tag">{s.how.cards.communicate.tag}</div>
 				</div>
 			</div>
 
 			<div class="output-card accent-purple reveal">
-				<div class="output-num three" aria-hidden="true">3</div>
+				<div class="output-card-top">
+					<div class="output-num three" aria-hidden="true">3</div>
+					<div class="output-tag">{s.how.cards.portfolio.tag}</div>
+				</div>
 				<div class="output-card-body">
 					<h3 class="output-title">{s.how.cards.portfolio.title}</h3>
 					<p class="output-desc">{s.how.cards.portfolio.desc}</p>
-					<div class="output-tag">{s.how.cards.portfolio.tag}</div>
 				</div>
 			</div>
 		</div>
@@ -363,6 +369,12 @@
 		.outputs-grid {
 			grid-template-columns: 1fr;
 		}
+	}
+
+	.output-card-top {
+		display: flex;
+		align-items: center;
+		gap: 10px;
 	}
 
 	.output-card {
