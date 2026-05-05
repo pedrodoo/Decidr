@@ -69,8 +69,8 @@ export const strings = {
   // ---------------------------------------------------------------------------
   audienceIndicator: {
     label: 'Audience',
-    startFresh: 'Start fresh decision',
-    startFreshAria: 'Discard current decision and start fresh',
+    startFresh: 'Start fresh case',
+    startFreshAria: 'Discard current case and start fresh',
     changeAudienceAria: 'Change audience',
   },
 
@@ -78,7 +78,7 @@ export const strings = {
   // Step progress (Context / Analysis / Outcomes)
   // ---------------------------------------------------------------------------
   stepProgress: {
-    ariaLabel: 'Decision steps',
+    ariaLabel: 'Case steps',
     steps: [
       { n: 1, label: 'Context' },
       { n: 2, label: 'Analysis' },
@@ -99,7 +99,7 @@ export const strings = {
   // New decision page
   // ---------------------------------------------------------------------------
   newDecision: {
-    pageTitle: 'New Decision — Decidr',
+    pageTitle: 'New Case — Decidr',
 
     fieldLabels: {
       decision: 'Decision',
@@ -138,7 +138,7 @@ export const strings = {
 
     stepCounter: 'Step {current} of {total}', // {current}, {total}
     generateOutputs: 'Generate outputs',
-    pageSrOnlyTitle: 'New Decision',
+    pageSrOnlyTitle: 'New Case',
     validation: {
       emptyGeneric: "Looks empty — without this the output won't have much to work with.",
       optionsOneDetected: "We only detected one option — usually we'd expect to see alternatives here.",
@@ -164,7 +164,7 @@ not preset prompts.`,
     },
 
     outputPreview: {
-      oneTitle: 'Prepare Decision',
+      oneTitle: 'Prepare Case',
       oneDesc: 'Structured reasoning to review before you commit. For you, not for them.',
       twoTitle: 'Communicate to Leadership',
       twoDesc: 'Exec-ready language for a {audienceLabel}. Business impact, risk, and clear recommendation.',
@@ -246,14 +246,14 @@ not preset prompts.`,
   },
 
   decisionsDashboard: {
-    pageTitle: 'Decision Dashboard',
+    pageTitle: 'Cases',
     eyebrow: 'Decidr',
-    title: 'Decision Dashboard',
-    subtitle: 'All your past decisions in one place.',
-    newDecisionCta: 'New decision',
-    emptyTitle: 'No decisions yet',
-    emptyBody: 'Once you generate outputs, your decisions will appear here.',
-    emptyCta: 'Start your first decision',
+    title: 'Cases',
+    subtitle: 'All your past cases in one place.',
+    newDecisionCta: 'New case',
+    emptyTitle: 'No cases yet',
+    emptyBody: 'Once you generate outputs, your cases will appear here.',
+    emptyCta: 'Start your first case',
     iterations: {
       one: 'iteration',
       many: 'iterations',
@@ -265,7 +265,7 @@ not preset prompts.`,
     backToInputsAria: 'Refine inputs',
     iterationMeta: 'Iteration {current} of {total}',
     generatedAt: 'generated {time}',
-    gateLabel: 'Decision Confidence',
+    gateLabel: 'Case Confidence',
     actions: {
       generateFullReview: 'Generate full review',
       generateFullReviewAnyway: 'Generate full review anyway',
@@ -273,32 +273,32 @@ not preset prompts.`,
       refineInputs: 'Refine inputs →',
     },
     prepare: {
-      title: 'Prepare Decision',
+      title: 'Prepare Case',
       desc: 'For you. Before you commit.',
     },
     communicate: {
       title: 'Communicate to Leadership',
       desc: 'Exec-ready. No design jargon.',
       cardDesc:
-        'Translate this decision into exec-ready language. Framed for a CEO — business impact, risk, and a clear recommendation.',
+        'Translate this case into exec-ready language. Framed for a CEO — business impact, risk, and a clear recommendation.',
     },
     portfolio: {
       title: 'Portfolio Case',
       desc: 'Structured narrative for interviews.',
       cardDesc:
-        'Turn this decision into a structured case study. Built for interviews and portfolio work — with context, reasoning, and what it demonstrates.',
+        'Turn this case into a structured case study. Built for interviews and portfolio work — with context, reasoning, and what it demonstrates.',
     },
     refineHint: 'Address the gaps above before moving forward.',
     nextLabel: 'What do you need next?',
-    persistError: 'Could not persist decision before generating outputs.',
+    persistError: 'Could not persist case before generating outputs.',
   },
 
   login: {
     pageTitle: 'Login',
     pageSrOnlyTitle: 'Login',
     eyebrow: 'Decidr',
-    title: 'Log in to write your next decision',
-    subtitle: 'A quick setup so you can start your first decision flow.',
+    title: 'Log in to build your next case',
+    subtitle: 'A quick setup so you can start your first case.',
     labels: {
       email: 'Email',
       password: 'Password',
@@ -349,18 +349,18 @@ not preset prompts.`,
       desc: 'One input. Three outputs. Built for the moments that matter.',
       cards: {
         prepare: {
-          title: 'Prepare Decision',
-          desc: 'Before anyone else sees your decision, know where your reasoning is weak. Decidr surfaces gaps and flags what leadership is most likely to challenge.',
+          title: 'Prepare Case',
+          desc: 'Before anyone else sees your case, know where your reasoning is weak. Decidr surfaces gaps and flags what leadership is most likely to challenge.',
           tag: 'Before the room',
         },
         communicate: {
           title: 'Communicate to Leadership',
-          desc: 'Your decision, translated into exec-ready language: business impact, risk, and a clear recommendation for the people who need to say yes.',
+          desc: 'Your case, translated into exec-ready language: business impact, risk, and a clear recommendation for the people who need to say yes.',
           tag: 'In the room',
         },
         portfolio: {
           title: 'Portfolio Case',
-          desc: 'The same decision, structured as a design leadership case study - context, reasoning, trade-offs, and what it reveals about how you think.',
+          desc: 'The same case, structured as a design leadership case study - context, reasoning, trade-offs, and what it reveals about how you think.',
           tag: 'Beyond the room',
         },
       },
