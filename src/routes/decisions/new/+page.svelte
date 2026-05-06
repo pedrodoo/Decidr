@@ -21,6 +21,8 @@
 	import { page } from '$app/state';
 
 	import { onMount, tick } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import DotMatrix from '$lib/components/DotMatrix.svelte';
 
 	type Phase = 'gate' | 'steps';
 	type Step = 1 | 2 | 3;
@@ -217,9 +219,26 @@
 	// POST form data to POST /api/decisions/generate, then navigate to outputs page.
 	let loading = $state(false);
 	let generateError = $state<string | null>(null);
+	let loadingMsgIndex = $state(0);
+
+	const loadingMsgs = $derived(
+		strings.common.generatingMessages.map((m: string) =>
+			m.replace('{audienceLabel}', audience.label)
+		)
+	);
+
+	$effect(() => {
+		if (!loading) return;
+		loadingMsgIndex = 0;
+		const timer = setInterval(() => {
+			loadingMsgIndex = (loadingMsgIndex + 1) % loadingMsgs.length;
+		}, 2200);
+		return () => clearInterval(timer);
+	});
 
 	async function handleGenerate() {
 		validate(3);
+		if (Object.keys(fieldValidation).length > 0) return;
 		loading = true;
 		generateError = null;
 
@@ -569,31 +588,43 @@
 				<div class="field">
 					<div class="field-label">{s.fieldLabels.whatYouGet}</div>
 					<p class="field-prompt">{s.fieldLabels.whatYouGetPrompt}</p>
-					<div class="output-preview">
-						<div class="output-mode">
-							<span class="output-num one">1</span>
-							<div>
-								<div class="output-title">{s.outputPreview.oneTitle}</div>
-								<div class="output-desc">{s.outputPreview.oneDesc}</div>
-							</div>
+					{#if loading}
+						<div class="output-loader">
+							<DotMatrix dotSize={7} color="var(--text-primary)" gap={6} />
+							<p class="output-loader-label">{strings.common.generatingLabel}</p>
+							{#key loadingMsgIndex}
+								<p class="output-loader-msg" in:fade={{ duration: 350 }}>
+									{loadingMsgs[loadingMsgIndex]}
+								</p>
+							{/key}
 						</div>
-						<div class="output-mode">
-							<span class="output-num two">2</span>
-							<div>
-								<div class="output-title">{s.outputPreview.twoTitle}</div>
-								<div class="output-desc">
-									{s.outputPreview.twoDesc.replace('{audienceLabel}', audience.label)}
+					{:else}
+						<div class="output-preview">
+							<div class="output-mode">
+								<span class="output-num one">1</span>
+								<div>
+									<div class="output-title">{s.outputPreview.oneTitle}</div>
+									<div class="output-desc">{s.outputPreview.oneDesc}</div>
+								</div>
+							</div>
+							<div class="output-mode">
+								<span class="output-num two">2</span>
+								<div>
+									<div class="output-title">{s.outputPreview.twoTitle}</div>
+									<div class="output-desc">
+										{s.outputPreview.twoDesc.replace('{audienceLabel}', audience.label)}
+									</div>
+								</div>
+							</div>
+							<div class="output-mode">
+								<span class="output-num three">3</span>
+								<div>
+									<div class="output-title">{s.outputPreview.threeTitle}</div>
+									<div class="output-desc">{s.outputPreview.threeDesc}</div>
 								</div>
 							</div>
 						</div>
-						<div class="output-mode">
-							<span class="output-num three">3</span>
-							<div>
-								<div class="output-title">{s.outputPreview.threeTitle}</div>
-								<div class="output-desc">{s.outputPreview.threeDesc}</div>
-							</div>
-						</div>
-					</div>
+					{/if}
 				</div>
 
 				{#if Object.keys(fieldValidation).length > 0}
@@ -605,14 +636,10 @@
 				<div class="step-actions">
 					<span class="step-counter">{stepCounter(3, 3)}</span>
 					<button class="btn-primary" type="button" onclick={handleGenerate} disabled={loading}>
-						{#if loading}
-							{strings.common.generating}
-						{:else}
-							<svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
-								<path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z" />
-							</svg>
-							{s.generateOutputs}
-						{/if}
+						<svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
+							<path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z" />
+						</svg>
+						{s.generateOutputs}
 					</button>
 				</div>
 				{#if generateError}
@@ -910,6 +937,35 @@
 		font-size: var(--text-sm);
 		color: var(--text-secondary);
 		line-height: 1.4;
+	}
+
+	/* Output loader */
+	.output-loader {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		padding: 32px 0;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		background: var(--surface);
+		min-height: 148px;
+		justify-content: center;
+	}
+
+	.output-loader-label {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		font-weight: 500;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+
+	.output-loader-msg {
+		font-size: var(--text-sm);
+		color: var(--text-secondary);
+		text-align: center;
 	}
 
 	/* Field validation */

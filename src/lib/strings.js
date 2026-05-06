@@ -16,6 +16,12 @@ export const strings = {
     change: 'Change',
     soon: 'Soon',
     generating: 'Generating...',
+    generatingLabel: 'Generating',
+    generatingMessages: [
+      'Analyzing your decision...',
+      'Building the case for {audienceLabel}...',
+      'Preparing your outputs...',
+    ],
     unknownError: 'Unknown error',
     somethingWentWrong: 'Something went wrong',
   },
