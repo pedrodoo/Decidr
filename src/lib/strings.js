@@ -254,7 +254,7 @@ not preset prompts.`,
   decisionsDashboard: {
     pageTitle: 'Story Dashboard',
     eyebrow: 'Decidr',
-    title: 'Story Dashboard',
+    title: 'Dashboard',
     subtitle: 'All your narratives in one place.',
     newDecisionCta: 'New ',
     emptyTitle: 'No narratives yet',
