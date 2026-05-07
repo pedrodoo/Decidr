@@ -180,8 +180,9 @@
 	}
 
 	// --- Handlers ---
-	function handleAudienceStart(selected: AudienceSelection) {
+	function handleAudienceStart(selected: AudienceSelection, intent: string | null) {
 		audience = selected;
+		form.intent = intent ?? '';
 		phase = 'steps';
 	}
 
@@ -295,8 +296,15 @@
 	}
 
 	// Convenience: get current audience's prompts
-	const p = $derived(prompts[audience.id] ?? prompts.ceo);
+	const promptKey = $derived(form.intent ? `${audience.id}:${form.intent}` : audience.id);
+	const p = $derived(prompts[promptKey] ?? prompts[audience.id] ?? prompts.ceo);
 	const c = $derived(coachContent[audience.id] ?? coachContent.ceo);
+
+	const hasFinancialSignals = $derived(
+		/\b(budget|cost|investment|roi|pricing|spend|forecast|payback)\b|[€$]/i.test(
+			`${form.decision} ${form.problem} ${form.data} ${form.tradeoffs}`
+		)
+	);
 </script>
 
 <svelte:head>
@@ -391,6 +399,10 @@
 					<p class="validation-disclaimer">
 						{s.validation.disclaimer}
 					</p>
+				{/if}
+
+				{#if hasFinancialSignals}
+					<p class="financial-disclaimer">{s.financialDisclaimer}</p>
 				{/if}
 
 				<div class="step-actions">
@@ -972,6 +984,12 @@
 		color: var(--text-muted);
 		font-style: italic;
 		margin-bottom: 16px;
+	}
+	.financial-disclaimer {
+		font-size: 12px;
+		color: var(--text-muted);
+		line-height: 1.5;
+		margin: 4px 0 16px;
 	}
 
 	/* Coach placeholder */

@@ -75,8 +75,8 @@ export const strings = {
   // ---------------------------------------------------------------------------
   audienceIndicator: {
     label: 'Audience',
-    startFresh: 'Start fresh decision',
-    startFreshAria: 'Discard current decision and start fresh',
+    startFresh: 'Start fresh case',
+    startFreshAria: 'Discard current case and start fresh',
     changeAudienceAria: 'Change audience',
   },
 
@@ -111,7 +111,7 @@ export const strings = {
       decision: 'Decision',
       problem: 'Problem',
       businessArea: 'Business Area',
-      businessAreaPrompt: 'Which area does this decision most directly affect?',
+      businessAreaPrompt: 'Which area does this case most directly affect?',
       options: 'Options Considered',
       data: 'Data & Signals',
       tradeoffs: 'Tradeoffs Accepted',
@@ -141,10 +141,22 @@ export const strings = {
       { id: 'retention', label: 'Retention', class: 'retention' },
       { id: 'revenue', label: 'Revenue', class: 'revenue' },
     ],
+    intentGate: {
+      title: 'What are you trying to achieve?',
+      subtitle: 'Optional. This helps tailor the questions to your situation.',
+      skip: 'Skip for now',
+      intents: [
+        { id: 'prove-impact', label: 'Prove impact' },
+        { id: 'choose-direction', label: 'Choose direction' },
+        { id: 'fix-underperformance', label: 'Fix underperformance' },
+      ],
+    },
 
     stepCounter: 'Step {current} of {total}', // {current}, {total}
     generateOutputs: 'Generate outputs',
     pageSrOnlyTitle: 'New Decision',
+    financialDisclaimer:
+      'This recommendation is framed for a CEO audience. Financial robustness is limited until CFO mode is available (budget structure, ROI model, and sensitivity analysis).',
     validation: {
       emptyGeneric: "Looks empty — without this the output won't have much to work with.",
       optionsOneDetected: "Consider including at least two alternatives — even 'do nothing' counts as an option.",
@@ -183,11 +195,11 @@ not preset prompts.`,
       analysisReview: 'Analysis review',
     },
 
-    // Prompts shown above each field (may include HTML). Keyed by audience id.
+    // Prompts shown above each field (may include HTML). Keyed by audience id or audience:intent.
     prompts: {
       ceo: {
         decision:
-          'A CEO needs to understand this in one sentence. It needs to sound like a business decision, not a design task. <strong>What is your iniciative?</strong>',
+          'A CEO needs to understand this in one sentence. It needs to sound like a business decision, not a design task. <strong>What is your initiative?</strong>',
         problem:
           'Frame this as a business problem, not a UX observation. <strong>What is the cost of not acting?</strong> A CEO will want to know that before anything else.',
         options:
@@ -202,6 +214,60 @@ not preset prompts.`,
           "What breaks if this goes wrong? Even if the primary metric wins, <strong>name the number that would make this decision a failure</strong> regardless.",
         expectedOutcome:
           '<strong>Make a prediction you can be held to.</strong> A CEO will remember what you said. Vague expectations are worse than honest uncertainty. A good prediction has three parts: what changes, by how much, and by when.',
+      },
+      'ceo:prove-impact': {
+        decision:
+          'State the decision this benchmark will unlock. Keep it specific and business-facing. <strong>What decision will become possible after this measurement?</strong>',
+        problem:
+          'Frame the uncertainty in business terms. <strong>What risk are you carrying today because impact is not measured?</strong>',
+        options:
+          'List realistic paths: benchmark now, launch without benchmark, or delay. <strong>Include the do-nothing option.</strong>',
+        data:
+          'Name your current baseline and signal quality. If data is weak, say so explicitly. <strong>What do you know today, and how reliable is it?</strong>',
+        tradeoffs:
+          "Be explicit about cost, time, and opportunity cost. <strong>What are you willing to spend to reduce uncertainty?</strong>",
+        primaryMetric:
+          'Name the metric this benchmark is meant to clarify, with a numeric target if possible.',
+        guardrailMetric:
+          'Name the metric that must not worsen while testing.',
+        expectedOutcome:
+          'Write a testable prediction with timeframe. <strong>What result would justify moving forward?</strong>',
+      },
+      'ceo:choose-direction': {
+        decision:
+          'Write the decision in one sentence. <strong>What exactly needs to be decided now?</strong>',
+        problem:
+          'Describe the business downside of delay. <strong>What happens if no decision is made this cycle?</strong>',
+        options:
+          "List 2-3 realistic alternatives plus do-nothing. <strong>A CEO will ask why this option over the others.</strong>",
+        data:
+          'Use evidence that differentiates options: impact potential, risk, speed, and confidence.',
+        tradeoffs:
+          'State what you give up with the recommended option. <strong>No hidden downside.</strong>',
+        primaryMetric:
+          'Name the metric this decision is expected to improve, with a target.',
+        guardrailMetric:
+          'Name the metric you refuse to sacrifice while pursuing the primary gain.',
+        expectedOutcome:
+          'Make a measurable prediction: what changes, by how much, and by when.',
+      },
+      'ceo:fix-underperformance': {
+        decision:
+          'State the recovery decision clearly. <strong>What are you changing to recover performance?</strong>',
+        problem:
+          'Quantify the underperformance and business cost. <strong>How far are you from target, and what does that cost?</strong>',
+        options:
+          'List recovery options, including low-risk and fast options, plus do-nothing.',
+        data:
+          'Show trend direction, timing, and the strongest signals for likely causes.',
+        tradeoffs:
+          'Name side effects of the recovery plan. <strong>What might worsen while you recover the main KPI?</strong>',
+        primaryMetric:
+          'Name the KPI to recover and the minimum acceptable target.',
+        guardrailMetric:
+          'Name the KPI that cannot degrade during recovery.',
+        expectedOutcome:
+          'Set a recovery prediction with timeframe and threshold for success.',
       },
       // Add cpo, cfo, eng when those audiences are enabled
     },

@@ -12,6 +12,7 @@ export type AudienceSelection = {
 };
 
 export type DecisionForm = {
+	intent: string;
 	decision: string;
 	problem: string;
 	businessArea: string;
@@ -63,6 +64,7 @@ export const STATUS_LABELS: Record<DecisionStatus, string> = {
 };
 
 export const EMPTY_FORM: DecisionForm = {
+	intent: '',
 	decision: '',
 	problem: '',
 	businessArea: '',

@@ -1,15 +1,34 @@
 <!--
-  Audience selection gate shown before the decision steps. User picks an audience (e.g. CEO); copy and coaching tone are keyed by audience.
-  Props: onStart(audience) — called with { id, label } when user clicks Start. Copy from strings.audienceGate.
+  Audience selection gate shown before the decision steps. User picks an audience (e.g. CEO)
+  and may optionally pick an intent (e.g. prove-impact) to tailor prompts.
+  Props: onStart(audience, intent) — called with selected audience + optional intent.
 -->
 <script lang="ts">
 	import { strings } from '$lib/strings.js';
 
-	let { onStart } = $props(); // (audience: { id: string, label: string }) => void
+	type AudienceSelection = {
+		id: string;
+		label: string;
+		icon: string;
+		description: string;
+		available: boolean;
+	};
+
+	type IntentOption = {
+		id: string;
+		label: string;
+	};
+
+	let { onStart } = $props<{
+		onStart: (audience: AudienceSelection, intent: string | null) => void;
+	}>();
 
 	const audiences = strings.audienceGate.audiences;
+	const intentGate = strings.newDecision.intentGate;
+	const intents = intentGate.intents as IntentOption[];
 
 	let selected = $state(audiences[0]);
+	let selectedIntent = $state<string | null>(null);
 
 	function select(a: any) {
 		if (!a.available) return;
@@ -17,7 +36,15 @@
 	}
 
 	function start() {
-		onStart(selected);
+		onStart(selected, selectedIntent);
+	}
+
+	function skipIntentSelection() {
+		selectedIntent = null;
+	}
+
+	function selectIntent(intentId: string) {
+		selectedIntent = selectedIntent === intentId ? null : intentId;
 	}
 </script>
 
@@ -50,6 +77,31 @@
 				<div class="check" aria-hidden="true"></div>
 			</button>
 		{/each}
+	</div>
+
+	<div class="intent-section">
+		<h3>{intentGate.title}</h3>
+		<p>{intentGate.subtitle}</p>
+		<div class="intent-pills">
+			{#each intents as intent}
+				<button
+					type="button"
+					class="intent-pill"
+					class:active={selectedIntent === intent.id}
+					onclick={() => selectIntent(intent.id)}
+				>
+					{intent.label}
+				</button>
+			{/each}
+			<button
+				type="button"
+				class="intent-pill intent-skip"
+				class:active={selectedIntent === null}
+				onclick={skipIntentSelection}
+			>
+				{intentGate.skip}
+			</button>
+		</div>
 	</div>
 
 	<div class="actions">
@@ -218,6 +270,83 @@
 
 	.actions {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.intent-section {
+		border-top: 1px solid var(--border);
+		padding-top: 24px;
+		margin-bottom: 28px;
+	}
+
+	.intent-section h3 {
+		font-size: var(--text-base);
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		color: var(--text-primary);
+		margin-bottom: 6px;
+	}
+
+	.intent-section p {
+		font-size: var(--text-sm);
+		color: var(--text-secondary);
+		line-height: 1.55;
+		margin-bottom: 12px;
+	}
+
+	.intent-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.intent-pill {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		letter-spacing: 0.05em;
+		min-height: 40px;
+		padding: 9px 12px;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+		background: var(--surface-2);
+		color: var(--text-secondary);
+		cursor: pointer;
+		transition:
+			border-color 0.15s,
+			color 0.15s,
+			background 0.15s;
+	}
+
+	.intent-pill:hover {
+		border-color: var(--border-focus);
+		color: var(--text-primary);
+	}
+
+	.intent-pill.active {
+		border-color: var(--orange-border);
+		background: var(--orange-bg);
+		color: var(--accent-text-orange);
+	}
+
+	.intent-pill.intent-skip {
+		background: transparent;
+		color: var(--text-muted);
+		border-style: dashed;
+		opacity: 0.85;
+	}
+
+	.intent-pill.intent-skip:hover {
+		background: transparent;
+		border-color: var(--border);
+		color: var(--text-muted);
+		opacity: 1;
+	}
+
+	.intent-pill.intent-skip.active {
+		border-color: var(--border);
+		background: transparent;
+		color: var(--text-muted);
+		box-shadow: none;
 	}
 </style>
