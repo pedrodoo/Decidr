@@ -238,7 +238,6 @@
 
 	async function handleGenerate() {
 		validate(3);
-		if (Object.keys(fieldValidation).length > 0) return;
 		loading = true;
 		generateError = null;
 
@@ -439,12 +438,11 @@
 					<textarea
 						id="f-options"
 						class="medium"
-						class:warned={!!fieldValidation.options}
 						bind:value={form.options}
 						placeholder={s.placeholders.options}
 					></textarea>
 					{#if fieldValidation.options}
-						<p class="field-message">{fieldValidation.options}</p>
+						<p class="field-hint">{fieldValidation.options}</p>
 					{/if}
 				</div>
 
@@ -454,12 +452,11 @@
 					<textarea
 						id="f-data"
 						class="short"
-						class:warned={!!fieldValidation.data}
 						bind:value={form.data}
 						placeholder={s.placeholders.data}
 					></textarea>
 					{#if fieldValidation.data}
-						<p class="field-message">{fieldValidation.data}</p>
+						<p class="field-hint">{fieldValidation.data}</p>
 					{/if}
 				</div>
 
@@ -469,20 +466,13 @@
 					<textarea
 						id="f-tradeoffs"
 						class="short"
-						class:warned={!!fieldValidation.tradeoffs}
 						bind:value={form.tradeoffs}
 						placeholder={s.placeholders.tradeoffs}
 					></textarea>
 					{#if fieldValidation.tradeoffs}
-						<p class="field-message">{fieldValidation.tradeoffs}</p>
+						<p class="field-hint">{fieldValidation.tradeoffs}</p>
 					{/if}
 				</div>
-
-				{#if coachVisible[2] && Object.keys(fieldValidation).length > 0}
-					<p class="validation-disclaimer">
-						{s.validation.disclaimer}
-					</p>
-				{/if}
 
 				<div class="step-actions">
 					<button class="btn-secondary" type="button" onclick={() => goToStep(1)}>
@@ -544,12 +534,11 @@
 						<input
 							id="f-metric"
 							type="text"
-							class:warned={!!fieldValidation.primaryMetric}
 							bind:value={form.primaryMetric}
 							placeholder={s.placeholders.primaryMetric}
 						/>
 						{#if fieldValidation.primaryMetric}
-							<p class="field-message">{fieldValidation.primaryMetric}</p>
+							<p class="field-hint">{fieldValidation.primaryMetric}</p>
 						{/if}
 					</div>
 					<div class="field">
@@ -558,12 +547,11 @@
 						<input
 							id="f-guardrail"
 							type="text"
-							class:warned={!!fieldValidation.guardrailMetric}
 							bind:value={form.guardrailMetric}
 							placeholder={s.placeholders.guardrailMetric}
 						/>
 						{#if fieldValidation.guardrailMetric}
-							<p class="field-message">{fieldValidation.guardrailMetric}</p>
+							<p class="field-hint">{fieldValidation.guardrailMetric}</p>
 						{/if}
 					</div>
 				</div>
@@ -574,12 +562,11 @@
 					<input
 						id="f-outcome"
 						type="text"
-						class:warned={!!fieldValidation.expectedOutcome}
 						bind:value={form.expectedOutcome}
 						placeholder={s.placeholders.expectedOutcome}
 					/>
 					{#if fieldValidation.expectedOutcome}
-						<p class="field-message">{fieldValidation.expectedOutcome}</p>
+						<p class="field-hint">{fieldValidation.expectedOutcome}</p>
 					{/if}
 				</div>
 
@@ -626,12 +613,6 @@
 						</div>
 					{/if}
 				</div>
-
-				{#if Object.keys(fieldValidation).length > 0}
-					<p class="validation-disclaimer">
-						{s.validation.disclaimer}
-					</p>
-				{/if}
 
 				<div class="step-actions">
 					<span class="step-counter">{stepCounter(3, 3)}</span>
@@ -978,6 +959,13 @@
 		color: var(--accent-text-orange);
 		line-height: 1.4;
 		margin-top: 2px;
+	}
+	.field-hint {
+		font-size: 12px;
+		color: var(--text-muted);
+		line-height: 1.4;
+		margin-top: 2px;
+		font-style: italic;
 	}
 	.validation-disclaimer {
 		font-size: 12px;
