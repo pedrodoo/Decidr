@@ -8,7 +8,7 @@
 	import StepProgress from '$lib/components/StepProgress.svelte';
 	import { strings } from '$lib/strings.js';
 	import { inputStore } from '$lib/stores/input';
-	import { outputsStore } from '../../../lib/stores/outputs';
+	import { outputsStore } from '$lib/stores/outputs';
 	import {
 		appendIteration,
 		getDecision,
@@ -309,12 +309,6 @@
 
 <svelte:head>
 	<title>{s.pageTitle}</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link
-		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap"
-		rel="stylesheet"
-	/>
 </svelte:head>
 
 <main id="main" class="page">

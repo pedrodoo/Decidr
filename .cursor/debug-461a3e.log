@@ -1,0 +1,2 @@
+{"sessionId":"461a3e","runId":"verify-fonts","hypothesisId":"H1","location":"+layout.svelte:onMount","message":"fonts after CDN removal","data":{"path":"/welcome","hasSoraInBodyStack":true,"bodyFontFamilySample":"Sora, sans-serif"},"timestamp":1778756250204}
+{"sessionId":"461a3e","runId":"verify-fonts","hypothesisId":"H1","location":"+layout.svelte:onMount","message":"fonts after CDN removal","data":{"path":"/welcome","hasSoraInBodyStack":true,"bodyFontFamilySample":"Sora, sans-serif"},"timestamp":1778756258112}
