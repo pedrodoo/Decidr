@@ -450,11 +450,12 @@
 					<textarea
 						id="f-options"
 						class="medium"
+						class:warned={!!fieldValidation.options}
 						bind:value={form.options}
 						placeholder={s.placeholders.options}
 					></textarea>
 					{#if fieldValidation.options}
-						<p class="field-hint">{fieldValidation.options}</p>
+						<p class="field-message">{fieldValidation.options}</p>
 					{/if}
 				</div>
 
@@ -464,11 +465,12 @@
 					<textarea
 						id="f-data"
 						class="short"
+						class:warned={!!fieldValidation.data}
 						bind:value={form.data}
 						placeholder={s.placeholders.data}
 					></textarea>
 					{#if fieldValidation.data}
-						<p class="field-hint">{fieldValidation.data}</p>
+						<p class="field-message">{fieldValidation.data}</p>
 					{/if}
 				</div>
 
@@ -478,11 +480,12 @@
 					<textarea
 						id="f-tradeoffs"
 						class="short"
+						class:warned={!!fieldValidation.tradeoffs}
 						bind:value={form.tradeoffs}
 						placeholder={s.placeholders.tradeoffs}
 					></textarea>
 					{#if fieldValidation.tradeoffs}
-						<p class="field-hint">{fieldValidation.tradeoffs}</p>
+						<p class="field-message">{fieldValidation.tradeoffs}</p>
 					{/if}
 				</div>
 
@@ -546,11 +549,12 @@
 						<input
 							id="f-metric"
 							type="text"
+							class:warned={!!fieldValidation.primaryMetric}
 							bind:value={form.primaryMetric}
 							placeholder={s.placeholders.primaryMetric}
 						/>
 						{#if fieldValidation.primaryMetric}
-							<p class="field-hint">{fieldValidation.primaryMetric}</p>
+							<p class="field-message">{fieldValidation.primaryMetric}</p>
 						{/if}
 					</div>
 					<div class="field">
@@ -559,11 +563,12 @@
 						<input
 							id="f-guardrail"
 							type="text"
+							class:warned={!!fieldValidation.guardrailMetric}
 							bind:value={form.guardrailMetric}
 							placeholder={s.placeholders.guardrailMetric}
 						/>
 						{#if fieldValidation.guardrailMetric}
-							<p class="field-hint">{fieldValidation.guardrailMetric}</p>
+							<p class="field-message">{fieldValidation.guardrailMetric}</p>
 						{/if}
 					</div>
 				</div>
@@ -574,11 +579,12 @@
 					<input
 						id="f-outcome"
 						type="text"
+						class:warned={!!fieldValidation.expectedOutcome}
 						bind:value={form.expectedOutcome}
 						placeholder={s.placeholders.expectedOutcome}
 					/>
 					{#if fieldValidation.expectedOutcome}
-						<p class="field-hint">{fieldValidation.expectedOutcome}</p>
+						<p class="field-message">{fieldValidation.expectedOutcome}</p>
 					{/if}
 				</div>
 
@@ -971,13 +977,6 @@
 		color: var(--accent-text-orange);
 		line-height: 1.4;
 		margin-top: 2px;
-	}
-	.field-hint {
-		font-size: 12px;
-		color: var(--text-muted);
-		line-height: 1.4;
-		margin-top: 2px;
-		font-style: italic;
 	}
 	.validation-disclaimer {
 		font-size: 12px;
