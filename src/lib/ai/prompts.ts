@@ -1,6 +1,6 @@
 // src/lib/ai/prompts.ts
 
-export interface DecisionInput {
+export interface DecisionPayload {
   audience: string;        // 'ceo' | 'cpo' | 'cfo' | 'eng'
   audienceLabel: string;   // 'CEO' | 'CPO' etc.
   decision: string;
@@ -56,7 +56,7 @@ function line(label: string, value: unknown): string | undefined {
 }
 
 // Shared context block — injected into every prompt
-function buildContext(input: DecisionInput): string {
+function buildContext(input: DecisionPayload): string {
   const rows = [
     'DECISION INPUT',
     '==============',
@@ -80,7 +80,7 @@ function buildContext(input: DecisionInput): string {
 // Tone: direct, structured
 // Length: minimal — two lines only
 // ─────────────────────────────────────────
-export function buildConfidencePrompt(input: DecisionInput): PromptParts {
+export function buildConfidencePrompt(input: DecisionPayload): PromptParts {
   const system = `
 You are a senior product strategist doing a quick triage of a design decision before a full review.
 
@@ -110,7 +110,7 @@ Criteria:
 // Tone: direct, structured, honest — for the designer's eyes only
 // Length: medium — structured sections, not prose
 // ─────────────────────────────────────────
-export function buildPreparePrompt(input: DecisionInput): PromptParts {
+export function buildPreparePrompt(input: DecisionPayload): PromptParts {
   const system = `
 You are a senior product strategist helping a designer pressure-test a decision before they commit to it.
 
@@ -154,7 +154,7 @@ Write in plain English. Do not start any sentence with "I".
 // Tone: business language — no design jargon
 // Length: short and dense — leadership reads fast
 // ─────────────────────────────────────────
-export function buildCommunicatePrompt(input: DecisionInput, options?: PromptBuildOptions): PromptParts {
+export function buildCommunicatePrompt(input: DecisionPayload, options?: PromptBuildOptions): PromptParts {
   const audienceGuidance: Record<string, string> = {
     ceo: `You are writing for a CEO. They care about business impact, risk, and strategic fit. They do not want design rationale or UX detail. Frame everything in terms of revenue, growth, retention, or competitive position. They need to understand the decision, the risk of inaction, and what you are recommending — in under 2 minutes of reading. Never use design or product jargon. Do not use the words "experience", "usability", "friction", or "journey".`,
     cpo: `You are writing for a Chief Product Officer. They care about product strategy, user insight, and how this decision fits the roadmap. They want to understand the tradeoffs clearly, see the metric impact, and know the product rationale. They can handle more depth than a CEO but still expect business framing — no UX jargon, no design process detail. Show how this decision moves a product metric and what it trades off against other roadmap priorities. Do not use the words "usability", "friction", or "journey".`,
@@ -211,7 +211,7 @@ Write in plain business English. No design jargon. No passive voice. Do not star
 // Tone: reflective, structured, first-person where appropriate
 // Length: longer — tells the full story with context and learnings
 // ─────────────────────────────────────────
-export function buildPortfolioPrompt(input: DecisionInput, options?: PromptBuildOptions): PromptParts {
+export function buildPortfolioPrompt(input: DecisionPayload, options?: PromptBuildOptions): PromptParts {
   const system = `
 You are helping a designer write a portfolio case study about a product decision they made.
 

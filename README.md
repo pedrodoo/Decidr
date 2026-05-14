@@ -66,7 +66,7 @@ src/
       playwright/
 ```
 
-Planned (not yet in repo): `lib/ai/prompts.ts`, `routes/api/decisions/generate/+server.ts`. See [docs/APP-STRUCTURE.md](docs/APP-STRUCTURE.md) for a full map.
+AI prompts live in `src/lib/ai/prompts.ts`; generation is handled by `src/routes/api/decisions/generate/+server.ts`. See [docs/APP-STRUCTURE.md](docs/APP-STRUCTURE.md) for a full map.
 
 ## Input model
 

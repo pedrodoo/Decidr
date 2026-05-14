@@ -13,7 +13,7 @@ One-page map of where things live and how the main flow works.
 | `/demo/better-auth` | Demo | Better Auth demo. |
 | `/demo/better-auth/login` | Demo | Better Auth login form demo. |
 
-**Note:** `POST /api/decisions/generate` is described in the README but is **not implemented yet**. Generation will call that API and then navigate to an outputs page (also not built).
+**Note:** `POST /api/decisions/generate` is implemented at `src/routes/api/decisions/generate/+server.ts`. The input flow POSTs there and navigates to `/decisions/outputs`.
 
 ## Where things live
 
@@ -29,6 +29,6 @@ Example tests live in `src/lib/vitest-examples/`.
 
 1. **Gate** — User picks an audience (e.g. CEO). Copy and coaching tone are keyed by audience; `strings.newDecision` and `strings.audienceGate` drive the UI.
 2. **Steps** — Three steps (Context, Analysis, Outcomes). Each step has form fields and an optional inline coach block that appears after the user submits the step.
-3. **Generate** — Button calls `handleGenerate()`. Currently logs to console; TODO: POST to API and navigate to outputs page.
+3. **Generate** — Button calls `handleGenerate()`, which POSTs to `/api/decisions/generate` and navigates to `/decisions/outputs`.
 
-State is local to the page (`phase`, `audience`, `currentStep`, `coachVisible`, `form`). No store; form data would be sent to the API on Generate.
+State uses `inputStore` (persisted) and `outputsStore` for generated text; see `src/lib/stores/`.
