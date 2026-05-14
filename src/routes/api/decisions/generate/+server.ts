@@ -9,7 +9,7 @@ import {
   buildPreparePrompt,
   buildCommunicatePrompt,
   buildPortfolioPrompt,
-  type DecisionInput,
+  type DecisionPayload,
   type PromptParts,
   type PromptBuildOptions
 } from '$lib/ai/prompts';
@@ -88,7 +88,7 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
 
   // Parse and validate input
   let mode: GenerateMode;
-  let input: DecisionInput;
+  let input: DecisionPayload;
   let raw: unknown;
   try {
     raw = await request.json();
@@ -100,15 +100,15 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
     throw error(400, 'Invalid mode');
   }
   mode = parsedMode as GenerateMode;
-  // Client sends { mode, input }; keep flat DecisionInput fallback for compatibility.
+  // Client sends { mode, input }; keep flat DecisionPayload fallback for compatibility.
   const nestedInput = (raw as { input?: unknown })?.input;
-  input = nestedInput && typeof nestedInput === 'object' ? nestedInput as DecisionInput : raw as DecisionInput;
+  input = nestedInput && typeof nestedInput === 'object' ? nestedInput as DecisionPayload : raw as DecisionPayload;
 
   const rawPrepareReview = (raw as { prepareReview?: unknown })?.prepareReview;
   const prepareReview =
     typeof rawPrepareReview === 'string' && rawPrepareReview.trim() !== '' ? rawPrepareReview.trim() : undefined;
 
-  const required: (keyof DecisionInput)[] = [
+  const required: (keyof DecisionPayload)[] = [
     'decision',
     'problem',
     'primaryMetric',

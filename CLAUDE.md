@@ -31,7 +31,7 @@ Never run `pnpm db:push` — always migrate, never push.
 ```
 src/
   lib/
-    ai/prompts.ts          # DecisionInput type + all three prompt builders
+    ai/prompts.ts          # DecisionPayload type + all three prompt builders
     components/            # AudienceGate, AudienceIndicator, StepProgress,
                            # CoachResponse, TopNav, BugReportModal, BugReportSection, DotMatrix
     decisions/storage.ts   # decision persistence helpers

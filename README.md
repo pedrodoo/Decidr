@@ -84,7 +84,7 @@ The coaching model challenges each step before the user proceeds - questions are
 
 Requires authentication. Rate limited to 10 requests per IP per hour.
 
-Request body: `DecisionInput` (see `src/lib/ai/prompts.ts`)  
+Request body: `DecisionPayload` (see `src/lib/ai/prompts.ts`)  
 Response: `{ prepare: string, communicate: string, portfolio: string }`
 
 ## Status
