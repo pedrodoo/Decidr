@@ -1,4 +1,4 @@
-<!-- Demo: Better Auth login/register form. Actions: signInEmail, signUpEmail. Form errors in form.message. -->
+<!-- Demo: Better Auth login form. Action: signInEmail. Sign-up removed — app is invite-only. Form errors in form.message. -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
@@ -18,18 +18,6 @@
 		Password
 		<input type="password" name="password" />
 	</label>
-	<label>
-		{s.nameForRegistration}
-		<input name="name" />
-	</label>
 	<button>{s.loginButton}</button>
-	<button
-		formaction="?/signUpEmail"
-		disabled
-		aria-disabled="true"
-		title={s.inviteOnlyTitle}
-	>
-		{s.inviteOnly}
-	</button>
 </form>
 <p style="color: var(--semantic-danger)">{form?.message ?? ''}</p>

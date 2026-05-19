@@ -31,8 +31,10 @@ const ALLOWED_URI_REGEXP = /^(?:https?|mailto):/i;
 
 export function renderMarkdown(text: string): string {
 	const html = marked.parse(text) as string;
-	// DOMPurify requires a DOM — it is never called during SSR because
-	// outputs are populated in onMount and the {#if} blocks never render server-side.
-	if (typeof window === 'undefined') return html;
+	// SSR fail-safe: DOMPurify needs a DOM. This path is never reached today
+	// (outputs are set in onMount, so {#if} blocks don't render server-side),
+	// but return empty rather than unsanitized HTML so a future server-side
+	// render path can never silently become an XSS hole.
+	if (typeof window === 'undefined') return '';
 	return DOMPurify.sanitize(html, { ALLOWED_TAGS, ALLOWED_ATTR, ALLOWED_URI_REGEXP });
 }
