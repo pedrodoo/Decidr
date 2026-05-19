@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { marked } from 'marked';
+	import { renderMarkdown } from '$lib/sanitize-markdown';
 	import { get } from 'svelte/store';
 	import { strings } from '$lib/strings.js';
 
@@ -66,10 +66,6 @@
 			form: latest.inputSnapshot.form
 		});
 	});
-
-	function renderMarkdown(text: string): string {
-		return marked(text) as string;
-	}
 
 	function parseConfidence(text: string): { rating: string; reason: string } {
 		const lines = text.trim().split('\n');
@@ -199,7 +195,9 @@
 		<div>
 			<h1 class="page-title">{s.pageTitle}</h1>
 			<p class="page-subtitle">
-				{s.iterationMeta.replace('{current}', String(iterationIndex)).replace('{total}', String(iterationCount))}
+				{s.iterationMeta
+					.replace('{current}', String(iterationIndex))
+					.replace('{total}', String(iterationCount))}
 				{#if lastGeneratedAt}
 					· {s.generatedAt.replace('{time}', formatTime(lastGeneratedAt))}{/if}
 			</p>
@@ -250,7 +248,9 @@
 							onclick={generatePrepare}
 							disabled={loading === 'prepare'}
 						>
-							{loading === 'prepare' ? strings.common.generating : s.actions.generateFullReviewAnyway}
+							{loading === 'prepare'
+								? strings.common.generating
+								: s.actions.generateFullReviewAnyway}
 						</button>
 					{/if}
 				</div>
@@ -300,9 +300,7 @@
 						<div class="next-card-num two">2</div>
 						<div class="next-card-body">
 							<div class="next-card-title">
-								{loading === 'communicate'
-									? strings.common.generating
-									: s.communicate.title}
+								{loading === 'communicate' ? strings.common.generating : s.communicate.title}
 							</div>
 							<div class="next-card-desc">
 								{s.communicate.cardDesc}
