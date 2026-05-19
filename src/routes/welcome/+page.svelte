@@ -7,6 +7,9 @@
 		STATUS_LABELS,
 		type DecisionRecord
 	} from '$lib/decisions/storage';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	let recentDecisions = $state<DecisionRecord[]>([]);
 	const s = strings.welcome;
@@ -23,8 +26,13 @@
 		recentDecisions.length === 0 ? s.startFirstDecision : s.startNewDecision
 	);
 
+	const isTrialFirst = $derived(data.isTrial && data.trialState === 'first');
+	const isTrialReturning = $derived(data.isTrial && data.trialState === 'returning');
+
 	onMount(() => {
-		recentDecisions = listRecentDecisions(3);
+		if (!data.isTrial) {
+			recentDecisions = listRecentDecisions(3);
+		}
 	});
 </script>
 
@@ -37,26 +45,91 @@
 
 	<section class="card">
 		<div class="eyebrow">{s.eyebrow}</div>
-		<h2 class="title">{s.title}</h2>
-		<p class="subtitle">{s.subtitle}</p>
 
-		<div class="ctaRow">
-			<a class="btn-primary cta" href="/decisions/new">
-				{ctaLabel}
-				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-					<path
-						d="M5 3l4 4-4 4"
-						stroke="white"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-				</svg>
-			</a>
-		</div>
+		{#if isTrialFirst}
+			<h2 class="title">{s.tourTitle}</h2>
+			<p class="subtitle">{s.tourSubtitle}</p>
+			<p class="body">{s.tourBody}</p>
+			<p class="bug-hint">{s.tourBugHint}</p>
+
+			{#if data.trialEmail}
+				<p class="trial-email">
+					<span class="trial-email-label">{s.trialEmailLabel}</span>
+					{data.trialEmail}
+				</p>
+			{/if}
+
+			<div class="cta-row">
+				<a class="btn-primary cta" href="/onboarding">
+					{s.startGuidedTour}
+					<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+						<path
+							d="M5 3l4 4-4 4"
+							stroke="white"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</a>
+			</div>
+
+			<p class="skip-block">
+				<a class="skip-link" href="/welcome?skip=1">{s.skipTour}</a>
+				<span class="skip-hint">{s.skipTourHint}</span>
+			</p>
+		{:else if isTrialReturning}
+			<h2 class="title">{s.returningTitle}</h2>
+			<p class="subtitle">{s.returningSubtitle}</p>
+
+			{#if data.trialEmail}
+				<p class="trial-email">
+					<span class="trial-email-label">{s.trialEmailLabel}</span>
+					{data.trialEmail}
+				</p>
+			{/if}
+
+			{#if data.skippedTour}
+				<p class="skipped-note" role="status">{s.skipTourHint}</p>
+			{/if}
+
+			<div class="cta-row cta-row--stacked">
+				<a class="btn-primary cta" href="/decisions/new">
+					{s.startOwnDecision}
+					<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+						<path
+							d="M5 3l4 4-4 4"
+							stroke="white"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</a>
+				<a class="btn-secondary" href="/onboarding">{s.replayTour}</a>
+			</div>
+		{:else}
+			<h2 class="title">{s.title}</h2>
+			<p class="subtitle">{s.subtitle}</p>
+
+			<div class="cta-row">
+				<a class="btn-primary cta" href="/decisions/new">
+					{ctaLabel}
+					<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+						<path
+							d="M5 3l4 4-4 4"
+							stroke="white"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</a>
+			</div>
+		{/if}
 	</section>
 
-	{#if recentDecisions.length > 0}
+	{#if !data.isTrial && recentDecisions.length > 0}
 		<section class="recent">
 			<div class="recent-header">
 				<h2>{s.recentTitle}</h2>
@@ -130,17 +203,95 @@
 		font-size: var(--text-sm);
 		color: var(--text-secondary);
 		line-height: 1.65;
-		margin-bottom: 20px;
+		margin-bottom: 12px;
 		max-width: 620px;
 	}
 
-	.ctaRow {
+	.body {
+		font-size: var(--text-sm);
+		color: var(--text-secondary);
+		line-height: 1.65;
+		margin-bottom: 16px;
+		max-width: 620px;
+	}
+
+	.bug-hint {
+		font-size: 13px;
+		color: var(--text-muted);
+		line-height: 1.55;
+		margin: 0 0 20px;
+		max-width: 620px;
+	}
+
+	.trial-email {
+		font-size: 13px;
+		color: var(--text-secondary);
+		margin: 0 0 20px;
+		padding: 12px 14px;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		background: var(--bg);
+	}
+
+	.trial-email-label {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		margin-bottom: 4px;
+	}
+
+	.skipped-note {
+		font-size: 13px;
+		color: var(--text-muted);
+		margin: 0 0 16px;
+		padding: 10px 12px;
+		border-left: 2px solid var(--orange);
+		background: var(--bg);
+	}
+
+	.cta-row {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
+		gap: 12px;
+	}
+
+	.cta-row--stacked {
+		flex-direction: column;
+		align-items: flex-start;
 	}
 
 	.cta {
 		text-decoration: none;
+	}
+
+	.skip-block {
+		margin: 20px 0 0;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.skip-link {
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--text-secondary);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.skip-link:hover {
+		color: var(--text-primary);
+	}
+
+	.skip-hint {
+		font-size: 12px;
+		color: var(--text-muted);
+		line-height: 1.5;
+		max-width: 480px;
 	}
 
 	.recent {

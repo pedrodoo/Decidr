@@ -1,14 +1,42 @@
 /**
- * First-run landing page after authentication.
- * - Requires a session (event.locals.user).
- * - Provides a single CTA into the existing stable decision flow.
+ * Post-login or post-email trial landing (trial hub).
  */
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { db } from '$lib/server/db';
+import { lead as leadTable } from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
+
+export type WelcomeTrialState = 'first' | 'returning';
 
 export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user) {
+	const { user, trialLead } = event.locals;
+	const skipTour = event.url.searchParams.get('skip') === '1';
+
+	if (!user && !trialLead) {
 		return redirect(302, '/login');
 	}
-	return {};
+
+	if (user) {
+		return {
+			isTrial: false,
+			trialEmail: null,
+			trialState: null
+		};
+	}
+
+	const [row] = await db
+		.select({ onboardingCompletedAt: leadTable.onboardingCompletedAt })
+		.from(leadTable)
+		.where(eq(leadTable.id, trialLead!.id));
+
+	const trialState: WelcomeTrialState =
+		skipTour || row?.onboardingCompletedAt ? 'returning' : 'first';
+
+	return {
+		isTrial: true,
+		trialEmail: trialLead!.email,
+		trialState,
+		skippedTour: skipTour
+	};
 };

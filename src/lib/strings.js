@@ -311,10 +311,52 @@ not preset prompts.`,
     title: 'For teams who take decision-making seriously.',
     subtitle:
       'Decidr was buikd to help product and design teams turn scattered opinions into clear, shared reasoning so cross-functional decisions move with more trust and less noise.',
+    trialEmailLabel: 'Signed in as',
+    tourTitle: 'See what Decidr does — in about 5 minutes',
+    tourSubtitle:
+      'We’ll walk you through a guided tour so you can see how Decidr turns design decisions into business-ready outputs.',
+    tourBody:
+      'We’ve pre-populated every input field with a realistic example. You don’t need to type anything — just follow the steps.',
+    tourBugHint:
+      'We’re in private beta — if anything breaks or confuses you, use Report a bug in the top bar.',
+    startGuidedTour: 'Start guided tour',
+    skipTour: 'Skip tour',
+    skipTourHint: 'You can explore with your own decision, but the tour is the fastest way to understand Decidr.',
+    returningTitle: 'Ready for your own decision?',
+    returningSubtitle:
+      'You’ve seen the example. Now try Decidr with a real decision — trial includes 2 AI generations.',
+    startOwnDecision: 'Start with your own decision',
+    replayTour: 'Replay guided tour',
     startFirstDecision: 'Start designing for impact',
     startNewDecision: 'Start designing for impact',
     recentTitle: 'Recent narratives',
     viewAll: 'View all',
+  },
+
+  onboarding: {
+    pageTitle: 'Guided tour',
+    pageSrOnlyTitle: 'Guided tour',
+    eyebrow: 'Guided tour',
+    entryTitle: 'A full walkthrough with a realistic example',
+    entrySubtitle:
+      'You’ll move through the same three steps you’d use for a real decision, then see the outputs Decidr produces.',
+    entryBody:
+      'All fields are pre-filled with an example case aimed at a CEO audience. Read the coaching notes after each step to see how Decidr responds to what you write.',
+    entrySteps: [
+      'Context — the decision and the problem',
+      'Analysis — options, data, and tradeoffs',
+      'Outcomes — metrics and expected results',
+      'Outputs — Prepare, Communicate, and Portfolio (example)'
+    ],
+    beginWalkthrough: 'Begin walkthrough',
+    backToWelcome: 'Back to welcome',
+    backToEntry: 'Back to tour intro',
+    exampleBadge: 'Example',
+    walkthroughPageTitle: 'Guided tour — walkthrough',
+    walkthroughSrOnly: 'Guided tour walkthrough',
+    walkthroughPlaceholderTitle: 'Interactive steps are next',
+    walkthroughPlaceholderBody:
+      'The step-by-step example (Context, Analysis, Outcomes, and sample outputs) is implemented in Phase 3. Use Back to return to the tour intro.',
   },
 
   decisionsDashboard: {
@@ -381,9 +423,9 @@ not preset prompts.`,
     },
     actions: {
       login: 'Log in',
-      inviteOnly: 'Invite only - request access via survey',
+      inviteOnly: 'Invite only — enter your email on the homepage',
     },
-    inviteOnlyTitle: 'Invite only. Request access via the survey on the homepage.',
+    inviteOnlyTitle: 'Invite only. Enter your email on the homepage to start a trial.',
   },
 
   join: {
@@ -407,7 +449,14 @@ not preset prompts.`,
     heroAccent: 'Proving it is the hard part.',
     heroSubtitle:
       'Decidr helps product and UX designers build the business case behind their work, so they can start demonstrating their value.',
-    earlyAccessPrompt: "If that's you, request early access now.",
+    emailPlaceholder: 'you@company.com',
+    emailLabel: 'Email',
+    submitEmail: 'Continue',
+    submittingEmail: 'Continuing…',
+    emailSuccess: "You're in — taking you to Decidr…",
+    emailErrorGeneric: 'Something went wrong. Please try again.',
+    emailErrorInvalid: 'Enter a valid email address.',
+    privacyNote: 'We use your email for beta access only. No spam.',
     requestEarlyAccess: 'Get early access',
     problem: {
       title: "Design impact is real.<br />Most of it goes unaccounted for.",

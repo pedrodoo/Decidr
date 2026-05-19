@@ -26,4 +26,21 @@ export const invite = pgTable('invite', {
 	usedAt: timestamp('used_at', { withTimezone: true })
 });
 
+/** Homepage email capture + trial lifecycle (see email-first trial plan). */
+export const lead = pgTable('lead', {
+	id: serial('id').primaryKey(),
+	email: text('email').notNull().unique(),
+	status: text('status').notNull().default('trial'),
+	userId: text('user_id'),
+	inviteId: integer('invite_id'),
+	generateCount: integer('generate_count').notNull().default(0),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	approvedAt: timestamp('approved_at', { withTimezone: true }),
+	convertedAt: timestamp('converted_at', { withTimezone: true }),
+	approvalRequestedAt: timestamp('approval_requested_at', { withTimezone: true }),
+	onboardingCompletedAt: timestamp('onboarding_completed_at', { withTimezone: true }),
+	firstGenerateAt: timestamp('first_generate_at', { withTimezone: true }),
+	lastSeenAt: timestamp('last_seen_at', { withTimezone: true })
+});
+
 export * from './auth.schema';

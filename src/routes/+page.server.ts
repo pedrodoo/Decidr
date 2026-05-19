@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) return redirect(302, '/welcome');
+	if (event.locals.trialLead) return redirect(302, '/welcome');
 	return {};
 };
 

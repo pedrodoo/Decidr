@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { strings } from '$lib/strings.js';
+	import EmailCaptureForm from '$lib/components/EmailCaptureForm.svelte';
 
 	const s = strings.landing;
-	const SURVEY_URL = s.surveyUrl;
 
 	onMount(() => {
 		const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -45,24 +45,7 @@
 		<p class="hero-subtitle">{s.heroSubtitle}</p>
 
 		<div class="cta-group">
-			<p class="cta-group-title">{s.earlyAccessPrompt}</p>
-			<a
-				href={SURVEY_URL}
-				class="landing-btn landing-btn--full"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				{s.requestEarlyAccess}
-				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-					<path
-						d="M5 3l4 4-4 4"
-						stroke="white"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-				</svg>
-			</a>
+			<EmailCaptureForm fullWidth />
 		</div>
 	</section>
 
@@ -125,18 +108,7 @@
 			<p class="cta-label">{s.cta.label}</p>
 			<h2 class="cta-title">{s.cta.title}</h2>
 			<p class="cta-desc">{s.cta.desc}</p>
-			<a href={SURVEY_URL} class="landing-btn" target="_blank" rel="noopener noreferrer">
-				{s.requestEarlyAccess}
-				<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-					<path
-						d="M5 3l4 4-4 4"
-						stroke="white"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-				</svg>
-			</a>
+			<EmailCaptureForm />
 		</div>
 	</section>
 </main>
@@ -185,7 +157,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 24px;
+		gap: 0;
 		border-bottom: 1px solid var(--border);
 	}
 
@@ -230,6 +202,7 @@
 		line-height: 1.1;
 		color: var(--text-primary);
 		max-width: 640px;
+		margin-top: 14px;
 	}
 
 	.hero-accent {
@@ -240,29 +213,14 @@
 		font-size: 16px;
 		color: var(--text-secondary);
 		line-height: 1.7;
-		max-width: 500px;
+		max-width: 560px;
+		margin: 16px 0 0;
 	}
 
 	.cta-group {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 16px;
-		margin-top: 12px;
-		padding: 28px 32px;
-		border: 1px solid var(--surface-2);
-		border-radius: 14px;
-		background: var(--surface);
+		margin-top: 20px;
 		width: 100%;
-		max-width: 440px;
-	}
-
-	.cta-group-title {
-		font-size: 15px;
-		font-weight: 600;
-		color: var(--text-primary);
-		letter-spacing: -0.02em;
-		line-height: 1.4;
+		max-width: 520px;
 	}
 
 	/* ── Problem ────────────────────────────────────────────────────── */
@@ -492,46 +450,6 @@
 		line-height: 1.7;
 	}
 
-	/* ── Shared CTA button ──────────────────────────────────────────── */
-	.landing-btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		padding: 14px 28px;
-		background: var(--orange);
-		color: white;
-		font-family: var(--font-sans);
-		font-size: 14px;
-		font-weight: 600;
-		letter-spacing: -0.01em;
-		border-radius: 9px;
-		text-decoration: none;
-		border: none;
-		cursor: pointer;
-		transition:
-			background 0.15s,
-			transform 0.1s;
-	}
-
-	.landing-btn--full {
-		width: 100%;
-	}
-
-	.landing-btn:hover {
-		background: var(--orange-hover);
-		transform: translateY(-1px);
-	}
-
-	.landing-btn:active {
-		transform: translateY(0);
-	}
-
-	.landing-btn:focus-visible {
-		outline: 2px solid var(--focus-ring);
-		outline-offset: 3px;
-	}
-
 	/* ── Mobile ─────────────────────────────────────────────────────── */
 	@media (max-width: 480px) {
 		.page {
@@ -543,8 +461,8 @@
 		}
 
 		.cta-group {
-			padding: 20px;
 			max-width: 100%;
+			margin-top: 24px;
 		}
 	}
 </style>
