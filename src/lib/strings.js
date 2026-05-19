@@ -193,6 +193,7 @@ not preset prompts.`,
     stepLabels: {
       contextReview: 'Context review',
       analysisReview: 'Analysis review',
+      outcomesReview: 'Outcomes review',
     },
 
     // Prompts shown above each field (may include HTML). Keyed by audience id or audience:intent.
@@ -354,9 +355,24 @@ not preset prompts.`,
     exampleBadge: 'Example',
     walkthroughPageTitle: 'Guided tour — walkthrough',
     walkthroughSrOnly: 'Guided tour walkthrough',
-    walkthroughPlaceholderTitle: 'Interactive steps are next',
-    walkthroughPlaceholderBody:
-      'The step-by-step example (Context, Analysis, Outcomes, and sample outputs) is implemented in Phase 3. Use Back to return to the tour intro.',
+    walkthroughAudienceNote:
+      'This example is framed for a CEO audience. Fields are read-only — follow the coaching notes after each step.',
+    walkthroughSeeCoaching: 'See coaching feedback',
+    walkthroughGenerateOutputs: 'Preview example outputs',
+    walkthroughGeneratingNote: 'Loading the example outputs Decidr would produce for this case…',
+  },
+
+  demoOutputs: {
+    bannerTitle: 'Example outputs',
+    bannerBody:
+      'These were generated from the guided tour example — not from your own decision. Explore how Prepare, Communicate, and Portfolio read for a CEO audience.',
+    startOwnDecision: 'Start with your own decision',
+    backToTour: 'Back to tour intro',
+    exampleBadge: 'Example',
+    tallyFeedback: 'Help us improve Decidr — 2 min feedback',
+    bugHint: 'Spotted a bug? Use Report a bug in the top bar.',
+    fullAccessNote: 'Example preview · full access unlocks live generation',
+    previewDivider: 'Leadership brief and portfolio case (example content below)',
   },
 
   decisionsDashboard: {
@@ -509,6 +525,10 @@ not preset prompts.`,
 
   bugReport: {
     submitFailed: 'Failed to submit bug report.',
+    coachMarkTitle: 'Private beta',
+    coachMarkBody:
+      'Help us improve. Tap Report a bug in the top bar if something breaks or feels confusing.',
+    coachMarkDismiss: 'Got it',
     title: 'Report a bug',
     closeDialogAria: 'Close bug report dialog',
     labels: {

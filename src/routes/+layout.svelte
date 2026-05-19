@@ -72,6 +72,7 @@
 <a href="#main" class="skip-link">{s.skipToMain}</a>
 <BugReportSection
 	user={data.user}
+	trialLead={data.trialLead}
 	onLogOut={handleLogOut}
 	theme={theme}
 	onThemeToggle={handleThemeToggle}

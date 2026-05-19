@@ -218,6 +218,29 @@ textarea:focus-visible {
 	color: var(--text-primary);
 }
 
+.nav-btn--highlight {
+	border-color: var(--orange-border);
+	color: var(--accent-text-orange);
+	animation: nav-bug-pulse 2s ease-in-out infinite;
+}
+
+@keyframes nav-bug-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+	}
+	50% {
+		box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.nav-btn--highlight {
+		animation: none;
+		box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+	}
+}
+
 .nav-btn:focus-visible,
 .nav-user-btn:focus-visible,
 .modal-close:focus-visible,

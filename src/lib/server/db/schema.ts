@@ -11,7 +11,8 @@ export const task = pgTable('task', {
 
 export const bugReport = pgTable('bug_report', {
 	id: serial('id').primaryKey(),
-	userId: text('user_id').notNull(),
+	userId: text('user_id'),
+	leadId: integer('lead_id'),
 	email: text('email').notNull(),
 	description: text('description').notNull(),
 	whereFound: text('where_found').notNull(),

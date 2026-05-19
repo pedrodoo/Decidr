@@ -10,7 +10,10 @@ type BugReportPayload = {
 };
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-	if (!locals.user) {
+	const user = locals.user;
+	const trialLead = locals.trialLead;
+
+	if (!user && !trialLead) {
 		throw error(401, 'Unauthorised');
 	}
 
@@ -29,9 +32,14 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	if (!whereFound) throw error(400, 'Where found is required.');
 	if (!email) throw error(400, 'Email is required.');
 
+	if (trialLead && email.toLowerCase() !== trialLead.email.toLowerCase()) {
+		throw error(400, 'Email must match your trial sign-up email.');
+	}
+
 	try {
 		await db.insert(bugReport).values({
-			userId: locals.user.id,
+			userId: user?.id ?? null,
+			leadId: trialLead?.id ?? null,
 			email,
 			description,
 			whereFound

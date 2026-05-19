@@ -6,13 +6,23 @@
 
 	type Props = {
 		user: SessionLayoutUser;
+		trialEmail?: string | null;
 		onReportBug: () => void;
 		onLogOut: () => void | Promise<void>;
 		theme: Theme;
 		onThemeToggle: () => void;
+		highlightBugButton?: boolean;
 	};
 
-	let { user, onReportBug, onLogOut, theme, onThemeToggle }: Props = $props();
+	let {
+		user,
+		trialEmail = null,
+		onReportBug,
+		onLogOut,
+		theme,
+		onThemeToggle,
+		highlightBugButton = false
+	}: Props = $props();
 	let isAccountModalOpen = $state(false);
 	const s = strings.topNav;
 
@@ -85,8 +95,16 @@
 			{/if}
 		</button>
 
-		{#if user}
-			<button class="nav-btn" type="button" aria-label={s.reportBug} title={s.reportBug} onclick={onReportBug}>
+		{#if user || trialEmail}
+			<button
+				class="nav-btn"
+				class:nav-btn--highlight={highlightBugButton}
+				type="button"
+				data-bug-report-btn
+				aria-label={s.reportBug}
+				title={s.reportBug}
+				onclick={onReportBug}
+			>
 				<svg class="nav-btn__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 					<path
 						d="M12 3L21 19H3L12 3Z"
@@ -98,7 +116,9 @@
 					<circle cx="12" cy="16.8" r="1.1" fill="currentColor"></circle>
 				</svg>
 			</button>
+		{/if}
 
+		{#if user}
 			<button class="nav-user-btn" type="button" onclick={openAccountModal} aria-label={s.account}>
 				<div class="nav-avatar" aria-hidden="true">{avatarInitial}</div>
 				<span class="nav-username">{displayName}</span>
@@ -112,7 +132,7 @@
 					></path>
 				</svg>
 			</button>
-		{:else}
+		{:else if !trialEmail}
 			<a class="btn-secondary nav-login-link" href="/login">{s.login}</a>
 		{/if}
 	</div>
