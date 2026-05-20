@@ -554,6 +554,22 @@ not preset prompts.`,
     skipToMain: 'Skip to main content',
   },
 
+  inputDepth: {
+    groupAria: 'Choose how much to write before generating',
+    prompt: 'How much do you want to invest upfront?',
+    quickBadge: 'Fast',
+    quickLabel: 'Just the basics',
+    quickDesc: 'Decision plus optional context. Generate quickly — add detail later on the outputs page.',
+    fullBadge: 'Recommended',
+    fullLabel: 'Complete inputs',
+    fullDesc: 'All three steps before your first generation. Strongest results for trial generations.',
+    quickStepTitle: 'Quick start',
+    quickStepSubtitle: 'Name your decision. Add a one-line problem if you can — the rest can wait.',
+    quickProblemOptional: 'Optional',
+    upgradeToFull: 'Switch to complete inputs →',
+    quickGenerate: 'Generate from basics',
+  },
+
   trial: {
     badge: 'Trial mode',
     badgeApprovalPending: 'Approval requested',

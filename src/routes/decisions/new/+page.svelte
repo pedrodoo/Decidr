@@ -25,14 +25,23 @@
 	import { fade } from 'svelte/transition';
 	import DotMatrix from '$lib/components/DotMatrix.svelte';
 	import TrialAccessPanel from '$lib/components/TrialAccessPanel.svelte';
+	import {
+		readInputDepth,
+		writeInputDepth,
+		parseInputDepth,
+		type InputDepth
+	} from '$lib/stores/input-depth';
 
-	type Phase = 'gate' | 'steps';
+	type Phase = 'gate' | 'quick' | 'steps';
 	type Step = 1 | 2 | 3;
 
 	let { data } = $props();
 
 	const trialUsage = $derived(data.trialUsage ?? null);
 	const canTrialGenerate = $derived(trialUsage?.canGenerate ?? true);
+	const depthCopy = strings.inputDepth;
+
+	let inputDepth = $state<InputDepth>('full');
 
 	// --- State ---
 	let phase = $state<Phase>('gate');
@@ -56,6 +65,14 @@
 
 	onMount(() => {
 		outputsStore.set({});
+		const depthParam = parseInputDepth(page.url.searchParams.get('depth'));
+		if (depthParam) {
+			inputDepth = depthParam;
+			writeInputDepth(depthParam);
+		} else {
+			inputDepth = readInputDepth();
+		}
+
 		const idParam = page.url.searchParams.get('id');
 		if (idParam) {
 			const record = getDecision(idParam);
@@ -65,6 +82,7 @@
 				form = { ...record.form };
 				phase = 'steps';
 				isRefining = true;
+				inputDepth = 'full';
 			}
 		}
 		hydrated = true;
@@ -104,6 +122,13 @@
 	});
 
 	let fieldValidation = $state<Record<string, string>>({});
+
+	function validateQuick() {
+		const next: Record<string, string> = {};
+		if (!form.decision.trim()) next.decision = s.validation.emptyGeneric;
+		fieldValidation = next;
+		return Object.keys(next).length === 0;
+	}
 
 	function validate(step: Step) {
 		const next: Record<string, string> = {};
@@ -190,7 +215,16 @@
 	function handleAudienceStart(selected: AudienceSelection, intent: string | null) {
 		audience = selected;
 		form.intent = intent ?? '';
+		phase = inputDepth === 'quick' && !isRefining ? 'quick' : 'steps';
+	}
+
+	function switchToFullInputs() {
+		writeInputDepth('full');
+		inputDepth = 'full';
 		phase = 'steps';
+		currentStep = 1;
+		fieldValidation = {};
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
 	function handleAudienceReset() {
@@ -245,13 +279,17 @@
 	});
 
 	async function handleGenerate() {
-		validate(3);
+		if (phase === 'quick') {
+			if (!validateQuick()) return;
+		} else {
+			validate(3);
+			if (Object.keys(fieldValidation).length > 0) return;
+		}
+
 		loading = true;
 		generateError = null;
 
 		try {
-			// Ensure we have a persisted draft before appending an iteration so the
-			// record exists even if the user reloads mid-generation.
 			const drafted = upsertDraft({
 				id: currentId ?? undefined,
 				audience,
@@ -259,12 +297,12 @@
 			});
 			if (drafted) currentId = drafted.id;
 
-			const url = '/api/decisions/generate';
-			const response = await fetch(url, {
+			const response = await fetch('/api/decisions/generate', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					mode: 'confidence',
+					inputDepth,
 					input: {
 						audience: audience.id,
 						audienceLabel: audience.label,
@@ -327,6 +365,72 @@
 	<!-- AUDIENCE GATE -->
 	{#if phase === 'gate'}
 		<AudienceGate onStart={handleAudienceStart} />
+	{/if}
+
+	{#if phase === 'quick'}
+		<AudienceIndicator
+			label={audience.label}
+			onReset={handleAudienceReset}
+			showResetLabel={false}
+		/>
+		<div class="quick-step">
+			<p class="quick-eyebrow">{depthCopy.quickBadge}</p>
+			<h2 class="quick-title">{depthCopy.quickStepTitle}</h2>
+			<p class="quick-subtitle">{depthCopy.quickStepSubtitle}</p>
+
+			<div class="field">
+				<label class="field-label" for="q-decision">{s.fieldLabels.decision}</label>
+				<p class="field-prompt">{@html p.decision}</p>
+				<input
+					id="q-decision"
+					type="text"
+					class:warned={!!fieldValidation.decision}
+					bind:value={form.decision}
+					placeholder={s.placeholders.decision}
+				/>
+				{#if fieldValidation.decision}
+					<p class="field-message">{fieldValidation.decision}</p>
+				{/if}
+			</div>
+
+			<div class="field">
+				<label class="field-label" for="q-problem">
+					{s.fieldLabels.problem}
+					<span class="optional-tag">{depthCopy.quickProblemOptional}</span>
+				</label>
+				<p class="field-prompt">{@html p.problem}</p>
+				<textarea
+					id="q-problem"
+					class="short"
+					bind:value={form.problem}
+					placeholder={s.placeholders.problem}
+				></textarea>
+			</div>
+
+			{#if data.isTrial && trialUsage}
+				<p class="trial-note">{strings.welcome.trialLimitNote}</p>
+				{#if !canTrialGenerate}
+					<TrialAccessPanel {trialUsage} variant="limit" />
+				{/if}
+			{/if}
+
+			<div class="step-actions step-actions--quick">
+				<button class="btn-ghost-inline" type="button" onclick={switchToFullInputs}>
+					{depthCopy.upgradeToFull}
+				</button>
+				<button
+					class="btn-primary"
+					type="button"
+					onclick={handleGenerate}
+					disabled={loading || (data.isTrial && !canTrialGenerate)}
+				>
+					{loading ? strings.common.generating : depthCopy.quickGenerate}
+				</button>
+			</div>
+			{#if generateError}
+				<p class="generate-error">{generateError}</p>
+			{/if}
+		</div>
 	{/if}
 
 	<!-- STEPS -->
@@ -739,6 +843,49 @@
 		color: var(--text-muted);
 		line-height: 1.55;
 		margin-bottom: 12px;
+	}
+
+	.quick-step {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.quick-eyebrow {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent-text-orange);
+		margin-bottom: 8px;
+	}
+
+	.quick-title {
+		font-size: var(--text-xl);
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: 8px;
+	}
+
+	.quick-subtitle {
+		font-size: var(--text-sm);
+		color: var(--text-secondary);
+		line-height: 1.65;
+		margin-bottom: 28px;
+	}
+
+	.optional-tag {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		margin-left: 8px;
+	}
+
+	.step-actions--quick {
+		flex-wrap: wrap;
+		justify-content: space-between;
+		margin-top: 8px;
 	}
 
 	:global(.field-prompt strong) {

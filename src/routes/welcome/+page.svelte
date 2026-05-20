@@ -8,11 +8,15 @@
 		type DecisionRecord
 	} from '$lib/decisions/storage';
 	import type { PageData } from './$types';
+	import InputDepthChooser from '$lib/components/InputDepthChooser.svelte';
 
 	let { data }: { data: PageData } = $props();
 
 	let recentDecisions = $state<DecisionRecord[]>([]);
 	const s = strings.welcome;
+
+	const isTrialFirst = $derived(data.isTrial && data.trialState === 'first');
+	const isTrialReturning = $derived(data.isTrial && data.trialState === 'returning');
 
 	function formatDate(isoDate: string): string {
 		const date = new Date(isoDate);
@@ -21,13 +25,6 @@
 			month: 'short'
 		}).format(date);
 	}
-
-	const ctaLabel = $derived(
-		recentDecisions.length === 0 ? s.startFirstDecision : s.startNewDecision
-	);
-
-	const isTrialFirst = $derived(data.isTrial && data.trialState === 'first');
-	const isTrialReturning = $derived(data.isTrial && data.trialState === 'returning');
 
 	onMount(() => {
 		if (!data.isTrial) {
@@ -95,38 +92,14 @@
 			{/if}
 
 			<div class="cta-row cta-row--stacked">
-				<a class="btn-primary cta" href="/decisions/new">
-					{s.startOwnDecision}
-					<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-						<path
-							d="M5 3l4 4-4 4"
-							stroke="white"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</svg>
-				</a>
+				<InputDepthChooser />
 				<a class="btn-secondary" href="/onboarding">{s.replayTour}</a>
 			</div>
 		{:else}
 			<h2 class="title">{s.title}</h2>
 			<p class="subtitle">{s.subtitle}</p>
 
-			<div class="cta-row">
-				<a class="btn-primary cta" href="/decisions/new">
-					{ctaLabel}
-					<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-						<path
-							d="M5 3l4 4-4 4"
-							stroke="white"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</svg>
-				</a>
-			</div>
+			<InputDepthChooser compact />
 		{/if}
 	</section>
 

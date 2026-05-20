@@ -20,8 +20,15 @@ export interface PromptParts {
 }
 
 /** Optional context when generating communicate/portfolio after prepare. */
+export type InputDepth = 'quick' | 'full';
+
 export interface PromptBuildOptions {
   prepareReview?: string;
+  inputDepth?: InputDepth;
+}
+
+function isSparse(options?: PromptBuildOptions): boolean {
+  return options?.inputDepth === 'quick';
 }
 
 function buildPrepareReviewBlockCommunicate(text: string): string {
@@ -56,8 +63,21 @@ function line(label: string, value: unknown): string | undefined {
 }
 
 // Shared context block — injected into every prompt
-function buildContext(input: DecisionPayload): string {
-  const rows = [
+function buildContext(input: DecisionPayload, sparse = false): string {
+	if (sparse) {
+		const rows = [
+			'DECISION INPUT (QUICK START — limited fields provided)',
+			'====================================================',
+			line('Decision', input.decision),
+			line('Problem / context', input.problem),
+			line('Target Audience', input.audienceLabel),
+			'',
+			'Note: The designer chose quick start. Other fields may be empty — treat gaps explicitly in your output and suggest what to add on the full form.'
+		].filter((x): x is string => x !== undefined && x !== '');
+		return rows.join('\n');
+	}
+
+	const rows = [
     'DECISION INPUT',
     '==============',
     line('Decision', input.decision),
@@ -80,15 +100,23 @@ function buildContext(input: DecisionPayload): string {
 // Tone: direct, structured
 // Length: minimal — two lines only
 // ─────────────────────────────────────────
-export function buildConfidencePrompt(input: DecisionPayload): PromptParts {
-  const system = `
+export function buildConfidencePrompt(input: DecisionPayload, options?: PromptBuildOptions): PromptParts {
+  const sparse = isSparse(options);
+
+  const system = sparse
+    ? `
+You are a senior product strategist doing a quick triage from minimal input — often just a decision title and a short problem note.
+
+The designer chose quick start. Be honest about what you cannot assess without metrics, options, or tradeoffs. Do not invent missing content.
+`.trim()
+    : `
 You are a senior product strategist doing a quick triage of a design decision before a full review.
 
 Your job is to assess, in one pass, whether this decision is ready to be reviewed in depth. Be ruthlessly honest. Do not inflate confidence to be encouraging.
 `.trim();
 
   const user = `
-${buildContext(input)}
+${buildContext(input, sparse)}
 
 Assess the readiness of this decision. Use this format:
 
@@ -99,6 +127,7 @@ Criteria:
 - Not Ready: fundamental gaps in reasoning or missing key data that would make a full review premature
 - Needs Work: reasoning is sound but framing, metric grounding, or business case has gaps
 - Ready to Present: decision is well-reasoned and framed for a business audience
+${sparse ? '\nFor quick-start input, default to Needs Work or Not Ready unless the decision and problem are unusually complete.' : ''}
 `.trim();
 
   return { system, user };
@@ -110,8 +139,16 @@ Criteria:
 // Tone: direct, structured, honest — for the designer's eyes only
 // Length: medium — structured sections, not prose
 // ─────────────────────────────────────────
-export function buildPreparePrompt(input: DecisionPayload): PromptParts {
-  const system = `
+export function buildPreparePrompt(input: DecisionPayload, options?: PromptBuildOptions): PromptParts {
+  const sparse = isSparse(options);
+
+  const system = sparse
+    ? `
+You are a senior product strategist helping a designer pressure-test a decision from minimal input (quick start).
+
+Work only with what is provided. Name gaps plainly — especially missing options, data, metrics, and tradeoffs. Suggest what to add on the full form before presenting to leadership.
+`.trim()
+    : `
 You are a senior product strategist helping a designer pressure-test a decision before they commit to it.
 
 Your job is not to validate their thinking — it is to stress-test it. Be direct. Surface gaps. Ask the hard questions they haven't asked themselves. Do not soften criticism. Do not use hedging phrases like "you might want to consider" or "it could be worth exploring" — if there is a fundamental gap, name it plainly.
@@ -122,7 +159,7 @@ Work only with what the user has provided. If a field is missing or thin, reflec
 `.trim();
 
   const user = `
-${buildContext(input)}
+${buildContext(input, sparse)}
 
 Produce a structured decision review with the following sections. Use plain headers (no markdown decorations beyond ##). Be concise within each section.
 
@@ -141,6 +178,7 @@ The question that, if asked in a leadership meeting, would most undermine confid
 
 ## Decision Confidence
 Rate the current state of this decision: Not Ready / Needs Work / Ready to Present. Criteria — Not Ready: fundamental gaps in reasoning or missing key data; Needs Work: reasoning is sound but communication or framing gaps remain; Ready to Present: decision is well-reasoned and framed for a business audience. Give one sentence of justification.
+${sparse ? '\n## Suggested Next Inputs\n2–3 bullets: which full-form fields would most improve this case (options, data, metrics, tradeoffs).' : ''}
 
 Write in plain English. Do not start any sentence with "I".
 `.trim();
@@ -176,7 +214,7 @@ ${guidance}
     : '\n\n';
 
   const user = `
-${buildContext(input)}${reviewSection}
+${buildContext(input, isSparse(options))}${reviewSection}
 Produce an executive communication with the following structure. Keep it tight — this should be readable in under 2 minutes.
 
 Use bullet lists only in **What Was Considered**; in every other section use compact prose (no bullets).
@@ -228,7 +266,7 @@ Work only with what the user has provided. If a field is missing or thin, reflec
     : '\n\n';
 
   const user = `
-${buildContext(input)}${reviewSection}
+${buildContext(input, isSparse(options))}${reviewSection}
 Produce a portfolio case study with the following structure:
 
 ## Overview

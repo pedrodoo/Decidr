@@ -148,26 +148,34 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
 			? rawPrepareReview.trim()
 			: undefined;
 
-	const required: (keyof DecisionPayload)[] = [
-		'decision',
-		'problem',
-		'primaryMetric',
-		'expectedOutcome'
-	];
+	const rawInputDepth = (raw as { inputDepth?: unknown })?.inputDepth;
+	const inputDepth = rawInputDepth === 'quick' ? 'quick' : 'full';
 
-	for (const field of required) {
-		if (!input[field]?.trim()) {
-			throw error(400, `Missing required field: ${field}`);
+	if (!input.decision?.trim()) {
+		throw error(400, 'Missing required field: decision');
+	}
+
+	if (inputDepth === 'full') {
+		const required: (keyof DecisionPayload)[] = [
+			'problem',
+			'primaryMetric',
+			'expectedOutcome'
+		];
+		for (const field of required) {
+			if (!input[field]?.trim()) {
+				throw error(400, `Missing required field: ${field}`);
+			}
 		}
 	}
 
-	const buildOptions: PromptBuildOptions | undefined = prepareReview
-		? { prepareReview }
-		: undefined;
+	const buildOptions: PromptBuildOptions = {
+		...(prepareReview ? { prepareReview } : {}),
+		inputDepth
+	};
 
 	let promptParts: PromptParts;
-	if (mode === 'confidence') promptParts = buildConfidencePrompt(input);
-	else if (mode === 'prepare') promptParts = buildPreparePrompt(input);
+	if (mode === 'confidence') promptParts = buildConfidencePrompt(input, buildOptions);
+	else if (mode === 'prepare') promptParts = buildPreparePrompt(input, buildOptions);
 	else if (mode === 'communicate')
 		promptParts = buildCommunicatePrompt(input, buildOptions);
 	else promptParts = buildPortfolioPrompt(input, buildOptions);

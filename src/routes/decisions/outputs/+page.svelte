@@ -18,6 +18,7 @@
 	import TrialAccessPanel from '$lib/components/TrialAccessPanel.svelte';
 	import { highlightBugReportButton } from '$lib/stores/bug-hint';
 	import { applyRateLimitHeaders, parseGenerateError } from '$lib/api/generate-client';
+	import { readInputDepth } from '$lib/stores/input-depth';
 
 	let { data } = $props();
 
@@ -166,6 +167,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					mode: 'prepare',
+					inputDepth: readInputDepth(),
 					input: {
 						audience: stored.audience.id,
 						audienceLabel: stored.audience.label,
@@ -211,6 +213,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					mode,
+					inputDepth: readInputDepth(),
 					prepareReview: outputs.prepare?.trim() || undefined,
 					input: {
 						audience: stored.audience.id,
