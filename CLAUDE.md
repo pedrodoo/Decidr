@@ -20,6 +20,7 @@ pnpm test:e2e                      # playwright
 pnpm db:generate && pnpm db:migrate   # run after any schema change
 pnpm db:studio                     # drizzle studio
 pnpm invite                        # create invite via scripts/invite.ts
+pnpm approve-lead user@example.com # approve trial lead + create join invite
 ```
 
 Never run `pnpm db:push` — always migrate, never push.
@@ -102,7 +103,7 @@ All routes except `/`, `/login`, `/join/[token]` require authentication.
 Session available via `locals.user` in server routes. Never expose user data in client-side stores.
 
 ### Rate limiting
-All API routes calling Anthropic must check IP rate limiting first. Limit: 10 requests/IP/hour. Currently in-memory — Redis is a future upgrade.
+All API routes calling Anthropic must check IP rate limiting first. Limit: 5 requests/IP/hour. Currently in-memory — Redis is a future upgrade. Trial leads are also capped at 2 lifetime generations (`confidence` + `prepare` only).
 
 ### Styling
 Use CSS variables from `src/app.css` and `src/lib/design-tokens.css`. Never hardcode colours.  

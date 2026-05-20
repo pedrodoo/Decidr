@@ -36,6 +36,13 @@
       "when": 1779205000000,
       "tag": "0004_bug_report_trial_lead",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779206000000,
+      "tag": "0005_invite_source_user_profile",
+      "breakpoints": true
     }
   ]
 }

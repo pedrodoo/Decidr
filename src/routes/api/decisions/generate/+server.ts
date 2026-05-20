@@ -1,141 +1,188 @@
-// src/routes/api/decisions/generate/+server.ts
-
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import Anthropic from '@anthropic-ai/sdk';
 import {
-  buildConfidencePrompt,
-  buildPreparePrompt,
-  buildCommunicatePrompt,
-  buildPortfolioPrompt,
-  type DecisionPayload,
-  type PromptParts,
-  type PromptBuildOptions
+	buildConfidencePrompt,
+	buildPreparePrompt,
+	buildCommunicatePrompt,
+	buildPortfolioPrompt,
+	type DecisionPayload,
+	type PromptParts,
+	type PromptBuildOptions
 } from '$lib/ai/prompts';
+import { consumeRateLimit, rateLimitHeaders } from '$lib/server/rate-limit';
+import {
+	isTrialAllowedMode,
+	recordTrialGeneration,
+	TRIAL_GENERATION_LIMIT
+} from '$lib/server/trial-limits';
 
-// ─── Rate limiting ───────────────────────────────────────────
-// Simple in-memory store. Replace with Redis in production.
-const ipRequestLog = new Map<string, number[]>();
-
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const RATE_LIMIT_MAX = 10;                     // max requests per IP per hour
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const windowStart = now - RATE_LIMIT_WINDOW_MS;
-  const requests = ipRequestLog.get(ip) ?? [];
-
-  // Drop requests outside the window
-  const recent = requests.filter((t) => t > windowStart);
-  ipRequestLog.set(ip, recent);
-
-  if (recent.length >= RATE_LIMIT_MAX) return true;
-
-  recent.push(now);
-  ipRequestLog.set(ip, recent);
-  return false;
-}
-
-// ─── Anthropic ────────────────────────────────────────────────
 const MODEL = 'claude-sonnet-4-5';
 type GenerateMode = 'confidence' | 'prepare' | 'communicate' | 'portfolio';
 
-// Max tokens per mode — keeps outputs focused and costs predictable
 const MAX_TOKENS: Record<GenerateMode, number> = {
-  confidence:  100,
-  prepare:     600,
-  communicate: 550,
-  portfolio:   800
+	confidence: 100,
+	prepare: 600,
+	communicate: 550,
+	portfolio: 800
 };
 
-async function callClaude(client: Anthropic, promptParts: PromptParts, maxTokens: number): Promise<string> {
-  const response = await client.messages.create({
-    model: MODEL,
-    max_tokens: maxTokens,
-    // Cache static instruction blocks to reduce repeated prompt processing.
-    system: [{ type: 'text', text: promptParts.system, cache_control: { type: 'ephemeral' } }],
-    messages: [
-      {
-        role: 'user',
-        content: [{ type: 'text', text: promptParts.user }]
-      }
-    ]
-  });
+async function callClaude(
+	client: Anthropic,
+	promptParts: PromptParts,
+	maxTokens: number
+): Promise<string> {
+	const response = await client.messages.create({
+		model: MODEL,
+		max_tokens: maxTokens,
+		system: [{ type: 'text', text: promptParts.system, cache_control: { type: 'ephemeral' } }],
+		messages: [
+			{
+				role: 'user',
+				content: [{ type: 'text', text: promptParts.user }]
+			}
+		]
+	});
 
-  const block = response.content[0];
-  if (block.type !== 'text') throw new Error('Unexpected response type from Anthropic API');
-  return block.text;
+	const block = response.content[0];
+	if (block.type !== 'text') throw new Error('Unexpected response type from Anthropic API');
+	return block.text;
 }
 
-// ─── Route handler ───────────────────────────────────────────
+function apiError(
+	status: number,
+	message: string,
+	code: string,
+	headers?: Record<string, string>
+) {
+	return json({ message, code }, { status, headers });
+}
+
 export const POST: RequestHandler = async ({ request, locals, getClientAddress }) => {
-  // Auth check — Better Auth populates locals.user
-  if (!locals.user) {
-    throw error(401, 'Unauthorised');
-  }
+	if (!locals.user && !locals.trialLead) {
+		throw error(401, 'Unauthorised');
+	}
 
-  // Rate limit by IP
-  const ip = getClientAddress();
-  if (isRateLimited(ip)) {
-    throw error(429, 'Too many requests. Try again later.');
-  }
+	const ip = getClientAddress();
+	const { allowed, status: rateStatus } = consumeRateLimit(ip);
+	const headers = rateLimitHeaders(rateStatus);
 
-  const apiKey = env.ANTHROPIC_API_KEY?.trim();
-  if (!apiKey) {
-    throw error(503, 'Anthropic API key is not configured. Add ANTHROPIC_API_KEY to your .env file and restart the dev server.');
-  }
+	if (!allowed) {
+		return apiError(
+			429,
+			'Hourly limit reached. Try again later.',
+			'rate_limit_exceeded',
+			headers
+		);
+	}
 
-  // Parse and validate input
-  let mode: GenerateMode;
-  let input: DecisionPayload;
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
-    throw error(400, 'Invalid request body');
-  }
-  const parsedMode = (raw as { mode?: unknown })?.mode;
-  if (!['confidence', 'prepare', 'communicate', 'portfolio'].includes(String(parsedMode))) {
-    throw error(400, 'Invalid mode');
-  }
-  mode = parsedMode as GenerateMode;
-  // Client sends { mode, input }; keep flat DecisionPayload fallback for compatibility.
-  const nestedInput = (raw as { input?: unknown })?.input;
-  input = nestedInput && typeof nestedInput === 'object' ? nestedInput as DecisionPayload : raw as DecisionPayload;
+	const trialLead = locals.user ? null : locals.trialLead;
+	const isTrial = !!trialLead;
 
-  const rawPrepareReview = (raw as { prepareReview?: unknown })?.prepareReview;
-  const prepareReview =
-    typeof rawPrepareReview === 'string' && rawPrepareReview.trim() !== '' ? rawPrepareReview.trim() : undefined;
+	const apiKey = env.ANTHROPIC_API_KEY?.trim();
+	if (!apiKey) {
+		throw error(
+			503,
+			'Anthropic API key is not configured. Add ANTHROPIC_API_KEY to your .env file and restart the dev server.'
+		);
+	}
 
-  const required: (keyof DecisionPayload)[] = [
-    'decision',
-    'problem',
-    'primaryMetric',
-    'expectedOutcome'
-  ];
+	let mode: GenerateMode;
+	let input: DecisionPayload;
+	let raw: unknown;
+	try {
+		raw = await request.json();
+	} catch {
+		throw error(400, 'Invalid request body');
+	}
 
-  for (const field of required) {
-    if (!input[field]?.trim()) {
-      throw error(400, `Missing required field: ${field}`);
-    }
-  }
+	const parsedMode = (raw as { mode?: unknown })?.mode;
+	if (!['confidence', 'prepare', 'communicate', 'portfolio'].includes(String(parsedMode))) {
+		throw error(400, 'Invalid mode');
+	}
+	mode = parsedMode as GenerateMode;
 
-  const buildOptions: PromptBuildOptions | undefined = prepareReview ? { prepareReview } : undefined;
+	const nestedInput = (raw as { input?: unknown })?.input;
+	input =
+		nestedInput && typeof nestedInput === 'object'
+			? (nestedInput as DecisionPayload)
+			: (raw as DecisionPayload);
 
-  let promptParts: PromptParts;
-  if (mode === 'confidence') promptParts = buildConfidencePrompt(input);
-  else if (mode === 'prepare') promptParts = buildPreparePrompt(input);
-  else if (mode === 'communicate') promptParts = buildCommunicatePrompt(input, buildOptions);
-  else promptParts = buildPortfolioPrompt(input, buildOptions);
+	if (isTrial && trialLead) {
+		if (trialLead.status === 'approval_requested' || trialLead.status === 'rejected') {
+			return apiError(
+				403,
+				'Trial generations are paused while your access request is reviewed.',
+				'trial_approval_pending',
+				headers
+			);
+		}
 
-  const client = new Anthropic({ apiKey });
-  try {
-    const output = await callClaude(client, promptParts, MAX_TOKENS[mode]);
-    return json({ [mode]: output });
+		if (trialLead.status !== 'trial') {
+			return apiError(403, 'Trial access is not available.', 'trial_inactive', headers);
+		}
 
-  } catch (err) {
-    console.error('Anthropic API error:', err);
-    throw error(500, 'Failed to generate output. Please try again.');
-  }
+		if (!isTrialAllowedMode(mode)) {
+			return apiError(
+				403,
+				'Communicate and Portfolio require full access. Request access to unlock.',
+				'trial_mode_locked',
+				headers
+			);
+		}
+
+		if (trialLead.generateCount >= TRIAL_GENERATION_LIMIT) {
+			return apiError(
+				403,
+				`Trial limit reached (${TRIAL_GENERATION_LIMIT} generations). Request full access to continue.`,
+				'trial_limit_reached',
+				headers
+			);
+		}
+	}
+
+	const rawPrepareReview = (raw as { prepareReview?: unknown })?.prepareReview;
+	const prepareReview =
+		typeof rawPrepareReview === 'string' && rawPrepareReview.trim() !== ''
+			? rawPrepareReview.trim()
+			: undefined;
+
+	const required: (keyof DecisionPayload)[] = [
+		'decision',
+		'problem',
+		'primaryMetric',
+		'expectedOutcome'
+	];
+
+	for (const field of required) {
+		if (!input[field]?.trim()) {
+			throw error(400, `Missing required field: ${field}`);
+		}
+	}
+
+	const buildOptions: PromptBuildOptions | undefined = prepareReview
+		? { prepareReview }
+		: undefined;
+
+	let promptParts: PromptParts;
+	if (mode === 'confidence') promptParts = buildConfidencePrompt(input);
+	else if (mode === 'prepare') promptParts = buildPreparePrompt(input);
+	else if (mode === 'communicate')
+		promptParts = buildCommunicatePrompt(input, buildOptions);
+	else promptParts = buildPortfolioPrompt(input, buildOptions);
+
+	const client = new Anthropic({ apiKey });
+	try {
+		const output = await callClaude(client, promptParts, MAX_TOKENS[mode]);
+
+		if (isTrial && trialLead) {
+			await recordTrialGeneration(trialLead.id);
+		}
+
+		return json({ [mode]: output }, { headers });
+	} catch (err) {
+		console.error('Anthropic API error:', err);
+		throw error(500, 'Failed to generate output. Please try again.');
+	}
 };

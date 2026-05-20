@@ -23,8 +23,24 @@ export const invite = pgTable('invite', {
 	id: serial('id').primaryKey(),
 	tokenHash: text('token_hash').notNull().unique(),
 	email: text('email'),
+	leadId: integer('lead_id'),
+	source: text('source').notNull().default('direct'),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	usedAt: timestamp('used_at', { withTimezone: true })
+});
+
+/** App profile for every Better Auth user (direct invite or converted lead). */
+export const userProfile = pgTable('user_profile', {
+	userId: text('user_id').primaryKey(),
+	email: text('email').notNull(),
+	origin: text('origin').notNull(),
+	leadId: integer('lead_id'),
+	inviteId: integer('invite_id'),
+	generateCount: integer('generate_count').notNull().default(0),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	onboardingCompletedAt: timestamp('onboarding_completed_at', { withTimezone: true }),
+	firstGenerateAt: timestamp('first_generate_at', { withTimezone: true }),
+	lastSeenAt: timestamp('last_seen_at', { withTimezone: true })
 });
 
 /** Homepage email capture + trial lifecycle (see email-first trial plan). */

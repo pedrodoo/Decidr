@@ -3,6 +3,7 @@
 	import { dev } from '$app/environment';
 	import favicon from '$lib/assets/favicon.svg';
 	import BugReportSection from '$lib/components/BugReportSection.svelte';
+	import TrialStatusBar from '$lib/components/TrialStatusBar.svelte';
 	import { applyTheme, getPreferredTheme, toggleTheme, type Theme } from '$lib/theme';
 	import type { LayoutData } from './$types';
 	import { onMount } from 'svelte';
@@ -15,6 +16,7 @@
 	import '@fontsource/ibm-plex-mono/500.css';
 	import '../app.css';
 	import { strings } from '$lib/strings.js';
+	import { clientRateLimit } from '$lib/stores/rate-limit';
 
 	let { children, data } = $props<{ children: () => unknown; data: LayoutData }>();
 	let theme = $state<Theme>('dark');
@@ -42,6 +44,7 @@
 	onMount(() => {
 		theme = getPreferredTheme();
 		applyTheme(theme);
+		clientRateLimit.set(data.rateLimit);
 	});
 
 	function handleThemeToggle() {
@@ -76,6 +79,12 @@
 	onLogOut={handleLogOut}
 	theme={theme}
 	onThemeToggle={handleThemeToggle}
+/>
+
+<TrialStatusBar
+	trialUsage={data.trialUsage}
+	rateLimit={data.rateLimit}
+	showRateLimit={!!data.user || !!data.trialUsage}
 />
 
 <div id="main">

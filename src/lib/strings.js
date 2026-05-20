@@ -326,6 +326,8 @@ not preset prompts.`,
     returningTitle: 'Ready for your own decision?',
     returningSubtitle:
       'You’ve seen the example. Now try Decidr with a real decision — trial includes 2 AI generations.',
+    trialLimitNote:
+      'Trial includes 2 AI generations (confidence + prepare only). Revisions count toward your limit.',
     startOwnDecision: 'Start with your own decision',
     replayTour: 'Replay guided tour',
     startFirstDecision: 'Start designing for impact',
@@ -550,6 +552,34 @@ not preset prompts.`,
 
   layout: {
     skipToMain: 'Skip to main content',
+  },
+
+  trial: {
+    badge: 'Trial mode',
+    badgeApprovalPending: 'Approval requested',
+    generationsUsed: '{used}/{limit} generations used',
+    limitReachedTitle: "You've used your 2 trial generations",
+    limitReachedBody:
+      'Request full access for more generations, Communicate, and Portfolio outputs.',
+    requestAccess: 'Request full access',
+    requestSent: "Request sent — we'll email you when approved.",
+    requestFailed: 'Could not submit your request. Try again.',
+    lockedCommunicateTitle: 'Communicate to Leadership',
+    lockedPortfolioTitle: 'Portfolio Case',
+    lockedModesBody:
+      'Request full access to generate leadership brief and portfolio case studies.',
+    requestAccessForModes: 'Request full access',
+    trialLimitNote:
+      'Trial includes 2 AI generations (confidence + prepare). Revisions count toward your limit.',
+  },
+
+  rateLimit: {
+    hourlyLimit: '{limit} generations per hour',
+    remaining: '{remaining}/{limit} hourly requests left',
+    limitReached: 'Hourly limit reached. Try again after {time}.',
+    trialHourlyLine:
+      'Trial · {used}/{limit} generations · {hourlyRemaining}/{hourlyLimit} hourly requests left',
+    usesOneGeneration: 'Uses 1 of your hourly generations ({remaining} left)',
   },
 
   demo: {

@@ -8,14 +8,16 @@
 	} from '$lib/decisions/storage';
 	import { DEMO_DECISION_ID } from '$lib/demo/example-decision';
 	import { seedDemoDecisionRecord } from '$lib/demo/demo-storage';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { renderMarkdown } from '$lib/sanitize-markdown';
 	import { get } from 'svelte/store';
 	import { strings } from '$lib/strings.js';
 	import BugReportCoachMark from '$lib/components/BugReportCoachMark.svelte';
+	import TrialAccessPanel from '$lib/components/TrialAccessPanel.svelte';
 	import { highlightBugReportButton } from '$lib/stores/bug-hint';
+	import { applyRateLimitHeaders, parseGenerateError } from '$lib/api/generate-client';
 
 	let { data } = $props();
 
@@ -28,7 +30,11 @@
 	let lastGeneratedAt = $state<string | null>(null);
 	const s = strings.decisionOutputs;
 	const demo = strings.demoOutputs;
+	const trial = strings.trial;
 	const isDemo = $derived(data.isDemo || page.url.searchParams.get('demo') === '1');
+	const trialUsage = $derived(data.trialUsage ?? null);
+	const isTrial = $derived(!!trialUsage?.active && !isDemo);
+	const canTrialGenerate = $derived(trialUsage?.canGenerate ?? true);
 	const tallyUrl = strings.landing.surveyUrl;
 	let coachMarkVisible = $state(false);
 
@@ -168,8 +174,10 @@
 				})
 			});
 
+			applyRateLimitHeaders(response);
+
 			if (!response.ok) {
-				const err = await response.json();
+				const err = await parseGenerateError(response);
 				throw new Error(err.message ?? strings.common.somethingWentWrong);
 			}
 
@@ -179,6 +187,7 @@
 			if (currentId) {
 				updateLatestIterationOutputs(currentId, { prepare: result.prepare });
 			}
+			await invalidateAll();
 		} catch (e) {
 			generateError = e instanceof Error ? e.message : strings.common.unknownError;
 		} finally {
@@ -211,8 +220,10 @@
 				})
 			});
 
+			applyRateLimitHeaders(response);
+
 			if (!response.ok) {
-				const err = await response.json();
+				const err = await parseGenerateError(response);
 				throw new Error(err.message ?? strings.common.somethingWentWrong);
 			}
 
@@ -222,6 +233,7 @@
 			if (currentId) {
 				updateLatestIterationOutputs(currentId, { [mode]: result[mode] });
 			}
+			await invalidateAll();
 		} catch (e) {
 			generateError = e instanceof Error ? e.message : strings.common.unknownError;
 		} finally {
@@ -297,6 +309,9 @@
 				<p class="gate-reason">{parsed.reason}</p>
 			{/if}
 			{#if !outputs.prepare && !isDemo}
+				{#if isTrial && !canTrialGenerate && trialUsage}
+					<TrialAccessPanel {trialUsage} variant="limit" />
+				{:else}
 				{@const gv = confidenceVariant(parseConfidence(outputs.confidence ?? '').rating)}
 				<div class="gate-actions">
 					{#if gv === 'ready'}
@@ -304,7 +319,7 @@
 							class="btn-primary"
 							type="button"
 							onclick={generatePrepare}
-							disabled={loading === 'prepare'}
+							disabled={loading === 'prepare' || (isTrial && !canTrialGenerate)}
 						>
 							{loading === 'prepare' ? strings.common.generating : s.actions.generateFullReview}
 							{#if loading !== 'prepare'}
@@ -326,7 +341,7 @@
 							class="btn-ghost"
 							type="button"
 							onclick={generatePrepare}
-							disabled={loading === 'prepare'}
+							disabled={loading === 'prepare' || (isTrial && !canTrialGenerate)}
 						>
 							{loading === 'prepare'
 								? strings.common.generating
@@ -336,6 +351,7 @@
 				</div>
 				{#if generateError}
 					<p class="generate-error">{generateError}</p>
+				{/if}
 				{/if}
 			{/if}
 		</div>
@@ -369,8 +385,36 @@
 		<p class="demo-preview-divider">{demo.previewDivider}</p>
 	{/if}
 
-	<!-- NEXT STEP CARDS — shown after prepare, until communicate/portfolio are generated -->
-	{#if !isDemo && outputs.prepare && (!outputs.communicate || !outputs.portfolio)}
+	{#if isTrial && outputs.prepare && trialUsage && (!outputs.communicate || !outputs.portfolio)}
+		<div class="next-section">
+			<p class="next-label">{s.nextLabel}</p>
+			{#if !outputs.communicate}
+				<div class="locked-card">
+					<div class="locked-card-header">
+						<span class="next-card-num two">2</span>
+						<div>
+							<div class="locked-title">{trial.lockedCommunicateTitle}</div>
+							<p class="locked-desc">{s.communicate.cardDesc}</p>
+						</div>
+						<span class="lock-icon" aria-hidden="true">🔒</span>
+					</div>
+				</div>
+			{/if}
+			{#if !outputs.portfolio}
+				<div class="locked-card">
+					<div class="locked-card-header">
+						<span class="next-card-num three">3</span>
+						<div>
+							<div class="locked-title">{trial.lockedPortfolioTitle}</div>
+							<p class="locked-desc">{s.portfolio.cardDesc}</p>
+						</div>
+						<span class="lock-icon" aria-hidden="true">🔒</span>
+					</div>
+				</div>
+			{/if}
+			<TrialAccessPanel {trialUsage} variant="locked-modes" />
+		</div>
+	{:else if !isDemo && outputs.prepare && (!outputs.communicate || !outputs.portfolio)}
 		<div class="next-section">
 			<p class="next-label">{s.nextLabel}</p>
 			<div class="next-cards">
@@ -542,6 +586,40 @@
 		text-transform: uppercase;
 		color: var(--text-muted);
 		margin-top: 8px;
+	}
+
+	.locked-card {
+		border: 1px dashed var(--border);
+		border-radius: 10px;
+		padding: 16px;
+		margin-bottom: 12px;
+		background: var(--surface);
+		opacity: 0.92;
+	}
+
+	.locked-card-header {
+		display: flex;
+		align-items: flex-start;
+		gap: 14px;
+	}
+
+	.locked-title {
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: 6px;
+	}
+
+	.locked-desc {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+		line-height: 1.55;
+	}
+
+	.lock-icon {
+		margin-left: auto;
+		font-size: 14px;
+		opacity: 0.7;
 	}
 
 	.demo-banner-actions {

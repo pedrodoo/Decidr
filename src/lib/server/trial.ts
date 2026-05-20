@@ -72,7 +72,7 @@ export async function getTrialLeadFromCookies(cookies: Cookies): Promise<TrialLe
 
 	const [row] = await db.select().from(lead).where(eq(lead.id, leadId));
 	if (!row) return null;
-	if (row.status === 'rejected') return null;
+	if (['rejected', 'approved', 'converted'].includes(row.status)) return null;
 
 	return {
 		id: row.id,

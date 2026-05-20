@@ -17,15 +17,22 @@
 		type AudienceSelection,
 		type DecisionForm
 	} from '$lib/decisions/storage';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { applyRateLimitHeaders, parseGenerateError } from '$lib/api/generate-client';
 	import { page } from '$app/state';
 
 	import { onMount, tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import DotMatrix from '$lib/components/DotMatrix.svelte';
+	import TrialAccessPanel from '$lib/components/TrialAccessPanel.svelte';
 
 	type Phase = 'gate' | 'steps';
 	type Step = 1 | 2 | 3;
+
+	let { data } = $props();
+
+	const trialUsage = $derived(data.trialUsage ?? null);
+	const canTrialGenerate = $derived(trialUsage?.canGenerate ?? true);
 
 	// --- State ---
 	let phase = $state<Phase>('gate');
@@ -266,12 +273,15 @@
 				})
 			});
 
+			applyRateLimitHeaders(response);
+
 			if (!response.ok) {
-				const err = await response.json();
+				const err = await parseGenerateError(response);
 				throw new Error(err.message ?? strings.common.somethingWentWrong);
 			}
 
 			const result = await response.json();
+			await invalidateAll();
 			const idForIteration = currentId;
 			if (!idForIteration) {
 				throw new Error(strings.decisionOutputs.persistError);
@@ -626,9 +636,21 @@
 					{/if}
 				</div>
 
+				{#if data.isTrial && trialUsage}
+					<p class="trial-note">{strings.welcome.trialLimitNote}</p>
+					{#if !canTrialGenerate}
+						<TrialAccessPanel {trialUsage} variant="limit" />
+					{/if}
+				{/if}
+
 				<div class="step-actions">
 					<span class="step-counter">{stepCounter(3, 3)}</span>
-					<button class="btn-primary" type="button" onclick={handleGenerate} disabled={loading}>
+					<button
+						class="btn-primary"
+						type="button"
+						onclick={handleGenerate}
+						disabled={loading || (data.isTrial && !canTrialGenerate)}
+					>
 						<svg width="13" height="13" viewBox="0 0 16 16" fill="white" aria-hidden="true">
 							<path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z" />
 						</svg>
@@ -710,6 +732,13 @@
 		font-size: 13px;
 		color: var(--semantic-danger);
 		margin-top: 12px;
+	}
+
+	.trial-note {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+		line-height: 1.55;
+		margin-bottom: 12px;
 	}
 
 	:global(.field-prompt strong) {

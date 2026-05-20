@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { strings } from '$lib/strings.js';
 	import EmailCaptureForm from '$lib/components/EmailCaptureForm.svelte';
+	import AsciiCat from '$lib/components/AsciiCat.svelte';
 
 	const s = strings.landing;
 
@@ -32,20 +33,26 @@
 
 <main class="page">
 	<section class="hero">
-		<div class="beta-badge">
-			<span class="beta-dot" aria-hidden="true"></span>
-			{s.betaBadge}
+		<div class="hero-content">
+			<div class="beta-badge">
+				<span class="beta-dot" aria-hidden="true"></span>
+				{s.betaBadge}
+			</div>
+
+			<h1 class="hero-title">
+				{s.heroTitle}<br />
+				<span class="hero-accent">{s.heroAccent}</span>
+			</h1>
+
+			<p class="hero-subtitle">{s.heroSubtitle}</p>
+
+			<div class="cta-group">
+				<EmailCaptureForm fullWidth />
+			</div>
 		</div>
 
-		<h1 class="hero-title">
-			{s.heroTitle}<br />
-			<span class="hero-accent">{s.heroAccent}</span>
-		</h1>
-
-		<p class="hero-subtitle">{s.heroSubtitle}</p>
-
-		<div class="cta-group">
-			<EmailCaptureForm fullWidth />
+		<div class="maneki-wrap">
+			<AsciiCat src="/maneki.png" cols={70} fontSize={9} />
 		</div>
 	</section>
 
@@ -159,6 +166,26 @@
 		align-items: flex-start;
 		gap: 0;
 		border-bottom: 1px solid var(--border);
+		position: relative;
+		min-height: 400px;
+	}
+
+	.hero-content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		max-width: 470px;
+		position: relative;
+		z-index: 1;
+	}
+
+	.maneki-wrap {
+		position: absolute;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		pointer-events: none;
+		opacity: 0.88;
 	}
 
 	.beta-badge {
@@ -196,12 +223,11 @@
 	}
 
 	.hero-title {
-		font-size: clamp(30px, 5vw, 48px);
+		font-size: clamp(26px, 4vw, 34px);
 		font-weight: 700;
 		letter-spacing: -0.04em;
 		line-height: 1.1;
 		color: var(--text-primary);
-		max-width: 640px;
 		margin-top: 14px;
 	}
 
@@ -451,6 +477,12 @@
 	}
 
 	/* ── Mobile ─────────────────────────────────────────────────────── */
+	@media (max-width: 768px) {
+		.maneki-wrap {
+			display: none;
+		}
+	}
+
 	@media (max-width: 480px) {
 		.page {
 			padding: 0 16px 80px;

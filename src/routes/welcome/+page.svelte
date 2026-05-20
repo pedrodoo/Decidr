@@ -81,6 +81,7 @@
 		{:else if isTrialReturning}
 			<h2 class="title">{s.returningTitle}</h2>
 			<p class="subtitle">{s.returningSubtitle}</p>
+			<p class="trial-limit-note">{s.trialLimitNote}</p>
 
 			{#if data.trialEmail}
 				<p class="trial-email">
@@ -197,6 +198,13 @@
 		letter-spacing: -0.03em;
 		color: var(--text-primary);
 		margin-bottom: 12px;
+	}
+
+	.trial-limit-note {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+		line-height: 1.6;
+		margin-bottom: 20px;
 	}
 
 	.subtitle {
