@@ -21,7 +21,8 @@
 		"db:studio": "drizzle-kit studio",
 		"auth:schema": "better-auth generate --config src/lib/server/auth.ts --output src/lib/server/db/auth.schema.ts --yes",
 		"invite": "node --env-file=.env --experimental-strip-types scripts/invite.ts",
-		"approve-lead": "node --env-file=.env --experimental-strip-types scripts/approve-lead.ts"
+		"approve-lead": "node --env-file=.env --experimental-strip-types scripts/approve-lead.ts",
+		"list-people": "node --env-file=.env --experimental-strip-types scripts/list-people.ts"
 	},
 	"devDependencies": {
 		"@better-auth/cli": "~1.4.21",

@@ -21,6 +21,7 @@ pnpm db:generate && pnpm db:migrate   # run after any schema change
 pnpm db:studio                     # drizzle studio
 pnpm invite                        # create invite via scripts/invite.ts
 pnpm approve-lead user@example.com # approve trial lead + create join invite
+pnpm list-people                   # list trial leads, invited users, usage signals
 ```
 
 Never run `pnpm db:push` — always migrate, never push.

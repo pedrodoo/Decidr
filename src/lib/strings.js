@@ -423,6 +423,15 @@ not preset prompts.`,
     refineHint: 'Address the gaps above before moving forward.',
     nextLabel: 'What do you need next?',
     persistError: 'Could not persist decision before generating outputs.',
+    strengthen: {
+      title: 'Strengthen your case',
+      subtitle:
+        'Add detail to your inputs here — then re-run confidence or regenerate your prepare review.',
+      recheckConfidence: 'Re-check confidence',
+      regeneratePrepare: 'Regenerate prepare review',
+      openFullEditor: 'Open full input editor →',
+      refineBelow: 'Strengthen your case below ↓',
+    },
   },
 
   login: {

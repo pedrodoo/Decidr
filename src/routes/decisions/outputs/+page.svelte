@@ -4,7 +4,8 @@
 	import {
 		getDecision,
 		getLatestIteration,
-		updateLatestIterationOutputs
+		updateLatestIterationOutputs,
+		upsertDraft
 	} from '$lib/decisions/storage';
 	import { DEMO_DECISION_ID } from '$lib/demo/example-decision';
 	import { seedDemoDecisionRecord } from '$lib/demo/demo-storage';
@@ -16,9 +17,16 @@
 	import { strings } from '$lib/strings.js';
 	import BugReportCoachMark from '$lib/components/BugReportCoachMark.svelte';
 	import TrialAccessPanel from '$lib/components/TrialAccessPanel.svelte';
+	import StrengthenYourCase from '$lib/components/StrengthenYourCase.svelte';
 	import { highlightBugReportButton } from '$lib/stores/bug-hint';
 	import { applyRateLimitHeaders, parseGenerateError } from '$lib/api/generate-client';
-	import { readInputDepth } from '$lib/stores/input-depth';
+	import { readInputDepth, type InputDepth } from '$lib/stores/input-depth';
+	import {
+		EMPTY_FORM,
+		type AudienceSelection,
+		type DecisionForm,
+		type DecisionRecord
+	} from '$lib/decisions/storage';
 
 	let { data } = $props();
 
@@ -29,6 +37,9 @@
 	let iterationCount = $state(0);
 	let iterationIndex = $state(0);
 	let lastGeneratedAt = $state<string | null>(null);
+	let refineForm = $state<DecisionForm>({ ...EMPTY_FORM });
+	let audience = $state<AudienceSelection | null>(null);
+	let inputDepth = $state<InputDepth>('full');
 	const s = strings.decisionOutputs;
 	const demo = strings.demoOutputs;
 	const trial = strings.trial;
@@ -118,11 +129,24 @@
 		lastGeneratedAt = latest.generatedAt;
 		outputs = { ...latest.outputs };
 		outputsStore.set({ ...latest.outputs });
+		refineForm = { ...latest.inputSnapshot.form };
+		audience = { ...latest.inputSnapshot.audience };
+		inputDepth = readInputDepth();
 		inputStore.set({
 			id: record.id,
 			audience: latest.inputSnapshot.audience,
 			form: latest.inputSnapshot.form
 		});
+	}
+
+	function handleStrengthenUpdated(record: DecisionRecord) {
+		loadFromRecord(record);
+	}
+
+	function syncRefineFormToStore() {
+		if (!audience || !currentId) return;
+		upsertDraft({ id: currentId, audience, form: refineForm });
+		inputStore.set({ id: currentId, audience, form: refineForm });
 	}
 
 	function parseConfidence(text: string): { rating: string; reason: string } {
@@ -154,6 +178,7 @@
 	async function generatePrepare() {
 		loading = 'prepare';
 		generateError = null;
+		syncRefineFormToStore();
 
 		const stored = get(inputStore);
 		if (!stored) {
@@ -200,6 +225,7 @@
 	async function generateMode(mode: 'communicate' | 'portfolio') {
 		loading = mode;
 		generateError = null;
+		syncRefineFormToStore();
 
 		const stored = get(inputStore);
 		if (!stored) {
@@ -378,7 +404,7 @@
 			{#if !isDemo && (variant === 'not-ready' || variant === 'needs-work')}
 				<div class="refine-footer">
 					<p class="refine-hint">{s.refineHint}</p>
-					<a class="btn-ghost-inline" href={refineHref()}>{s.actions.refineInputs}</a>
+					<span class="refine-hint">{s.strengthen.refineBelow}</span>
 				</div>
 			{/if}
 		</div>
@@ -519,6 +545,25 @@
 				{@html renderMarkdown(outputs.portfolio)}
 			</div>
 		</div>
+	{/if}
+
+	{#if !isDemo && outputs.confidence && audience && currentId}
+		{@const parsed = parseConfidence(outputs.confidence ?? '')}
+		{@const variant = confidenceVariant(parsed.rating)}
+		<StrengthenYourCase
+			bind:form={refineForm}
+			{audience}
+			{inputDepth}
+			decisionId={currentId}
+			hasPrepare={!!outputs.prepare}
+			{isTrial}
+			{canTrialGenerate}
+			trialUsage={trialUsage ?? null}
+			currentConfidence={outputs.confidence}
+			fullEditorHref={refineHref()}
+			defaultOpen={variant === 'not-ready' || variant === 'needs-work'}
+			onUpdated={handleStrengthenUpdated}
+		/>
 	{/if}
 </div>
 

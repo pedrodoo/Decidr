@@ -184,7 +184,6 @@
 		right: 0;
 		top: 50%;
 		transform: translateY(-50%);
-		pointer-events: none;
 		opacity: 0.88;
 	}
 
