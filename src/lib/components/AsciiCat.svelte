@@ -13,7 +13,6 @@
 	const CHARS = ' .,:;i1tfLCG08@#';
 
 	let ascii = $state('');
-	let hovered = $state(false);
 	let canvas: HTMLCanvasElement;
 
 	onMount(() => {
@@ -65,11 +64,8 @@
 {#if ascii}
 	<pre
 		class="ascii-cat"
-		class:hovered
 		style="--fs:{fontSize}px"
 		aria-hidden="true"
-		onmouseenter={() => (hovered = true)}
-		onmouseleave={() => (hovered = false)}
 	>{ascii}</pre>
 {/if}
 
@@ -92,14 +88,6 @@
 		cursor: default;
 	}
 
-	/* On hover: pause the float, rock the whole cat.
-	   Because the paw is at the top-left, rocking ±6° makes it
-	   trace a larger arc than the body — the "wave" effect. */
-	.hovered {
-		animation: cat-wave 1.4s ease-in-out infinite;
-		opacity: 1;
-	}
-
 	@keyframes cat-float {
 		0%,
 		100% {
@@ -107,19 +95,6 @@
 		}
 		50% {
 			transform: translateY(-3px);
-		}
-	}
-
-	@keyframes cat-wave {
-		0%,
-		100% {
-			transform: rotate(0deg);
-		}
-		25% {
-			transform: rotate(-4deg);
-		}
-		75% {
-			transform: rotate(4deg);
 		}
 	}
 
