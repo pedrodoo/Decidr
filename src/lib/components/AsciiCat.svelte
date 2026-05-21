@@ -87,7 +87,7 @@
 		padding: 0;
 		/* Pivot near the base so the raised paw arcs further than the body */
 		transform-origin: 50% 90%;
-		animation: cat-float 5s ease-in-out infinite;
+		animation: cat-float 7s ease-in-out infinite;
 		transition: opacity 0.3s;
 		cursor: default;
 	}
@@ -96,7 +96,7 @@
 	   Because the paw is at the top-left, rocking ±6° makes it
 	   trace a larger arc than the body — the "wave" effect. */
 	.hovered {
-		animation: cat-wave 0.85s ease-in-out infinite;
+		animation: cat-wave 1.4s ease-in-out infinite;
 		opacity: 1;
 	}
 
@@ -106,7 +106,7 @@
 			transform: translateY(0px);
 		}
 		50% {
-			transform: translateY(-8px);
+			transform: translateY(-3px);
 		}
 	}
 
@@ -115,11 +115,11 @@
 		100% {
 			transform: rotate(0deg);
 		}
-		30% {
-			transform: rotate(-7deg);
+		25% {
+			transform: rotate(-4deg);
 		}
-		70% {
-			transform: rotate(5deg);
+		75% {
+			transform: rotate(4deg);
 		}
 	}
 
