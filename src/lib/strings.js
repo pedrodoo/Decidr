@@ -315,20 +315,20 @@ not preset prompts.`,
     trialEmailLabel: 'Signed in as',
     tourTitle: 'See what Decidr does — in about 5 minutes',
     tourSubtitle:
-      'We’ll walk you through a guided tour so you can see how Decidr turns design decisions into business-ready outputs.',
+      'We’ll walk you through a guided tour so you can see how Decidr turns design cases into business-ready outputs.',
     tourBody:
-      'We’ve pre-populated every input field with a realistic example. You don’t need to type anything — just follow the steps.',
+      'We’ve pre-populated every input field with a realistic example. You don’t need to type anything. Just follow the steps.',
     tourBugHint:
-      'We’re in private beta — if anything breaks or confuses you, use Report a bug in the top bar.',
+      'We’re in private beta. If anything breaks or confuses you, use Report a bug in the top bar.',
     startGuidedTour: 'Start guided tour',
     skipTour: 'Skip tour',
     skipTourHint: 'You can explore with your own decision, but the tour is the fastest way to understand Decidr.',
-    returningTitle: 'Ready for your own decision?',
+    returningTitle: 'Ready ro create your own case?',
     returningSubtitle:
-      'You’ve seen the example. Now try Decidr with a real decision — trial includes 2 AI generations.',
+      'You’ve seen the example. Now try Decidr with your own case. Trial includes 2 AI generations.',
     trialLimitNote:
       'Trial includes 2 AI generations (confidence + prepare only). Revisions count toward your limit.',
-    startOwnDecision: 'Start with your own decision',
+    startOwnDecision: 'Start your own case',
     replayTour: 'Replay guided tour',
     startFirstDecision: 'Start designing for impact',
     startNewDecision: 'Start designing for impact',
@@ -342,7 +342,7 @@ not preset prompts.`,
     eyebrow: 'Guided tour',
     entryTitle: 'A full walkthrough with a realistic example',
     entrySubtitle:
-      'You’ll move through the same three steps you’d use for a real decision, then see the outputs Decidr produces.',
+      'You’ll move through the same three steps you’d use for a real design case, then see the outputs Decidr produces.',
     entryBody:
       'All fields are pre-filled with an example case aimed at a CEO audience. Read the coaching notes after each step to see how Decidr responds to what you write.',
     entrySteps: [
@@ -367,8 +367,8 @@ not preset prompts.`,
   demoOutputs: {
     bannerTitle: 'Example outputs',
     bannerBody:
-      'These were generated from the guided tour example — not from your own decision. Explore how Prepare, Communicate, and Portfolio read for a CEO audience.',
-    startOwnDecision: 'Start with your own decision',
+      'These were generated from the guided tour example. Now explore how Prepare, Communicate, and Portfolio read for a CEO audience.',
+    startOwnDecision: 'Start your case',
     backToTour: 'Back to tour intro',
     exampleBadge: 'Example',
     tallyFeedback: 'Help us improve Decidr — 2 min feedback',
@@ -378,14 +378,14 @@ not preset prompts.`,
   },
 
   decisionsDashboard: {
-    pageTitle: 'Story Dashboard',
+    pageTitle: 'Cases Dashboard',
     eyebrow: 'Decidr',
     title: 'Dashboard',
-    subtitle: 'All your narratives in one place.',
+    subtitle: 'All your cases in one place.',
     newDecisionCta: 'New ',
-    emptyTitle: 'No narratives yet',
-    emptyBody: 'Once you generate hipothesis, your narratives will appear here.',
-    emptyCta: 'Start your first decision',
+    emptyTitle: 'No cases yet',
+    emptyBody: 'Once you generate hipothesis, your cases will appear here.',
+    emptyCta: 'Start your first case',
     iterations: {
       one: 'iteration',
       many: 'iterations',
@@ -393,7 +393,7 @@ not preset prompts.`,
   },
 
   decisionOutputs: {
-    pageTitle: 'Your narratives',
+    pageTitle: 'Your cases',
     backToInputsAria: 'Refine inputs',
     iterationMeta: 'Iteration {current} of {total}',
     generatedAt: 'generated {time}',
