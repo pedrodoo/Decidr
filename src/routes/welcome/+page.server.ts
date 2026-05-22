@@ -20,7 +20,6 @@ export const load: PageServerLoad = async (event) => {
 	if (user) {
 		return {
 			isTrial: false,
-			trialEmail: null,
 			trialState: null
 		};
 	}
@@ -35,7 +34,6 @@ export const load: PageServerLoad = async (event) => {
 
 	return {
 		isTrial: true,
-		trialEmail: trialLead!.email,
 		trialState,
 		skippedTour: skipTour
 	};

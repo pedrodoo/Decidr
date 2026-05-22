@@ -156,6 +156,26 @@ textarea:focus-visible {
 	z-index: 100;
 }
 
+.nav--with-trial {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	column-gap: 16px;
+}
+
+.nav--with-trial .logo {
+	min-width: 0;
+}
+
+.nav-center {
+	justify-self: center;
+	max-width: min(100%, 320px);
+}
+
+.nav--with-trial .nav-actions {
+	justify-self: end;
+	flex-shrink: 0;
+}
+
 .logo {
 	display: flex;
 	align-items: center;

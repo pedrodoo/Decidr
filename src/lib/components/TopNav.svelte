@@ -1,4 +1,6 @@
 <script lang="ts">
+	import TrialModeBadge from '$lib/components/TrialModeBadge.svelte';
+	import type { TrialUsage } from '$lib/server/trial-limits';
 	import type { Theme } from '$lib/theme';
 	import type { SessionLayoutUser } from '$lib/types/session';
 	import { getUserDisplayName, getUserInitial } from '$lib/utils/userDisplay';
@@ -7,6 +9,7 @@
 	type Props = {
 		user: SessionLayoutUser;
 		trialEmail?: string | null;
+		trialUsage?: TrialUsage | null;
 		onReportBug: () => void;
 		onLogOut: () => void | Promise<void>;
 		theme: Theme;
@@ -17,6 +20,7 @@
 	let {
 		user,
 		trialEmail = null,
+		trialUsage = null,
 		onReportBug,
 		onLogOut,
 		theme,
@@ -26,8 +30,10 @@
 	let isAccountModalOpen = $state(false);
 	const s = strings.topNav;
 
-	const displayName = $derived(getUserDisplayName(user?.name, user?.email));
-	const avatarInitial = $derived(getUserInitial(user?.name, user?.email));
+	const sessionEmail = $derived(user?.email ?? trialEmail ?? null);
+	const hasSession = $derived(!!user || !!trialEmail);
+	const displayName = $derived(getUserDisplayName(user?.name, sessionEmail));
+	const avatarInitial = $derived(getUserInitial(user?.name, sessionEmail));
 
 	function openAccountModal() {
 		isAccountModalOpen = true;
@@ -52,7 +58,7 @@
 
 <svelte:window onkeydown={handleWindowKeyDown} />
 
-<header class="nav">
+<header class="nav" class:nav--with-trial={!!trialUsage}>
 	<a class="logo" href="/" aria-label={s.homeAria}>
 		<div class="logo-mark" aria-hidden="true">
 			<svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
@@ -61,6 +67,12 @@
 		</div>
 		<span>{strings.common.appName}</span>
 	</a>
+
+	{#if trialUsage}
+		<div class="nav-center">
+			<TrialModeBadge {trialUsage} />
+		</div>
+	{/if}
 
 	<div class="nav-actions">
 		<button
@@ -118,7 +130,7 @@
 			</button>
 		{/if}
 
-		{#if user}
+		{#if hasSession}
 			<button class="nav-user-btn" type="button" onclick={openAccountModal} aria-label={s.account}>
 				<div class="nav-avatar" aria-hidden="true">{avatarInitial}</div>
 				<span class="nav-username">{displayName}</span>
@@ -132,13 +144,13 @@
 					></path>
 				</svg>
 			</button>
-		{:else if !trialEmail}
+		{:else}
 			<a class="btn-secondary nav-login-link" href="/login">{s.login}</a>
 		{/if}
 	</div>
 </header>
 
-{#if user && isAccountModalOpen}
+{#if hasSession && isAccountModalOpen}
 	<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label={s.account}>
 		<button class="modal-backdrop-close" type="button" aria-label={s.closeAccountDialog} onclick={closeAccountModal}
 		></button>
@@ -152,9 +164,14 @@
 				<div class="user-info">
 					<div class="user-avatar-large">{avatarInitial}</div>
 					<div>
-						<div class="user-name">{user.name ?? user.email}</div>
-						{#if user.name}
-							<div class="user-email">{user.email}</div>
+						{#if user}
+							<div class="user-name">{user.name ?? user.email}</div>
+							{#if user.name}
+								<div class="user-email">{user.email}</div>
+							{/if}
+						{:else if trialEmail}
+							<div class="user-name">{trialEmail}</div>
+							<div class="user-email">{s.trialAccess}</div>
 						{/if}
 					</div>
 				</div>

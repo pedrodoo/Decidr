@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { strings } from '$lib/strings.js';
 	import { clientRateLimit, type ClientRateLimitStatus } from '$lib/stores/rate-limit';
-	import type { TrialUsage } from '$lib/server/trial-limits';
 
 	type Props = {
 		serverRateLimit: { limit: number; remaining: number; resetAt: number };
-		trialUsage?: TrialUsage | null;
 	};
 
-	let { serverRateLimit, trialUsage = null }: Props = $props();
+	let { serverRateLimit }: Props = $props();
 
 	const r = strings.rateLimit;
 	let live = $state<ClientRateLimitStatus | null>(null);
@@ -40,18 +38,8 @@
 </script>
 
 <div class="rate-limit" role="status">
-	{#if trialUsage}
-		<span class="rate-trial-line">
-			{r.trialHourlyLine
-				.replace('{used}', String(trialUsage.used))
-				.replace('{limit}', String(trialUsage.limit))
-				.replace('{hourlyRemaining}', String(status.remaining))
-				.replace('{hourlyLimit}', String(status.limit))}
-		</span>
-	{:else}
-		<span class="rate-line">{r.hourlyLimit.replace('{limit}', String(status.limit))}</span>
-		<span class="rate-line">{hourlyLabel}</span>
-	{/if}
+	<span class="rate-line">{r.hourlyLimit.replace('{limit}', String(status.limit))}</span>
+	<span class="rate-line">{hourlyLabel}</span>
 </div>
 
 <style>
@@ -63,7 +51,6 @@
 		color: var(--text-muted);
 	}
 
-	.rate-trial-line,
 	.rate-line {
 		font-family: var(--font-mono);
 		letter-spacing: 0.03em;

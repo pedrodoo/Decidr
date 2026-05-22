@@ -24,14 +24,21 @@
 
 	async function handleLogOut() {
 		try {
-			await fetch('/api/auth/sign-out', {
-				method: 'POST',
-				credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: '{}'
-			});
+			if (data.trialLead) {
+				await fetch('/api/trial/sign-out', {
+					method: 'POST',
+					credentials: 'include'
+				});
+			} else if (data.user) {
+				await fetch('/api/auth/sign-out', {
+					method: 'POST',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: '{}'
+				});
+			}
 		} catch (error) {
 			if (dev) {
 				console.error('Sign-out request failed; continuing to login redirect.', error);
@@ -76,6 +83,7 @@
 <BugReportSection
 	user={data.user}
 	trialLead={data.trialLead}
+	trialUsage={data.trialUsage}
 	onLogOut={handleLogOut}
 	theme={theme}
 	onThemeToggle={handleThemeToggle}

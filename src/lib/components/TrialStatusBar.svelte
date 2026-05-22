@@ -1,5 +1,4 @@
 <script lang="ts">
-	import TrialModeBadge from '$lib/components/TrialModeBadge.svelte';
 	import RateLimitIndicator from '$lib/components/RateLimitIndicator.svelte';
 	import type { TrialUsage } from '$lib/server/trial-limits';
 
@@ -10,16 +9,13 @@
 	};
 
 	let { trialUsage, rateLimit, showRateLimit }: Props = $props();
+
+	const showBar = $derived(showRateLimit && !trialUsage);
 </script>
 
-{#if trialUsage || showRateLimit}
+{#if showBar}
 	<div class="trial-status-bar">
-		{#if trialUsage}
-			<TrialModeBadge {trialUsage} />
-		{/if}
-		{#if showRateLimit}
-			<RateLimitIndicator serverRateLimit={rateLimit} {trialUsage} />
-		{/if}
+		<RateLimitIndicator serverRateLimit={rateLimit} />
 	</div>
 {/if}
 

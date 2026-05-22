@@ -49,13 +49,6 @@
 			<p class="body">{s.tourBody}</p>
 			<p class="bug-hint">{s.tourBugHint}</p>
 
-			{#if data.trialEmail}
-				<p class="trial-email">
-					<span class="trial-email-label">{s.trialEmailLabel}</span>
-					{data.trialEmail}
-				</p>
-			{/if}
-
 			<div class="cta-row">
 				<a class="btn-primary cta" href="/onboarding">
 					{s.startGuidedTour}
@@ -79,13 +72,6 @@
 			<h2 class="title">{s.returningTitle}</h2>
 			<p class="subtitle">{s.returningSubtitle}</p>
 			<p class="trial-limit-note">{s.trialLimitNote}</p>
-
-			{#if data.trialEmail}
-				<p class="trial-email">
-					<span class="trial-email-label">{s.trialEmailLabel}</span>
-					{data.trialEmail}
-				</p>
-			{/if}
 
 			{#if data.skippedTour}
 				<p class="skipped-note" role="status">{s.skipTourHint}</p>
@@ -202,26 +188,6 @@
 		line-height: 1.55;
 		margin: 0 0 20px;
 		max-width: 620px;
-	}
-
-	.trial-email {
-		font-size: 13px;
-		color: var(--text-secondary);
-		margin: 0 0 20px;
-		padding: 12px 14px;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		background: var(--bg);
-	}
-
-	.trial-email-label {
-		display: block;
-		font-family: var(--font-mono);
-		font-size: 10px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--text-muted);
-		margin-bottom: 4px;
 	}
 
 	.skipped-note {

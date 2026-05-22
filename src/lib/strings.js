@@ -312,8 +312,7 @@ not preset prompts.`,
     title: 'For teams who take decision-making seriously.',
     subtitle:
       'Decidr was buikd to help product and design teams turn scattered opinions into clear, shared reasoning so cross-functional decisions move with more trust and less noise.',
-    trialEmailLabel: 'Signed in as',
-    tourTitle: 'See what Decidr does — in about 5 minutes',
+    tourTitle: 'See what Decidr does',
     tourSubtitle:
       'We’ll walk you through a guided tour so you can see how Decidr turns design cases into business-ready outputs.',
     tourBody:
@@ -532,6 +531,7 @@ not preset prompts.`,
     closeAccountDialog: 'Close account dialog',
     close: 'Close',
     signOut: 'Sign out',
+    trialAccess: 'Trial access',
   },
 
   bugReport: {
@@ -602,8 +602,6 @@ not preset prompts.`,
     hourlyLimit: '{limit} generations per hour',
     remaining: '{remaining}/{limit} hourly requests left',
     limitReached: 'Hourly limit reached. Try again after {time}.',
-    trialHourlyLine:
-      'Trial · {used}/{limit} generations · {hourlyRemaining}/{hourlyLimit} hourly requests left',
     usesOneGeneration: 'Uses 1 of your hourly generations ({remaining} left)',
   },
 

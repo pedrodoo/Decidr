@@ -3,6 +3,7 @@
 	import TopNav from '$lib/components/TopNav.svelte';
 	import { highlightBugReportButton } from '$lib/stores/bug-hint';
 	import { strings } from '$lib/strings.js';
+	import type { TrialUsage } from '$lib/server/trial-limits';
 	import type { Theme } from '$lib/theme';
 	import type { SessionLayoutUser } from '$lib/types/session';
 
@@ -19,6 +20,7 @@
 	type Props = {
 		user: SessionLayoutUser;
 		trialLead?: TrialLeadLayout | null;
+		trialUsage?: TrialUsage | null;
 		onLogOut: () => void | Promise<void>;
 		theme: Theme;
 		onThemeToggle: () => void;
@@ -28,6 +30,7 @@
 	let {
 		user,
 		trialLead = null,
+		trialUsage = null,
 		onLogOut,
 		theme,
 		onThemeToggle,
@@ -93,6 +96,7 @@
 <TopNav
 	{user}
 	trialEmail={trialLead?.email ?? null}
+	{trialUsage}
 	onReportBug={openBugModal}
 	{onLogOut}
 	{theme}
