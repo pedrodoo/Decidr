@@ -137,6 +137,14 @@
 		outline: none;
 	}
 
+	.email-capture-input:focus,
+	.email-capture-input:focus-visible {
+		outline: none;
+		border-color: transparent;
+		background: transparent;
+		box-shadow: none;
+	}
+
 	.email-capture-input::placeholder {
 		color: var(--text-muted);
 	}
@@ -189,8 +197,8 @@
 		cursor: not-allowed;
 	}
 
+	.email-capture-btn:focus,
 	.email-capture-btn:focus-visible {
-		outline: 2px solid var(--focus-ring);
-		outline-offset: 2px;
+		outline: none;
 	}
 </style>
