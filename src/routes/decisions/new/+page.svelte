@@ -3,6 +3,7 @@
   Phases: gate (pick audience) | steps (form + coach blocks). All copy from $lib/strings.js (newDecision, audienceGate).
 -->
 <script lang="ts">
+	import { autoresize } from '$lib/actions/autoresize';
 	import AudienceGate from '$lib/components/AudienceGate.svelte';
 	import AudienceIndicator from '$lib/components/AudienceIndicator.svelte';
 	import StepProgress from '$lib/components/StepProgress.svelte';
@@ -401,7 +402,7 @@
 				<p class="field-prompt">{@html p.problem}</p>
 				<textarea
 					id="q-problem"
-					class="short"
+					use:autoresize={form.problem}
 					bind:value={form.problem}
 					placeholder={s.placeholders.problem}
 				></textarea>
@@ -465,8 +466,8 @@
 					<p class="field-prompt">{@html p.problem}</p>
 					<textarea
 						id="f-problem"
-						class="short"
 						class:warned={!!fieldValidation.problem}
+						use:autoresize={form.problem}
 						bind:value={form.problem}
 						placeholder={s.placeholders.problem}
 					></textarea>
@@ -557,8 +558,8 @@
 					<p class="field-prompt">{@html p.options}</p>
 					<textarea
 						id="f-options"
-						class="medium"
 						class:warned={!!fieldValidation.options}
+						use:autoresize={form.options}
 						bind:value={form.options}
 						placeholder={s.placeholders.options}
 					></textarea>
@@ -572,8 +573,8 @@
 					<p class="field-prompt">{@html p.data}</p>
 					<textarea
 						id="f-data"
-						class="short"
 						class:warned={!!fieldValidation.data}
+						use:autoresize={form.data}
 						bind:value={form.data}
 						placeholder={s.placeholders.data}
 					></textarea>
@@ -587,8 +588,8 @@
 					<p class="field-prompt">{@html p.tradeoffs}</p>
 					<textarea
 						id="f-tradeoffs"
-						class="short"
 						class:warned={!!fieldValidation.tradeoffs}
+						use:autoresize={form.tradeoffs}
 						bind:value={form.tradeoffs}
 						placeholder={s.placeholders.tradeoffs}
 					></textarea>
@@ -894,13 +895,6 @@
 	}
 	:global(.field-prompt em) {
 		font-style: italic;
-	}
-
-	textarea.short {
-		min-height: 90px;
-	}
-	textarea.medium {
-		min-height: 120px;
 	}
 
 	.field-row {

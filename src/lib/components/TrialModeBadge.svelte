@@ -1,18 +1,12 @@
 <script lang="ts">
 	import { strings } from '$lib/strings.js';
 	import type { TrialUsage } from '$lib/server/trial-limits';
+	import { getTrialUsageDetail } from '$lib/utils/trialUsageLabel';
 
 	let { trialUsage }: { trialUsage: TrialUsage } = $props();
 
 	const t = strings.trial;
-
-	const label = $derived(
-		trialUsage.status === 'approval_requested'
-			? t.badgeApprovalPending
-			: t.generationsUsed
-					.replace('{used}', String(trialUsage.used))
-					.replace('{limit}', String(trialUsage.limit))
-	);
+	const label = $derived(getTrialUsageDetail(trialUsage));
 </script>
 
 <div class="trial-badge" role="status">

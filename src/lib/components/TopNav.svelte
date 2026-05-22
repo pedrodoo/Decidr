@@ -1,6 +1,7 @@
 <script lang="ts">
 	import TrialModeBadge from '$lib/components/TrialModeBadge.svelte';
 	import type { TrialUsage } from '$lib/server/trial-limits';
+	import { getTrialUsageDetail } from '$lib/utils/trialUsageLabel';
 	import type { Theme } from '$lib/theme';
 	import type { SessionLayoutUser } from '$lib/types/session';
 	import { getUserDisplayName, getUserInitial } from '$lib/utils/userDisplay';
@@ -34,6 +35,11 @@
 	const hasSession = $derived(!!user || !!trialEmail);
 	const displayName = $derived(getUserDisplayName(user?.name, sessionEmail));
 	const avatarInitial = $derived(getUserInitial(user?.name, sessionEmail));
+	const trialAccessLine = $derived(
+		trialUsage
+			? s.trialAccessSummary.replace('{detail}', getTrialUsageDetail(trialUsage))
+			: s.trialAccess
+	);
 
 	function openAccountModal() {
 		isAccountModalOpen = true;
@@ -171,16 +177,10 @@
 							{/if}
 						{:else if trialEmail}
 							<div class="user-name">{trialEmail}</div>
-							<div class="user-email">{s.trialAccess}</div>
+							<div class="user-email" role="status">{trialAccessLine}</div>
 						{/if}
 					</div>
 				</div>
-
-				{#if trialUsage}
-					<div class="account-trial-status">
-						<TrialModeBadge {trialUsage} />
-					</div>
-				{/if}
 
 				<button class="btn-logout" type="button" onclick={handleLogOut}>{s.signOut}</button>
 			</div>

@@ -12,6 +12,7 @@
 	import { seedDemoDecisionRecord } from '$lib/demo/demo-storage';
 	import { inputStore } from '$lib/stores/input';
 	import { outputsStore } from '$lib/stores/outputs';
+	import { autoresize } from '$lib/actions/autoresize';
 	import { strings } from '$lib/strings.js';
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
@@ -36,8 +37,6 @@
 			m.replace('{audienceLabel}', audience.label)
 		)
 	);
-
-	const selectedArea = $derived(businessAreas.find((a) => a.id === form.businessArea));
 
 	$effect(() => {
 		if (!loading) return;
@@ -132,17 +131,39 @@
 			<div class="field">
 				<label class="field-label" for="demo-problem">{s.fieldLabels.problem}</label>
 				<p class="field-prompt">{@html prompts.problem}</p>
-				<textarea id="demo-problem" class="short" value={form.problem} readonly></textarea>
+				<textarea
+					id="demo-problem"
+					use:autoresize={form.problem}
+					value={form.problem}
+					readonly
+				></textarea>
 			</div>
 
 			<fieldset class="field fieldset-reset">
-				<legend class="field-label">{s.fieldLabels.businessArea}</legend>
-				<p class="field-prompt">{s.fieldLabels.businessAreaPrompt}</p>
-				{#if selectedArea}
-					<div class="pill-group">
-						<span class="pill {selectedArea.class} active" aria-current="true">{selectedArea.label}</span>
-					</div>
-				{/if}
+				<legend class="field-label" id="demo-business-area-legend">{s.fieldLabels.businessArea}</legend>
+				<p class="field-prompt" id="demo-business-area-prompt">{s.fieldLabels.businessAreaPrompt}</p>
+				<div
+					class="pill-group"
+					role="radiogroup"
+					aria-labelledby="demo-business-area-legend"
+					aria-describedby="demo-business-area-prompt demo-business-area-hint"
+					aria-readonly="true"
+				>
+					{#each businessAreas as area (area.id)}
+						<button
+							type="button"
+							class="pill {area.class}"
+							class:active={form.businessArea === area.id}
+							role="radio"
+							aria-checked={form.businessArea === area.id}
+							disabled
+							tabindex="-1"
+						>
+							{area.label}
+						</button>
+					{/each}
+				</div>
+				<p id="demo-business-area-hint" class="sr-only">{ob.walkthroughBusinessAreaHint}</p>
 			</fieldset>
 
 			<div class="step-actions">
@@ -184,19 +205,29 @@
 			<div class="field">
 				<label class="field-label" for="demo-options">{s.fieldLabels.options}</label>
 				<p class="field-prompt">{@html prompts.options}</p>
-				<textarea id="demo-options" class="medium" value={form.options} readonly></textarea>
+				<textarea
+					id="demo-options"
+					use:autoresize={form.options}
+					value={form.options}
+					readonly
+				></textarea>
 			</div>
 
 			<div class="field">
 				<label class="field-label" for="demo-data">{s.fieldLabels.data}</label>
 				<p class="field-prompt">{@html prompts.data}</p>
-				<textarea id="demo-data" class="short" value={form.data} readonly></textarea>
+				<textarea id="demo-data" use:autoresize={form.data} value={form.data} readonly></textarea>
 			</div>
 
 			<div class="field">
 				<label class="field-label" for="demo-tradeoffs">{s.fieldLabels.tradeoffs}</label>
 				<p class="field-prompt">{@html prompts.tradeoffs}</p>
-				<textarea id="demo-tradeoffs" class="short" value={form.tradeoffs} readonly></textarea>
+				<textarea
+					id="demo-tradeoffs"
+					use:autoresize={form.tradeoffs}
+					value={form.tradeoffs}
+					readonly
+				></textarea>
 			</div>
 
 			<div class="step-actions">
@@ -458,13 +489,6 @@
 		font-weight: 500;
 	}
 
-	textarea.short {
-		min-height: 90px;
-	}
-	textarea.medium {
-		min-height: 120px;
-	}
-
 	.field-row {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -483,6 +507,18 @@
 		opacity: 0.92;
 	}
 
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
 	.pill-group {
 		display: flex;
 		gap: 8px;
@@ -496,16 +532,90 @@
 		min-height: 44px;
 		padding: 10px 12px;
 		border-radius: 6px;
+		cursor: not-allowed;
 		border-width: 1px;
 		border-style: solid;
 		user-select: none;
+		background: var(--surface-2);
+		color: var(--text-secondary);
+		border-color: var(--border);
+		box-shadow: none;
+	}
+
+	.pill:disabled:not(.active) {
+		opacity: 0.72;
+	}
+
+	.pill:disabled.active {
+		opacity: 1;
+	}
+
+	.pill.activation:not(.active) {
+		color: var(--accent-text-teal);
+		border-color: rgba(45, 212, 191, 0.45);
+		background: rgba(20, 184, 166, 0.1);
+	}
+
+	.pill.conversion:not(.active) {
+		color: var(--accent-text-orange);
+		border-color: var(--orange-border);
+		background: rgba(249, 115, 22, 0.08);
+	}
+
+	.pill.retention:not(.active) {
+		color: var(--accent-text-blue);
+		border-color: rgba(96, 165, 250, 0.35);
+		background: rgba(96, 165, 250, 0.08);
+	}
+
+	.pill.revenue:not(.active) {
+		color: var(--accent-text-green);
+		border-color: rgba(74, 222, 128, 0.35);
+		background: rgba(74, 222, 128, 0.08);
+	}
+
+	.pill.active {
+		box-shadow: 0 0 0 2px var(--text-primary);
+	}
+
+	.pill.active.activation {
+		background: var(--teal);
+		color: var(--accent-text-teal);
+		border-color: rgba(45, 212, 191, 0.25);
 	}
 
 	.pill.active.conversion {
 		background: var(--orange-bg);
 		color: var(--accent-text-orange);
 		border-color: var(--orange-border);
-		box-shadow: 0 0 0 2px var(--text-primary);
+	}
+
+	.pill.active.retention {
+		background: var(--blue-bg);
+		color: var(--accent-text-blue);
+		border-color: rgba(96, 165, 250, 0.3);
+	}
+
+	.pill.active.revenue {
+		background: var(--green-bg);
+		color: var(--accent-text-green);
+		border-color: rgba(74, 222, 128, 0.3);
+	}
+
+	:global([data-theme='light']) .pill.activation:not(.active) {
+		background: rgba(20, 184, 166, 0.12);
+	}
+
+	:global([data-theme='light']) .pill.conversion:not(.active) {
+		background: rgba(249, 115, 22, 0.1);
+	}
+
+	:global([data-theme='light']) .pill.retention:not(.active) {
+		background: rgba(96, 165, 250, 0.1);
+	}
+
+	:global([data-theme='light']) .pill.revenue:not(.active) {
+		background: rgba(74, 222, 128, 0.1);
 	}
 
 	.step-actions {

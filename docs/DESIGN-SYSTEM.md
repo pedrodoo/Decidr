@@ -23,6 +23,6 @@ Single source of truth for design primitives and semantic tokens.
 - **Base:** Resets, `body` (font, size, background, color).
 - **Accessibility:** Skip link (`.skip-link`) and focus styles.
 - **Form elements:** Default styles for `input[type="text"]` and `textarea` (background, border, focus).
-- **Buttons:** `.btn-primary`, `.btn-secondary` — use these classes for consistent CTAs.
+- **Buttons:** `.btn-primary`, `.btn-secondary` — use these classes for consistent CTAs. **Text actions:** `.btn-ghost` (padded tertiary link/button), `.btn-ghost-inline` (compact semibold inline link, e.g. “Back to tour intro”).
 
 Components in `src/lib/components/` use the same semantic tokens and, where needed, the same button/input styles so the app stays consistent.

@@ -817,26 +817,6 @@
 		cursor: not-allowed;
 	}
 
-	.btn-ghost {
-		font-size: 13px;
-		color: var(--text-secondary);
-		text-decoration: none;
-		padding: 10px 4px;
-		transition: color 0.15s;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-family: var(--font-sans);
-	}
-
-	.btn-ghost:hover {
-		color: var(--text-primary);
-	}
-	.btn-ghost:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
-
 	/* OUTPUT BLOCKS */
 	.output-block {
 		border: 1px solid var(--border);
@@ -905,19 +885,6 @@
 	.refine-hint {
 		font-size: 12px;
 		color: var(--text-muted);
-	}
-
-	.btn-ghost-inline {
-		font-size: 13px;
-		font-weight: 600;
-		color: var(--text-secondary);
-		text-decoration: none;
-		letter-spacing: -0.01em;
-		transition: color 0.15s;
-	}
-
-	.btn-ghost-inline:hover {
-		color: var(--text-primary);
 	}
 
 	/* NEXT STEP CARDS */

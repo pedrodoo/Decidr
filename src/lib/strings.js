@@ -358,6 +358,8 @@ not preset prompts.`,
     walkthroughSrOnly: 'Guided tour walkthrough',
     walkthroughAudienceNote:
       'This example is framed for a CEO audience. Fields are read-only — follow the coaching notes after each step.',
+    walkthroughBusinessAreaHint:
+      'Example case: Conversion is selected. All business area options are shown as in a real decision; they cannot be changed during the tour.',
     walkthroughSeeCoaching: 'See coaching feedback',
     walkthroughGenerateOutputs: 'Preview example outputs',
     walkthroughGeneratingNote: 'Loading the example outputs Decidr would produce for this case…',
@@ -532,6 +534,7 @@ not preset prompts.`,
     close: 'Close',
     signOut: 'Sign out',
     trialAccess: 'Trial access',
+    trialAccessSummary: 'Trial access · {detail}',
   },
 
   bugReport: {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { autoresize } from '$lib/actions/autoresize';
 	import { strings } from '$lib/strings.js';
 	type BugFormValues = {
 		description: string;
@@ -58,9 +59,8 @@
 				<textarea
 					id="bug-description"
 					name="description"
-					rows="3"
+					use:autoresize={description}
 					placeholder={s.placeholders.description}
-					class="short"
 					bind:value={description}
 					required
 				></textarea>

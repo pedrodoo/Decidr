@@ -392,19 +392,6 @@
 		color: var(--text-primary);
 	}
 
-	.btn-ghost-inline {
-		font-size: 13px;
-		font-weight: 600;
-		color: var(--text-secondary);
-		text-decoration: none;
-		letter-spacing: -0.01em;
-		transition: color 0.15s;
-	}
-
-	.btn-ghost-inline:hover {
-		color: var(--text-primary);
-	}
-
 	.generate-error {
 		font-size: 13px;
 		color: var(--semantic-danger);

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { autoresize } from '$lib/actions/autoresize';
 	import { tick } from 'svelte';
 	import { strings } from '$lib/strings.js';
 	import type { DecisionForm } from '$lib/decisions/storage';
@@ -103,7 +104,7 @@
 		<p class="field-prompt">{@html p.problem}</p>
 		<textarea
 			id="{idPrefix}-problem"
-			class="short"
+			use:autoresize={form.problem}
 			bind:value={form.problem}
 			placeholder={s.placeholders.problem}
 		></textarea>
@@ -132,8 +133,8 @@
 				<p class="field-prompt">{@html p.problem}</p>
 				<textarea
 					id="{idPrefix}-problem"
-					class="short"
 					class:warned={!!fieldValidation.problem}
+					use:autoresize={form.problem}
 					bind:value={form.problem}
 					placeholder={s.placeholders.problem}
 				></textarea>
@@ -179,8 +180,8 @@
 				<p class="field-prompt">{@html p.options}</p>
 				<textarea
 					id="{idPrefix}-options"
-					class="medium"
 					class:warned={!!fieldValidation.options}
+					use:autoresize={form.options}
 					bind:value={form.options}
 					placeholder={s.placeholders.options}
 				></textarea>
@@ -194,8 +195,8 @@
 				<p class="field-prompt">{@html p.data}</p>
 				<textarea
 					id="{idPrefix}-data"
-					class="short"
 					class:warned={!!fieldValidation.data}
+					use:autoresize={form.data}
 					bind:value={form.data}
 					placeholder={s.placeholders.data}
 				></textarea>
@@ -209,8 +210,8 @@
 				<p class="field-prompt">{@html p.tradeoffs}</p>
 				<textarea
 					id="{idPrefix}-tradeoffs"
-					class="short"
 					class:warned={!!fieldValidation.tradeoffs}
+					use:autoresize={form.tradeoffs}
 					bind:value={form.tradeoffs}
 					placeholder={s.placeholders.tradeoffs}
 				></textarea>
@@ -351,16 +352,6 @@
 	input.warned,
 	textarea.warned {
 		border-color: var(--semantic-warning);
-	}
-
-	textarea.short {
-		min-height: 88px;
-		resize: vertical;
-	}
-
-	textarea.medium {
-		min-height: 120px;
-		resize: vertical;
 	}
 
 	.field-message {

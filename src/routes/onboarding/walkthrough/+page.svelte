@@ -39,6 +39,6 @@
 	}
 
 	.top-nav {
-		margin-bottom: 24px;
+		margin-bottom: var(--dt-space-6);
 	}
 </style>
