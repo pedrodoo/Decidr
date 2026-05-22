@@ -176,6 +176,12 @@
 					</div>
 				</div>
 
+				{#if trialUsage}
+					<div class="account-trial-status">
+						<TrialModeBadge {trialUsage} />
+					</div>
+				{/if}
+
 				<button class="btn-logout" type="button" onclick={handleLogOut}>{s.signOut}</button>
 			</div>
 		</div>

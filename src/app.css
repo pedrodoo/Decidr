@@ -144,6 +144,8 @@ textarea:focus-visible {
 
 /* ─── Top nav (reference visual) ─────────────────────────────────────── */
 .nav {
+	container-type: inline-size;
+	container-name: nav;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -157,23 +159,32 @@ textarea:focus-visible {
 }
 
 .nav--with-trial {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-	column-gap: 16px;
+	position: relative;
 }
 
 .nav--with-trial .logo {
 	min-width: 0;
+	flex-shrink: 0;
 }
 
 .nav-center {
-	justify-self: center;
-	max-width: min(100%, 320px);
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	max-width: min(calc(100% - 280px), 320px);
+	pointer-events: none;
 }
 
-.nav--with-trial .nav-actions {
-	justify-self: end;
-	flex-shrink: 0;
+.nav-center > * {
+	pointer-events: auto;
+}
+
+/* Trial badge duplicates account modal; hide when nav is too narrow */
+@container nav (max-width: 880px) {
+	.nav-center {
+		display: none;
+	}
 }
 
 .logo {
@@ -208,6 +219,8 @@ textarea:focus-visible {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	margin-left: auto;
+	flex-shrink: 0;
 }
 
 .nav-btn {
@@ -409,6 +422,11 @@ textarea:focus-visible {
 }
 
 /* ─── Account modal content ──────────────────────────────────────────── */
+.account-trial-status {
+	display: flex;
+	justify-content: flex-start;
+}
+
 .user-info {
 	display: flex;
 	align-items: center;
