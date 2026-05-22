@@ -10,7 +10,7 @@
 
 	let { src, cols = 60, fontSize = 6, bgThreshold = 0.22 } = $props();
 
-	const CHARS = ' .,:;i1tfLCG08@#';
+	const CHARS = ' .,:-=+i!1|tfjrxnuvczXYZO0Q#%&@$';
 
 	let ascii = $state('');
 	let canvas: HTMLCanvasElement;

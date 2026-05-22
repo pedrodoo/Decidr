@@ -52,7 +52,7 @@
 		</div>
 
 		<div class="maneki-wrap">
-			<AsciiCat src="/maneki-neko.png" cols={100} fontSize={6} bgThreshold={0.10} />
+			<AsciiCat src="/maneki-neko.png" cols={120} fontSize={5} bgThreshold={0.10} />
 		</div>
 	</section>
 
