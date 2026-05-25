@@ -1,4 +1,6 @@
 <script lang="ts">
+	import AudienceGate from '$lib/components/AudienceGate.svelte';
+	import AudienceIndicator from '$lib/components/AudienceIndicator.svelte';
 	import CoachResponse from '$lib/components/CoachResponse.svelte';
 	import StepProgress from '$lib/components/StepProgress.svelte';
 	import DotMatrix from '$lib/components/DotMatrix.svelte';
@@ -17,6 +19,7 @@
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 
+	type Phase = 'gate' | 'steps';
 	type Step = 1 | 2 | 3;
 
 	const s = strings.newDecision;
@@ -26,6 +29,7 @@
 	const form = DEMO_FORM;
 	const audience = DEMO_AUDIENCE;
 
+	let phase = $state<Phase>('gate');
 	let currentStep = $state<Step>(1);
 	let coachVisible = $state<Record<Step, boolean>>({ 1: false, 2: false, 3: false });
 	let coachDone3 = $state(false);
@@ -71,6 +75,25 @@
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
+	function handleGateStart(
+		_selected: typeof DEMO_AUDIENCE,
+		_intent: string | null
+	) {
+		phase = 'steps';
+		currentStep = 1;
+		coachVisible = { 1: false, 2: false, 3: false };
+		coachDone3 = false;
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+
+	function handleBackToGate() {
+		phase = 'gate';
+		currentStep = 1;
+		coachVisible = { 1: false, 2: false, 3: false };
+		coachDone3 = false;
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+
 	function onCoachContinue(step: Step) {
 		if (step === 1) {
 			coachVisible[1] = false;
@@ -112,20 +135,35 @@
 </script>
 
 <div class="walkthrough">
-	<div class="audience-bar" role="status">
+	<div class="walkthrough-header" role="status">
 		<span class="example-badge">{ob.exampleBadge}</span>
-		<span class="audience-label">{strings.audienceIndicator.label}: {audience.label}</span>
 	</div>
-	<p class="audience-note">{ob.walkthroughAudienceNote}</p>
 
-	<StepProgress {currentStep} />
+	{#if phase === 'gate'}
+		<AudienceGate
+			onStart={handleGateStart}
+			initialIntentId={form.intent}
+			startLabel={ob.walkthroughStartCta}
+			gateNote={ob.walkthroughGateNote}
+		/>
+	{:else}
+		<AudienceIndicator label={audience.label} onReset={handleBackToGate} showResetLabel={false} />
+		<p class="depth-note">{ob.walkthroughDepthNote}</p>
+		<p class="steps-note">{ob.walkthroughStepsNote}</p>
+
+		<StepProgress {currentStep} />
 
 	{#if currentStep === 1}
 		<div class="step">
 			<div class="field">
 				<label class="field-label" for="demo-decision">{s.fieldLabels.decision}</label>
 				<p class="field-prompt">{@html prompts.decision}</p>
-				<input id="demo-decision" type="text" value={form.decision} readonly />
+				<textarea
+					id="demo-decision"
+					use:autoresize={form.decision}
+					value={form.decision}
+					readonly
+				></textarea>
 			</div>
 
 			<div class="field">
@@ -284,19 +322,34 @@
 				<div class="field">
 					<label class="field-label" for="demo-metric">{s.fieldLabels.primaryMetric}</label>
 					<p class="field-prompt">{@html prompts.primaryMetric}</p>
-					<input id="demo-metric" type="text" value={form.primaryMetric} readonly />
+					<textarea
+						id="demo-metric"
+						use:autoresize={form.primaryMetric}
+						value={form.primaryMetric}
+						readonly
+					></textarea>
 				</div>
 				<div class="field">
 					<label class="field-label" for="demo-guardrail">{s.fieldLabels.guardrailMetric}</label>
 					<p class="field-prompt">{@html prompts.guardrailMetric}</p>
-					<input id="demo-guardrail" type="text" value={form.guardrailMetric} readonly />
+					<textarea
+						id="demo-guardrail"
+						use:autoresize={form.guardrailMetric}
+						value={form.guardrailMetric}
+						readonly
+					></textarea>
 				</div>
 			</div>
 
 			<div class="field">
 				<label class="field-label" for="demo-outcome">{s.fieldLabels.expectedOutcome}</label>
 				<p class="field-prompt">{@html prompts.expectedOutcome}</p>
-				<input id="demo-outcome" type="text" value={form.expectedOutcome} readonly />
+				<textarea
+					id="demo-outcome"
+					use:autoresize={form.expectedOutcome}
+					value={form.expectedOutcome}
+					readonly
+				></textarea>
 			</div>
 
 			{#if coachDone3}
@@ -408,6 +461,7 @@
 			</div>
 		</div>
 	{/if}
+	{/if}
 </div>
 
 <style>
@@ -416,12 +470,12 @@
 		flex-direction: column;
 	}
 
-	.audience-bar {
+	.walkthrough-header {
 		display: flex;
 		align-items: center;
 		gap: 12px;
 		flex-wrap: wrap;
-		margin-bottom: 8px;
+		margin-bottom: 16px;
 	}
 
 	.example-badge {
@@ -435,18 +489,19 @@
 		padding: 4px 10px;
 	}
 
-	.audience-label {
-		font-family: var(--font-mono);
-		font-size: var(--text-xs);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--accent-text-orange);
-	}
-
-	.audience-note {
+	.depth-note,
+	.steps-note {
 		font-size: var(--text-sm);
 		color: var(--text-secondary);
 		line-height: 1.65;
+		max-width: 620px;
+	}
+
+	.depth-note {
+		margin: -20px 0 12px;
+	}
+
+	.steps-note {
 		margin-bottom: 32px;
 	}
 
@@ -501,7 +556,6 @@
 		}
 	}
 
-	input[readonly],
 	textarea[readonly] {
 		cursor: default;
 		opacity: 0.92;

@@ -84,13 +84,13 @@
 	<div class="field">
 		<label class="field-label" for="{idPrefix}-decision">{s.fieldLabels.decision}</label>
 		<p class="field-prompt">{@html p.decision}</p>
-		<input
+		<textarea
 			id="{idPrefix}-decision"
-			type="text"
 			class:warned={!!fieldValidation.decision}
+			use:autoresize={form.decision}
 			bind:value={form.decision}
 			placeholder={s.placeholders.decision}
-		/>
+		></textarea>
 		{#if fieldValidation.decision}
 			<p class="field-message">{fieldValidation.decision}</p>
 		{/if}
@@ -116,13 +116,13 @@
 			<div class="field">
 				<label class="field-label" for="{idPrefix}-decision">{s.fieldLabels.decision}</label>
 				<p class="field-prompt">{@html p.decision}</p>
-				<input
+				<textarea
 					id="{idPrefix}-decision"
-					type="text"
 					class:warned={!!fieldValidation.decision}
+					use:autoresize={form.decision}
 					bind:value={form.decision}
 					placeholder={s.placeholders.decision}
-				/>
+				></textarea>
 				{#if fieldValidation.decision}
 					<p class="field-message">{fieldValidation.decision}</p>
 				{/if}
@@ -229,13 +229,13 @@
 				<div class="field">
 					<label class="field-label" for="{idPrefix}-metric">{s.fieldLabels.primaryMetric}</label>
 					<p class="field-prompt">{@html p.primaryMetric}</p>
-					<input
+					<textarea
 						id="{idPrefix}-metric"
-						type="text"
 						class:warned={!!fieldValidation.primaryMetric}
+						use:autoresize={form.primaryMetric}
 						bind:value={form.primaryMetric}
 						placeholder={s.placeholders.primaryMetric}
-					/>
+					></textarea>
 					{#if fieldValidation.primaryMetric}
 						<p class="field-message">{fieldValidation.primaryMetric}</p>
 					{/if}
@@ -243,13 +243,13 @@
 				<div class="field">
 					<label class="field-label" for="{idPrefix}-guardrail">{s.fieldLabels.guardrailMetric}</label>
 					<p class="field-prompt">{@html p.guardrailMetric}</p>
-					<input
+					<textarea
 						id="{idPrefix}-guardrail"
-						type="text"
 						class:warned={!!fieldValidation.guardrailMetric}
+						use:autoresize={form.guardrailMetric}
 						bind:value={form.guardrailMetric}
 						placeholder={s.placeholders.guardrailMetric}
-					/>
+					></textarea>
 					{#if fieldValidation.guardrailMetric}
 						<p class="field-message">{fieldValidation.guardrailMetric}</p>
 					{/if}
@@ -259,13 +259,13 @@
 			<div class="field">
 				<label class="field-label" for="{idPrefix}-outcome">{s.fieldLabels.expectedOutcome}</label>
 				<p class="field-prompt">{@html p.expectedOutcome}</p>
-				<input
+				<textarea
 					id="{idPrefix}-outcome"
-					type="text"
 					class:warned={!!fieldValidation.expectedOutcome}
+					use:autoresize={form.expectedOutcome}
 					bind:value={form.expectedOutcome}
 					placeholder={s.placeholders.expectedOutcome}
-				/>
+				></textarea>
 				{#if fieldValidation.expectedOutcome}
 					<p class="field-message">{fieldValidation.expectedOutcome}</p>
 				{/if}
@@ -330,7 +330,6 @@
 		font-style: italic;
 	}
 
-	input,
 	textarea {
 		width: 100%;
 		padding: 12px 14px;
@@ -343,13 +342,11 @@
 		transition: border-color 0.15s;
 	}
 
-	input:focus,
 	textarea:focus {
 		outline: none;
 		border-color: var(--border-focus);
 	}
 
-	input.warned,
 	textarea.warned {
 		border-color: var(--semantic-warning);
 	}

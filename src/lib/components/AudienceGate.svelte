@@ -19,16 +19,33 @@
 		label: string;
 	};
 
-	let { onStart } = $props<{
+	let {
+		onStart,
+		initialIntentId = null,
+		startLabel,
+		gateNote
+	} = $props<{
 		onStart: (audience: AudienceSelection, intent: string | null) => void;
+		/** Pre-select an intent pill (e.g. guided tour example). */
+		initialIntentId?: string | null;
+		/** Override the primary CTA label. */
+		startLabel?: string;
+		/** Optional note shown above the gate (tour / demo). */
+		gateNote?: string;
 	}>();
 
 	const audiences = strings.audienceGate.audiences;
 	const intentGate = strings.newDecision.intentGate;
 	const intents = intentGate.intents as IntentOption[];
 
-	let selected = $state(audiences[0]);
-	let selectedIntent = $state<string | null>(null);
+	const defaultAudience = audiences.find((a) => a.available) ?? audiences[0];
+
+	let selected = $state(defaultAudience);
+	let selectedIntent = $state<string | null>(initialIntentId ?? null);
+
+	const ctaLabel = $derived(
+		startLabel ?? strings.audienceGate.startWith.replace('{label}', selected.label)
+	);
 
 	function select(a: any) {
 		if (!a.available) return;
@@ -49,6 +66,10 @@
 </script>
 
 <div class="gate">
+	{#if gateNote}
+		<p class="gate-note" role="note">{gateNote}</p>
+	{/if}
+
 	<div class="intro">
 		<h2>{strings.audienceGate.title}</h2>
 		<p>{strings.audienceGate.intro}</p>
@@ -106,7 +127,7 @@
 
 	<div class="actions">
 		<button class="btn-primary" onclick={start} type="button">
-			{strings.audienceGate.startWith.replace('{label}', selected.label)}
+			{ctaLabel}
 			<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 				<path
 					d="M5 3l4 4-4 4"
@@ -125,6 +146,17 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0;
+	}
+
+	.gate-note {
+		font-size: var(--text-sm);
+		color: var(--text-secondary);
+		line-height: 1.65;
+		margin-bottom: 24px;
+		max-width: 600px;
+		padding: 12px 14px;
+		border-left: 2px solid var(--orange);
+		background: var(--bg);
 	}
 
 	.intro {

@@ -60,6 +60,7 @@
 
 	// Coach visibility per step
 	let coachVisible = $state<Record<Step, boolean>>({ 1: false, 2: false, 3: false });
+	let coachDone3 = $state(false);
 
 	// Form values
 	let form = $state<DecisionForm>({ ...EMPTY_FORM });
@@ -236,7 +237,13 @@
 		phase = 'gate';
 		currentStep = 1;
 		coachVisible = { 1: false, 2: false, 3: false };
+		coachDone3 = false;
 		fieldValidation = {};
+	}
+
+	function finishCoach3() {
+		coachVisible[3] = false;
+		coachDone3 = true;
 	}
 
 	function submitStep(n: Step) {
@@ -382,13 +389,13 @@
 			<div class="field">
 				<label class="field-label" for="q-decision">{s.fieldLabels.decision}</label>
 				<p class="field-prompt">{@html p.decision}</p>
-				<input
+				<textarea
 					id="q-decision"
-					type="text"
 					class:warned={!!fieldValidation.decision}
+					use:autoresize={form.decision}
 					bind:value={form.decision}
 					placeholder={s.placeholders.decision}
-				/>
+				></textarea>
 				{#if fieldValidation.decision}
 					<p class="field-message">{fieldValidation.decision}</p>
 				{/if}
@@ -449,13 +456,13 @@
 				<div class="field">
 					<label class="field-label" for="f-decision">{s.fieldLabels.decision}</label>
 					<p class="field-prompt">{@html p.decision}</p>
-					<input
+					<textarea
 						id="f-decision"
-						type="text"
 						class:warned={!!fieldValidation.decision}
+						use:autoresize={form.decision}
 						bind:value={form.decision}
 						placeholder={s.placeholders.decision}
-					/>
+					></textarea>
 					{#if fieldValidation.decision}
 						<p class="field-message">{fieldValidation.decision}</p>
 					{/if}
@@ -655,13 +662,13 @@
 					<div class="field">
 						<label class="field-label" for="f-metric">{s.fieldLabels.primaryMetric}</label>
 						<p class="field-prompt">{@html p.primaryMetric}</p>
-						<input
+						<textarea
 							id="f-metric"
-							type="text"
 							class:warned={!!fieldValidation.primaryMetric}
+							use:autoresize={form.primaryMetric}
 							bind:value={form.primaryMetric}
 							placeholder={s.placeholders.primaryMetric}
-						/>
+						></textarea>
 						{#if fieldValidation.primaryMetric}
 							<p class="field-message">{fieldValidation.primaryMetric}</p>
 						{/if}
@@ -669,13 +676,13 @@
 					<div class="field">
 						<label class="field-label" for="f-guardrail">{s.fieldLabels.guardrailMetric}</label>
 						<p class="field-prompt">{@html p.guardrailMetric}</p>
-						<input
+						<textarea
 							id="f-guardrail"
-							type="text"
 							class:warned={!!fieldValidation.guardrailMetric}
+							use:autoresize={form.guardrailMetric}
 							bind:value={form.guardrailMetric}
 							placeholder={s.placeholders.guardrailMetric}
-						/>
+						></textarea>
 						{#if fieldValidation.guardrailMetric}
 							<p class="field-message">{fieldValidation.guardrailMetric}</p>
 						{/if}
@@ -685,18 +692,25 @@
 				<div class="field">
 					<label class="field-label" for="f-outcome">{s.fieldLabels.expectedOutcome}</label>
 					<p class="field-prompt">{@html p.expectedOutcome}</p>
-					<input
+					<textarea
 						id="f-outcome"
-						type="text"
 						class:warned={!!fieldValidation.expectedOutcome}
+						use:autoresize={form.expectedOutcome}
 						bind:value={form.expectedOutcome}
 						placeholder={s.placeholders.expectedOutcome}
-					/>
-					{#if fieldValidation.expectedOutcome}
-						<p class="field-message">{fieldValidation.expectedOutcome}</p>
-					{/if}
-				</div>
+					></textarea>
+				{#if fieldValidation.expectedOutcome}
+					<p class="field-message">{fieldValidation.expectedOutcome}</p>
+				{/if}
+			</div>
 
+			{#if coachVisible[3] && Object.keys(fieldValidation).length > 0}
+				<p class="validation-disclaimer">
+					{s.validation.disclaimer}
+				</p>
+			{/if}
+
+			{#if coachDone3}
 				<div class="divider"></div>
 
 				<div class="field">
@@ -765,7 +779,58 @@
 				{#if generateError}
 					<p class="generate-error">{generateError}</p>
 				{/if}
-			</div>
+			{/if}
+
+			{#if !coachDone3}
+				<div class="step-actions">
+					<button class="btn-secondary" type="button" onclick={() => goToStep(2)}>
+						<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+							<path
+								d="M9 3L5 7l4 4"
+								stroke="currentColor"
+								stroke-width="1.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+						{strings.common.back}
+					</button>
+					<div class="actions-right">
+						<span class="step-counter">{stepCounter(3, 3)}</span>
+						<button class="btn-primary" type="button" onclick={() => submitStep(3)}>
+							{strings.common.continue}
+							<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+								<path
+									d="M5 3l4 4-4 4"
+									stroke="white"
+									stroke-width="1.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
+							</svg>
+						</button>
+					</div>
+				</div>
+			{/if}
+
+			{#if coachVisible[3]}
+				<div id="coach-3" class="coach-placeholder">
+					<div class="coach-placeholder-header">
+						<span class="coach-placeholder-badge">{s.coachPlaceholder.badge}</span>
+						<span class="coach-placeholder-title">{s.coachPlaceholder.title}</span>
+					</div>
+					<p class="coach-placeholder-body">
+						{s.coachPlaceholder.body.replace('{audienceLabel}', audience.label)}
+					</p>
+					<p class="coach-placeholder-sub">
+						{s.coachPlaceholder.sub}
+					</p>
+					<button class="btn-primary" type="button" onclick={finishCoach3}>
+						{s.coachPlaceholder.continueToOutputPreview}
+					</button>
+				</div>
+			{/if}
+		</div>
 		{/if}
 	{/if}
 </main>
@@ -804,8 +869,7 @@
 		margin-bottom: 28px;
 	}
 
-	/* Ensure inputs sit above any external overlay (e.g. devtools/Cursor highlight) so they receive focus and input */
-	.field input,
+	/* Ensure textareas sit above any external overlay (e.g. devtools/Cursor highlight) so they receive focus and input */
 	.field textarea {
 		position: relative;
 		z-index: 10000;
@@ -1132,7 +1196,6 @@
 	}
 
 	/* Field validation */
-	:global(input.warned),
 	:global(textarea.warned) {
 		border-color: var(--accent-text-orange) !important;
 	}
