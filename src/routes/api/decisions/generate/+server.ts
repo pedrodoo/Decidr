@@ -17,6 +17,7 @@ import {
 	recordTrialGeneration,
 	TRIAL_GENERATION_LIMIT
 } from '$lib/server/trial-limits';
+import { log } from '$lib/server/logger';
 
 const MODEL = 'claude-sonnet-4-5';
 type GenerateMode = 'confidence' | 'prepare' | 'communicate' | 'portfolio';
@@ -32,7 +33,7 @@ async function callClaude(
 	client: Anthropic,
 	promptParts: PromptParts,
 	maxTokens: number
-): Promise<string> {
+): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
 	const response = await client.messages.create({
 		model: MODEL,
 		max_tokens: maxTokens,
@@ -47,7 +48,7 @@ async function callClaude(
 
 	const block = response.content[0];
 	if (block.type !== 'text') throw new Error('Unexpected response type from Anthropic API');
-	return block.text;
+	return { text: block.text, usage: response.usage };
 }
 
 function apiError(
@@ -69,6 +70,7 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
 	const headers = rateLimitHeaders(rateStatus);
 
 	if (!allowed) {
+		log('warn', 'rate_limit_hit', { ip, reset_at: rateStatus.resetAt });
 		return apiError(
 			429,
 			'Hourly limit reached. Try again later.',
@@ -181,8 +183,21 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
 	else promptParts = buildPortfolioPrompt(input, buildOptions);
 
 	const client = new Anthropic({ apiKey });
+	const userId = locals.user?.id ?? trialLead?.id;
 	try {
-		const output = await callClaude(client, promptParts, MAX_TOKENS[mode]);
+		const start = Date.now();
+		const { text: output, usage } = await callClaude(client, promptParts, MAX_TOKENS[mode]);
+		const latency_ms = Date.now() - start;
+
+		log('info', 'ai_generation', {
+			user_id: userId,
+			is_trial: isTrial,
+			mode,
+			audience: input.audience,
+			latency_ms,
+			input_tokens: usage.input_tokens,
+			output_tokens: usage.output_tokens
+		});
 
 		if (isTrial && trialLead) {
 			await recordTrialGeneration(trialLead.id);
@@ -190,7 +205,7 @@ export const POST: RequestHandler = async ({ request, locals, getClientAddress }
 
 		return json({ [mode]: output }, { headers });
 	} catch (err) {
-		console.error('Anthropic API error:', err);
+		log('error', 'ai_generation_failed', { user_id: userId, mode, error: String(err) });
 		throw error(500, 'Failed to generate output. Please try again.');
 	}
 };
