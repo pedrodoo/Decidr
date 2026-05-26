@@ -56,7 +56,7 @@
 	}
 
 	function backHref(): string {
-		if (isDemo) return '/onboarding';
+		if (isDemo) return '/welcome';
 		return refineHref();
 	}
 
@@ -277,28 +277,6 @@
 			visible={coachMarkVisible}
 			onDismiss={() => highlightBugReportButton.set(false)}
 		/>
-		<div class="demo-banner" role="status">
-			<span class="demo-badge">{demo.exampleBadge}</span>
-			<div class="demo-banner-text">
-				<p class="demo-banner-title">{demo.bannerTitle}</p>
-				<p class="demo-banner-body">{demo.bannerBody}</p>
-				<p class="demo-banner-bug">{demo.bugHint}</p>
-			</div>
-			<div class="demo-banner-actions">
-				<button class="btn-primary" type="button" onclick={startOwnDecision}>
-					{demo.startOwnDecision}
-				</button>
-				<a class="btn-ghost" href={backHref()}>{demo.backToTour}</a>
-				<a
-					class="btn-ghost-inline"
-					href={tallyUrl}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{demo.tallyFeedback}
-				</a>
-			</div>
-		</div>
 	{/if}
 
 	<div class="page-header">
@@ -547,6 +525,30 @@
 		</div>
 	{/if}
 
+	{#if isDemo}
+		<div class="demo-banner" role="status">
+			<span class="demo-badge">{demo.exampleBadge}</span>
+			<div class="demo-banner-text">
+				<p class="demo-banner-title">{demo.bannerTitle}</p>
+				<p class="demo-banner-body">{demo.bannerBody}</p>
+				<p class="demo-banner-bug">{demo.bugHint}</p>
+			</div>
+			<div class="demo-banner-actions">
+				<button class="btn-primary" type="button" onclick={startOwnDecision}>
+					{demo.startOwnDecision}
+				</button>
+				<a
+					class="btn-secondary"
+					href={tallyUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{demo.tallyFeedback}
+				</a>
+			</div>
+		</div>
+	{/if}
+
 	{#if !isDemo && outputs.confidence && audience && currentId}
 		{@const parsed = parseConfidence(outputs.confidence ?? '')}
 		{@const variant = confidenceVariant(parsed.rating)}
@@ -579,7 +581,8 @@
 		flex-direction: column;
 		gap: 16px;
 		padding: 20px;
-		margin-bottom: 32px;
+		margin-top: 48px;
+		margin-bottom: 0;
 		border: 1px solid var(--orange-border);
 		border-radius: 10px;
 		background: var(--orange-dim);
@@ -673,8 +676,13 @@
 	.demo-banner-actions {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 10px;
+		gap: 12px;
 		align-items: center;
+	}
+
+	.demo-banner-actions :global(.btn-secondary) {
+		background: var(--surface);
+		text-decoration: none;
 	}
 
 	.page-header {

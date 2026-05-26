@@ -14,6 +14,7 @@
 
 	let recentDecisions = $state<DecisionRecord[]>([]);
 	const s = strings.welcome;
+	const ob = strings.onboarding;
 
 	const isTrialFirst = $derived(data.isTrial && data.trialState === 'first');
 	const isTrialReturning = $derived(data.isTrial && data.trialState === 'returning');
@@ -44,14 +45,22 @@
 		<div class="eyebrow">{s.eyebrow}</div>
 
 		{#if isTrialFirst}
-			<h2 class="title">{s.tourTitle}</h2>
-			<p class="subtitle">{s.tourSubtitle}</p>
-			<p class="body">{s.tourBody}</p>
+			<span class="example-badge">{ob.exampleBadge}</span>
+			<h2 class="title">{ob.entryTitle}</h2>
+			<p class="subtitle">{ob.entrySubtitle}</p>
+			<p class="body">{ob.entryBody}</p>
+
+			<ol class="steps-list">
+				{#each ob.entrySteps as step, i (i)}
+					<li>{step}</li>
+				{/each}
+			</ol>
+
 			<p class="bug-hint">{s.tourBugHint}</p>
 
 			<div class="cta-row">
-				<a class="btn-primary cta" href="/onboarding">
-					{s.startGuidedTour}
+				<a class="btn-primary cta" href="/onboarding/walkthrough">
+					{ob.beginWalkthrough}
 					<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 						<path
 							d="M5 3l4 4-4 4"
@@ -79,7 +88,7 @@
 
 			<div class="cta-row cta-row--stacked">
 				<InputDepthChooser />
-				<a class="btn-secondary" href="/onboarding">{s.replayTour}</a>
+				<a class="btn-secondary" href="/onboarding/walkthrough">{s.replayTour}</a>
 			</div>
 		{:else}
 			<h2 class="title">{s.title}</h2>
@@ -180,6 +189,34 @@
 		line-height: 1.65;
 		margin-bottom: 16px;
 		max-width: 620px;
+	}
+
+	.example-badge {
+		display: inline-block;
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 4px 10px;
+		margin-bottom: 16px;
+	}
+
+	.steps-list {
+		margin: 0 0 20px;
+		padding-left: 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		max-width: 620px;
+	}
+
+	.steps-list li {
+		font-size: 14px;
+		color: var(--text-primary);
+		line-height: 1.5;
 	}
 
 	.bug-hint {

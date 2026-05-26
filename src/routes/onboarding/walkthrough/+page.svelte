@@ -13,7 +13,7 @@
 	<h1 class="sr-only">{s.walkthroughSrOnly}</h1>
 
 	<nav class="top-nav" aria-label="Tour navigation">
-		<a class="btn-ghost-inline" href="/onboarding">{s.backToEntry}</a>
+		<a class="btn-ghost-inline" href="/welcome">{s.backToWelcome}</a>
 	</nav>
 
 	<OnboardingWalkthrough />

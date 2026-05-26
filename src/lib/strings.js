@@ -313,14 +313,8 @@ not preset prompts.`,
     title: 'For teams who take decision-making seriously.',
     subtitle:
       'Decidr was buikd to help product and design teams turn scattered opinions into clear, shared reasoning so cross-functional decisions move with more trust and less noise.',
-    tourTitle: 'See what Decidr does',
-    tourSubtitle:
-      'We’ll walk you through a guided tour so you can see how Decidr turns design cases into business-ready outputs.',
-    tourBody:
-      'You’ll pick an audience (CEO in the example), then follow pre-filled steps — no typing required. Just read and use the coaching notes.',
     tourBugHint:
       'We’re in private beta. If anything breaks or confuses you, use Report a bug in the top bar.',
-    startGuidedTour: 'Start guided tour',
     skipTour: 'Skip tour',
     skipTourHint: 'You can explore with your own decision, but the tour is the fastest way to understand Decidr.',
     returningTitle: 'Ready ro create your own case?',
@@ -337,14 +331,11 @@ not preset prompts.`,
   },
 
   onboarding: {
-    pageTitle: 'Guided tour',
-    pageSrOnlyTitle: 'Guided tour',
-    eyebrow: 'Guided tour',
     entryTitle: 'A full walkthrough with a realistic example',
     entrySubtitle:
       'You’ll see the same setup screens as a real case — audience, optional intent, then three input steps — ending with example outputs.',
     entryBody:
-      'The tour starts with audience selection (CEO only today), then a pre-filled example with coaching after each step. Your own case can use quick start or complete inputs from the welcome screen.',
+      'The tour starts with audience selection (CEO only today), then a pre-filled example with coaching after each step. After the tour, your own case can use quick start or complete inputs.',
     entrySteps: [
       'Audience — who you communicate to (CEO in this example)',
       'Intent — optional framing for your situation',
@@ -355,7 +346,6 @@ not preset prompts.`,
     ],
     beginWalkthrough: 'Begin walkthrough',
     backToWelcome: 'Back to welcome',
-    backToEntry: 'Back to tour intro',
     exampleBadge: 'Example',
     walkthroughPageTitle: 'Guided tour — walkthrough',
     walkthroughSrOnly: 'Guided tour walkthrough',
@@ -363,7 +353,7 @@ not preset prompts.`,
       'Example tour — same screens as a real case. Only CEO is available today; other audiences are coming soon. You can explore intent pills; this example uses Fix underperformance.',
     walkthroughStartCta: 'Continue with CEO (example)',
     walkthroughDepthNote:
-      'This tour uses complete inputs (all three steps). For your own case you can choose quick start or complete inputs from the welcome screen.',
+      'This tour uses complete inputs (all three steps). For your own case you can choose quick start or complete inputs after the tour.',
     walkthroughStepsNote:
       'Pre-filled example for CEO — fields are read-only. Follow the coaching notes after each step.',
     walkthroughAudienceNote:
@@ -380,9 +370,8 @@ not preset prompts.`,
     bannerBody:
       'These were generated from the guided tour example. Now explore how Prepare, Communicate, and Portfolio read for a CEO audience.',
     startOwnDecision: 'Start your case',
-    backToTour: 'Back to tour intro',
     exampleBadge: 'Example',
-    tallyFeedback: 'Help us improve Decidr — 2 min feedback',
+    tallyFeedback: 'Help us improve',
     bugHint: 'Spotted a bug? Use Report a bug in the top bar.',
     fullAccessNote: 'Example preview · full access unlocks live generation',
     previewDivider: 'Leadership brief and portfolio case (example content below)',
