@@ -80,11 +80,6 @@
 		{:else if isTrialReturning}
 			<h2 class="title">{s.returningTitle}</h2>
 			<p class="subtitle">{s.returningSubtitle}</p>
-			<p class="trial-limit-note">{s.trialLimitNote}</p>
-
-			{#if data.skippedTour}
-				<p class="skipped-note" role="status">{s.skipTourHint}</p>
-			{/if}
 
 			<div class="cta-row cta-row--stacked">
 				<InputDepthChooser />
@@ -168,13 +163,6 @@
 		margin-bottom: 12px;
 	}
 
-	.trial-limit-note {
-		font-size: var(--text-sm);
-		color: var(--text-muted);
-		line-height: 1.6;
-		margin-bottom: 20px;
-	}
-
 	.subtitle {
 		font-size: var(--text-sm);
 		color: var(--text-secondary);
@@ -225,15 +213,6 @@
 		line-height: 1.55;
 		margin: 0 0 20px;
 		max-width: 620px;
-	}
-
-	.skipped-note {
-		font-size: 13px;
-		color: var(--text-muted);
-		margin: 0 0 16px;
-		padding: 10px 12px;
-		border-left: 2px solid var(--orange);
-		background: var(--bg);
 	}
 
 	.cta-row {

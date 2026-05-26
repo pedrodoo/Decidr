@@ -319,7 +319,7 @@ not preset prompts.`,
     skipTourHint: 'You can explore with your own decision, but the tour is the fastest way to understand Decidr.',
     returningTitle: 'Ready ro create your own case?',
     returningSubtitle:
-      'You’ve seen the example. Now try Decidr with your own case. Trial includes 2 AI generations.',
+      'You’ve seen the example. Now try Decidr with your own case — 2 AI generations on trial (confidence + prepare only). Revisions count toward your limit.',
     trialLimitNote:
       'Trial includes 2 AI generations (confidence + prepare only). Revisions count toward your limit.',
     startOwnDecision: 'Start your own case',

@@ -34,7 +34,6 @@ export const load: PageServerLoad = async (event) => {
 
 	return {
 		isTrial: true,
-		trialState,
-		skippedTour: skipTour
+		trialState
 	};
 };
