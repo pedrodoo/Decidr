@@ -6,7 +6,7 @@ type LogEntry = { ts: string; level: Level; event: string; [key: string]: unknow
 function sendToAxiom(entry: LogEntry) {
 	const { AXIOM_TOKEN: token, AXIOM_DATASET: dataset } = env;
 	if (!token || !dataset) return;
-	fetch(`https://api.axiom.co/v1/datasets/${dataset}/ingest`, {
+	fetch(`https://eu-central-1.aws.edge.axiom.co/v1/ingest/${dataset}`, {
 		method: 'POST',
 		headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
 		body: JSON.stringify([entry])
